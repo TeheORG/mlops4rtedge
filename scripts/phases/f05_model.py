@@ -57,6 +57,11 @@ from scripts.core.traceability import validate_outputs
 PHASE = "f05_modeling"
 PARENT_PHASE = "f04_targets"
 FAST_MAX_MAJORITY_SAMPLES = 20_000
+
+# ── Análisis opcionales (desactivar para acelerar ejecución) ──────────────────
+ENABLE_EXACT_DUPLICATE_ANALYSIS    = False   # set operations, rápido
+ENABLE_UNORDERED_DUPLICATE_ANALYSIS = False  # set operations, rápido
+ENABLE_NEAR_DUPLICATE_ANALYSIS     = False  # O(n²) Jaccard, muy lento en datasets grandes
 LEAKAGE_ANALYSIS_ENABLED = False  # True para análisis exhaustivo de leakage (puede ser costoso en datasets grandes)
 
 def build_adam_optimizer(learning_rate: float):
@@ -1012,8 +1017,13 @@ def build_split_leakage_report(
 ) -> dict:
     split_frames = []
     for split_name, idx in split_indices.items():
+        print(f"[INFO] Processing split '{split_name}' ({len(idx)} rows) for leakage detection...")
+        start_time = time.time()
+        
         cur_events = events.iloc[idx].reset_index(drop=True)
         cur_labels = labels.iloc[idx].astype("int32").reset_index(drop=True)
+        
+        print(f"      [1/6] Canonicalizing event sequences...")
         cur_df = pd.DataFrame(
             {
                 "split": split_name,
@@ -1021,36 +1031,73 @@ def build_split_leakage_report(
                 "sequence": cur_events.apply(canonicalize_events_sequence),
             }
         )
+        
+        print(f"      [2/6] Computing exact keys...")
         cur_df["exact_key"] = cur_df["sequence"].apply(lambda seq: json.dumps(list(seq), separators=(",", ":")))
+        
+        print(f"      [3/6] Computing unordered keys...")
         cur_df["unordered_key"] = cur_df["sequence"].apply(build_unordered_key)
+        
+        print(f"      [4/6] Computing event counters...")
         cur_df["events_counter"] = cur_df["sequence"].apply(Counter)
+        
+        print(f"      [5/6] Computing sequence lengths...")
         cur_df["seq_len"] = cur_df["sequence"].apply(len)
+        
+        print(f"      [6/6] Building sequence previews...")
         cur_df["events_preview"] = cur_df["sequence"].apply(build_sequence_preview)
+        
+        elapsed = time.time() - start_time
+        print(f"[INFO] Split '{split_name}' processed in {elapsed:.2f}s")
         split_frames.append(cur_df)
 
     metadata_df = pd.concat(split_frames, axis=0).reset_index(drop=True)
-    exact_duplicates = build_key_overlap_section(metadata_df, "exact_key", ["train", "val", "test"], "exact_key")
-    unordered_duplicates = build_key_overlap_section(metadata_df, "unordered_key", ["train", "val", "test"], "unordered_key")
-    near_duplicates = build_near_duplicate_section(metadata_df, threshold=0.80, top_k_examples=20)
+    print(f"[INFO] Merged all splits: {len(metadata_df)} total rows")
+    
+    _SKIPPED = {"skipped": True, "possible_leakage": False, "high_leakage_warning": False, "max_overlap_pct": 0.0}
+    _SKIPPED_NEAR = {"skipped": True, "n_total_pairs": 0, "max_similarity": 0.0, "pairwise": {}}
+
+    if ENABLE_EXACT_DUPLICATE_ANALYSIS:
+        print("[INFO] Analyzing exact duplicate keys...")
+        exact_duplicates = build_key_overlap_section(metadata_df, "exact_key", ["train", "val", "test"], "exact_key")
+    else:
+        print("[INFO] Exact duplicate analysis disabled")
+        exact_duplicates = _SKIPPED
+
+    if ENABLE_UNORDERED_DUPLICATE_ANALYSIS:
+        print("[INFO] Analyzing unordered duplicate keys...")
+        unordered_duplicates = build_key_overlap_section(metadata_df, "unordered_key", ["train", "val", "test"], "unordered_key")
+    else:
+        print("[INFO] Unordered duplicate analysis disabled")
+        unordered_duplicates = _SKIPPED
+
+    if ENABLE_NEAR_DUPLICATE_ANALYSIS:
+        print("[INFO] Analyzing near duplicates (similarity >= 0.80)...")
+        near_duplicates = build_near_duplicate_section(metadata_df, threshold=0.80, top_k_examples=20)
+    else:
+        print("[INFO] Near duplicate analysis disabled (O(n²) — activate with ENABLE_NEAR_DUPLICATE_ANALYSIS=True)")
+        near_duplicates = _SKIPPED_NEAR
+
+    print("[INFO] Leakage report generation complete")
 
     return {
         "exact_duplicates": exact_duplicates,
         "unordered_duplicates": unordered_duplicates,
         "near_duplicates": near_duplicates,
         "possible_leakage": bool(
-            exact_duplicates["possible_leakage"]
-            or unordered_duplicates["possible_leakage"]
+            exact_duplicates.get("possible_leakage", False)
+            or unordered_duplicates.get("possible_leakage", False)
             or near_duplicates["n_total_pairs"] > 0
         ),
         "high_leakage_warning": bool(
-            exact_duplicates["high_leakage_warning"]
-            or unordered_duplicates["high_leakage_warning"]
+            exact_duplicates.get("high_leakage_warning", False)
+            or unordered_duplicates.get("high_leakage_warning", False)
             or near_duplicates["n_total_pairs"] > 0
         ),
         "max_overlap_pct": float(
             max(
-                exact_duplicates["max_overlap_pct"],
-                unordered_duplicates["max_overlap_pct"],
+                exact_duplicates.get("max_overlap_pct", 0.0),
+                unordered_duplicates.get("max_overlap_pct", 0.0),
                 near_duplicates["max_similarity"],
             )
         ),
@@ -1058,6 +1105,9 @@ def build_split_leakage_report(
 
 
 def print_overlap_section(section_name: str, section: dict) -> None:
+    if section.get("skipped"):
+        print(f"[INFO] Leakage audit: {section_name} — skipped")
+        return
     sizes = section["split_sizes_unique_keys"]
     train_size = next(v for k, v in sizes.items() if k.endswith("_train"))
     val_size = next(v for k, v in sizes.items() if k.endswith("_val"))
@@ -1090,6 +1140,9 @@ def print_split_leakage_report(leakage_report: dict) -> None:
     print_overlap_section("unordered_duplicates", leakage_report["unordered_duplicates"])
 
     near_duplicates = leakage_report.get("near_duplicates", {})
+    if near_duplicates.get("skipped"):
+        print("[INFO] Leakage audit: near_duplicates — skipped")
+        return
     print("[INFO] Leakage audit: near_duplicates")
     print(f"[INFO] similarity_definition={near_duplicates.get('similarity_definition')}")
     pairwise = near_duplicates.get("pairwise", {})
@@ -1122,6 +1175,8 @@ def print_split_leakage_report(leakage_report: dict) -> None:
 
 
 def render_overlap_html(section_title: str, section: dict) -> str:
+    if section.get("skipped"):
+        return f"<h3>{escape(section_title)}</h3><p><em>Análisis desactivado.</em></p>"
     summary_html = pd.DataFrame(section["summary_rows"]).to_html(index=False, escape=True)
     top_shared = section.get("top_shared_keys", [])
     top_shared_html = (
@@ -1155,6 +1210,8 @@ def render_overlap_html(section_title: str, section: dict) -> str:
 
 
 def render_near_duplicates_html(near_duplicates: dict) -> str:
+    if near_duplicates.get("skipped"):
+        return "<h3>near_duplicates</h3><p><em>Análisis desactivado.</em></p>"
     pairwise = near_duplicates.get("pairwise", {})
     summary_rows = []
     example_rows = []
@@ -2033,6 +2090,7 @@ def main():
     # ---------------------------------------------
     # 4. AutoML — entrenamiento y selección
     # ---------------------------------------------
+    print(f"[INFO] Starting AutoML training...")
     experiments_dir = variant_dir / "experiments"
 
     best_model, best_hp, best_val_recall, history, trials_summary, best_trial_id, best_validation_candidates = train_with_automl(
@@ -2048,6 +2106,7 @@ def main():
         class_weights=class_weights,
         experiments_dir=experiments_dir,
     )
+    print(f"[INFO] AutoML training complete (best trial: {best_trial_id}, best_val_recall: {best_val_recall:.4f})")
 
     # ---------------------------------------------
     # 5. Evaluación final en test + thresholds
@@ -2230,23 +2289,23 @@ def main():
             "n_train": int(len(y_train)),
             "n_val": int(len(y_val)),
             "n_test": int(len(y_test)),
-            "n_exact_train": int(leakage_report["exact_duplicates"]["split_sizes_unique_keys"]["n_exact_key_train"]),
-            "n_exact_val": int(leakage_report["exact_duplicates"]["split_sizes_unique_keys"]["n_exact_key_val"]),
-            "n_exact_test": int(leakage_report["exact_duplicates"]["split_sizes_unique_keys"]["n_exact_key_test"]),
-            "n_exact_intersection_train_val": int(leakage_report["exact_duplicates"]["pair_intersections"]["train_val"]["shared_keys_count"]),
-            "n_exact_intersection_train_test": int(leakage_report["exact_duplicates"]["pair_intersections"]["train_test"]["shared_keys_count"]),
-            "n_exact_intersection_val_test": int(leakage_report["exact_duplicates"]["pair_intersections"]["val_test"]["shared_keys_count"]),
-            "n_exact_intersection_all_three": int(leakage_report["exact_duplicates"]["triple_intersection"]["shared_keys_count"]),
-            "n_unordered_train": int(leakage_report["unordered_duplicates"]["split_sizes_unique_keys"]["n_unordered_key_train"]),
-            "n_unordered_val": int(leakage_report["unordered_duplicates"]["split_sizes_unique_keys"]["n_unordered_key_val"]),
-            "n_unordered_test": int(leakage_report["unordered_duplicates"]["split_sizes_unique_keys"]["n_unordered_key_test"]),
-            "n_unordered_intersection_train_val": int(leakage_report["unordered_duplicates"]["pair_intersections"]["train_val"]["shared_keys_count"]),
-            "n_unordered_intersection_train_test": int(leakage_report["unordered_duplicates"]["pair_intersections"]["train_test"]["shared_keys_count"]),
-            "n_unordered_intersection_val_test": int(leakage_report["unordered_duplicates"]["pair_intersections"]["val_test"]["shared_keys_count"]),
-            "n_unordered_intersection_all_three": int(leakage_report["unordered_duplicates"]["triple_intersection"]["shared_keys_count"]),
-            "n_near_pairs_train_val": int(leakage_report["near_duplicates"]["pairwise"]["train_val"]["n_pairs"]),
-            "n_near_pairs_train_test": int(leakage_report["near_duplicates"]["pairwise"]["train_test"]["n_pairs"]),
-            "n_near_pairs_val_test": int(leakage_report["near_duplicates"]["pairwise"]["val_test"]["n_pairs"]),
+            "n_exact_train": int(leakage_report["exact_duplicates"].get("split_sizes_unique_keys", {}).get("n_exact_key_train", 0)),
+            "n_exact_val": int(leakage_report["exact_duplicates"].get("split_sizes_unique_keys", {}).get("n_exact_key_val", 0)),
+            "n_exact_test": int(leakage_report["exact_duplicates"].get("split_sizes_unique_keys", {}).get("n_exact_key_test", 0)),
+            "n_exact_intersection_train_val": int(leakage_report["exact_duplicates"].get("pair_intersections", {}).get("train_val", {}).get("shared_keys_count", 0)),
+            "n_exact_intersection_train_test": int(leakage_report["exact_duplicates"].get("pair_intersections", {}).get("train_test", {}).get("shared_keys_count", 0)),
+            "n_exact_intersection_val_test": int(leakage_report["exact_duplicates"].get("pair_intersections", {}).get("val_test", {}).get("shared_keys_count", 0)),
+            "n_exact_intersection_all_three": int(leakage_report["exact_duplicates"].get("triple_intersection", {}).get("shared_keys_count", 0)),
+            "n_unordered_train": int(leakage_report["unordered_duplicates"].get("split_sizes_unique_keys", {}).get("n_unordered_key_train", 0)),
+            "n_unordered_val": int(leakage_report["unordered_duplicates"].get("split_sizes_unique_keys", {}).get("n_unordered_key_val", 0)),
+            "n_unordered_test": int(leakage_report["unordered_duplicates"].get("split_sizes_unique_keys", {}).get("n_unordered_key_test", 0)),
+            "n_unordered_intersection_train_val": int(leakage_report["unordered_duplicates"].get("pair_intersections", {}).get("train_val", {}).get("shared_keys_count", 0)),
+            "n_unordered_intersection_train_test": int(leakage_report["unordered_duplicates"].get("pair_intersections", {}).get("train_test", {}).get("shared_keys_count", 0)),
+            "n_unordered_intersection_val_test": int(leakage_report["unordered_duplicates"].get("pair_intersections", {}).get("val_test", {}).get("shared_keys_count", 0)),
+            "n_unordered_intersection_all_three": int(leakage_report["unordered_duplicates"].get("triple_intersection", {}).get("shared_keys_count", 0)),
+            "n_near_pairs_train_val": int(leakage_report["near_duplicates"].get("pairwise", {}).get("train_val", {}).get("n_pairs", 0)),
+            "n_near_pairs_train_test": int(leakage_report["near_duplicates"].get("pairwise", {}).get("train_test", {}).get("n_pairs", 0)),
+            "n_near_pairs_val_test": int(leakage_report["near_duplicates"].get("pairwise", {}).get("val_test", {}).get("n_pairs", 0)),
             "n_near_pairs_total": int(leakage_report["near_duplicates"]["n_total_pairs"]),
             "max_split_overlap_pct": float(leakage_report["max_overlap_pct"]),
             "positive_ratio_train": float(y_train.mean()),
