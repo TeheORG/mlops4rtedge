@@ -340,6 +340,7 @@ def main():
     # outputs.yaml
     # --------------------------------------------------------
 
+    parent_f01 = parent_outputs.get("exports", {}).get("parent_f01")
     n_unique_ow_hash = len(ow_hashes)
     n_unique_pw_hash = len(pw_hashes)
 
@@ -384,6 +385,7 @@ def main():
             "window_strategy": window_strategy,
             "nan_mode": nan_mode,
             "parent_f02": parent_variant,
+            "parent_f01": parent_f01,
             "n_windows": windows_written,
             "n_unique_ow_hash": n_unique_ow_hash,
             "n_unique_pw_hash": n_unique_pw_hash,

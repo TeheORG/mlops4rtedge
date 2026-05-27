@@ -227,6 +227,8 @@ make register5 VARIANT=v501
 
 Common F05 overrides include batch size, epochs, learning rate, embedding size, hidden units, dropout, AutoML, and evaluation split.
 
+For GPU execution in F05/F06, use `F56_GPU=true`, for example `make script5 VARIANT=v501 F56_GPU=true` or `make script6 VARIANT=v601 F56_GPU=true`.
+
 ### F06: Quantize and package for edge
 
 ```bash
@@ -237,6 +239,8 @@ make register6 VARIANT=v601
 ```
 
 F06 uses Docker for reproducible packaging in the default flow.
+
+Set `F56_GPU=true` to switch F06 to the GPU image and pass `--gpus all` to `docker run`.
 
 ### F07: Validate a model on edge hardware
 

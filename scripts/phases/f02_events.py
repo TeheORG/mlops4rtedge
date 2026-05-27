@@ -1584,6 +1584,7 @@ def main():
             "n_types": int(len(event_to_id)),
             "n_types_observed": int(stats["global"]["n_event_types_observed"]),
             "target_candidates": stats.get("target_candidates", {}),
+            "parent_f01": parent_variant,
         },
         "metrics": build_outputs_metrics(
             stats=stats,

@@ -322,6 +322,7 @@ def main():
     parent_exports = parent_outputs.get("exports", {})
 
     parent_f02 = parent_exports.get("parent_f02")
+    parent_f01 = parent_exports.get("parent_f01")
     window_strategy = parent_exports.get("window_strategy")
     dup_ratio_ow = parent_exports.get("dup_ratio_ow")
     dup_ratio_pw = parent_exports.get("dup_ratio_pw")
@@ -354,6 +355,7 @@ def main():
             "window_strategy": window_strategy,
             "parent_f03": parent_variant,
             "parent_f02": parent_f02,
+            "parent_f01": parent_f01,
             "n_windows": int(total),
             "n_windows_pos": int(positives),
             "n_windows_neg": int(negatives),

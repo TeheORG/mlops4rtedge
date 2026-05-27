@@ -128,6 +128,8 @@ make script6 VARIANT=v601
 make check6 VARIANT=v601
 ```
 
+GPU execution for the shared F05/F06 Docker flow is toggled with `F56_GPU=true`, which switches to `scripts/docker/Dockerfile.f56_gpu` and adds `--gpus all` at runtime.
+
 ### Clean local state
 
 ```bash

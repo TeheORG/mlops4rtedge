@@ -60,5 +60,8 @@ data/*.pkl
 run*.csv
 
 test/experiments/**/analysis/outputs/
-test/experiments/**/logs/
 test/experiments/**/analysis/figures/
+test/experiments/**/logs/
+test/experiments/experiment-*/analysis/outputs/
+test/experiments/experiment-*/analysis/figures/
+test/experiments/experiment1/

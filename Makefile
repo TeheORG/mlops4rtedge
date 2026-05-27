@@ -833,8 +833,15 @@ SCRIPT5_MODULE = scripts.phases.f05_model
 VARIANTS_DIR5 = executions/$(PHASE5)
 
 # Docker único para F05/F06 (reproducible entre OS)
-F56_DOCKER_IMAGE ?= mlops4ofp-f56:py311-tf215
-F56_DOCKERFILE ?= scripts/docker/Dockerfile.f56
+ifeq ($(F56_GPU),true)
+	F56_DOCKER_IMAGE ?= mlops-f56-gpu:latest
+	F56_DOCKERFILE ?= scripts/docker/Dockerfile.f56_gpu
+	F56_DOCKER_RUN_ARGS ?= --gpus all
+else
+	F56_DOCKER_IMAGE ?= mlops4ofp-f56:py311-tf215
+	F56_DOCKERFILE ?= scripts/docker/Dockerfile.f56
+	F56_DOCKER_RUN_ARGS ?=
+endif
 F56_DOCKER_PLATFORM ?= linux/amd64
 
 ensure-f56-docker-image:
@@ -921,6 +928,7 @@ script5: check-variant-format ensure-f56-docker-image
 	echo "==> Running F05 in Docker ($(F56_DOCKER_IMAGE)) for $$VARIANT_NORM"; \
 	docker run --rm --platform $(F56_DOCKER_PLATFORM) \
 		$(DOCKER_HOST_USER_ARGS) \
+		$(F56_DOCKER_RUN_ARGS) \
 		-v "$(DOCKER_HOST_PWD):$(DOCKER_WORKSPACE_PATH)" \
 		-w $(DOCKER_WORKSPACE_PATH) \
 		$(F56_DOCKER_IMAGE) \
@@ -1167,6 +1175,7 @@ script6: check-variant-format ensure-f56-docker-image
 	echo "==> Running F06 in Docker ($(F56_DOCKER_IMAGE)) for $$VARIANT_NORM"; \
 	docker run --rm --platform $(F56_DOCKER_PLATFORM) \
 		$(DOCKER_HOST_USER_ARGS) \
+		$(F56_DOCKER_RUN_ARGS) \
 		-v "$(DOCKER_HOST_PWD):$(DOCKER_WORKSPACE_PATH)" \
 		-w $(DOCKER_WORKSPACE_PATH) \
 		$(F56_DOCKER_IMAGE) \
