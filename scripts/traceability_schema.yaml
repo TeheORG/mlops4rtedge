@@ -1046,10 +1046,10 @@ phases:
       # Geometría heredada desde F06
       # -------------------------------------------------
 
-      time_scale_factor:
+      time_scale:
         type: float
         required: false
-        default: 1.0
+        default: 0.01
         check: ">0"
 
       Tu:
