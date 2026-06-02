@@ -79,6 +79,47 @@ clean-setup:
 	@rm -rf .mlops4ofp .dvc .dvc_storage local_dvc_store executions
 	@echo "[OK] ML project reinitialized. Run 'make setup' to rebuild base structure."
 
+############################################
+# DATA — add file to DVC and push
+############################################
+
+DATA_FILE ?=
+
+dvc-add-datafile:
+	@test -n "$(DATA_FILE)" || (echo "[ERROR] You must specify DATA_FILE=<path/to/file>"; exit 1)
+	@echo "==> Adding $(DATA_FILE) to DVC"
+	$(DVC) add $(DATA_FILE)
+	@echo "==> Staging DVC pointer and .gitignore"
+	@git add "$(DATA_FILE).dvc"
+	@git add "$$(dirname "$(DATA_FILE)")/.gitignore" 2>/dev/null || true
+	@git add .gitignore 2>/dev/null || true
+	@echo "==> Committing"
+	@git commit -m "dvc: add data file $(DATA_FILE)" || true
+	@echo "==> Pushing .dvc pointer to git remote"
+	@if [ -f ".mlops4ofp/setup.yaml" ]; then \
+		PUBLISH_REMOTE="$$($(PYTHON_LOCAL) -c 'import yaml,pathlib; cfg=yaml.safe_load(pathlib.Path(".mlops4ofp/setup.yaml").read_text()); print(cfg.get("git",{}).get("publish_remote_name","origin"))')"; \
+		PUBLISH_BRANCH="$$($(PYTHON_LOCAL) -c 'import yaml,pathlib; cfg=yaml.safe_load(pathlib.Path(".mlops4ofp/setup.yaml").read_text()); print(cfg.get("git",{}).get("branch","main"))')"; \
+		git push "$$PUBLISH_REMOTE" "HEAD:$$PUBLISH_BRANCH" || true; \
+	else \
+		echo "[INFO] .mlops4ofp/setup.yaml not found — skipping git push"; \
+	fi
+	@echo "==> Pushing data to DVC remote"
+	$(DVC) push -r storage || true
+
+############################################
+# SETUP-BRANCH — create branch + setup + push data
+############################################
+
+setup-branch:
+	@test -n "$(SETUP_CFG)" || (echo "[ERROR] You must specify SETUP_CFG=<file.yaml>"; exit 1)
+	@test -n "$(DATA_FILE)" || (echo "[ERROR] You must specify DATA_FILE=<path/to/file>"; exit 1)
+	@set -eu; \
+	BRANCH="$$($(PYTHON_LOCAL) -c 'import yaml; print(yaml.safe_load(open("$(SETUP_CFG)")).get("git",{}).get("branch","main"))')"; \
+	echo "==> Creating/switching to branch: $$BRANCH"; \
+	git checkout -b "$$BRANCH" 2>/dev/null || git checkout "$$BRANCH"; \
+	$(MAKE) setup SETUP_CFG=$(SETUP_CFG); \
+	$(MAKE) dvc-add-datafile DATA_FILE=$(DATA_FILE)
+
 
 ifeq ($(OS),Windows_NT)
   PYTHON := .venv/Scripts/python.exe
@@ -1773,7 +1814,7 @@ help: help-setup help1 help2 help3 help4 help5 help6 help7 help8
 	@echo "==============================================="
 
 .PHONY: \
-	setup check-setup clean-setup \
+	setup check-setup clean-setup setup-branch dvc-add-datafile \
 	nb-run-generic script-run-generic \
 	variant-generic check-variant-format \
 	register-generic remove-generic check-results-generic export-generic \
