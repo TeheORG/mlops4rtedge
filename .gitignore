@@ -49,7 +49,7 @@ executions/**/*.dvc
 
 # Development
 .python-version
-.mlops4ofp/
+# .mlops4ofp/
 
 # Large data files (users will provide their own)
 data/*.csv
