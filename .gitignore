@@ -33,8 +33,10 @@ executions-*/
 .dvc/config.local
 
 # Pipeline code repo: local DVC state and cache must not be versioned here
-.dvc/
+.dvc/*
+!.dvc/config
 .dvc_storage/
+
 
 # Local experiment tracking
 mlruns/
