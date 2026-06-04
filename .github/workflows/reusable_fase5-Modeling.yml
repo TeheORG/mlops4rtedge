@@ -51,7 +51,7 @@ jobs:
           ref: ${{ inputs.checkout_branch }}
           token: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Configurar Git, sincronizar Fase 4 y configurar DVC
+      - name: Configurar Git y DVC
         run: |
           git config --global user.name "github-actions[bot]"
           git config --global user.email "github-actions[bot]@users.noreply.github.com"
@@ -124,6 +124,7 @@ jobs:
           paths: |
             ${{ env.VARIANT_ROOT }}
           github_token: ${{ secrets.GITHUB_TOKEN }}
+          checkout_branch: ${{ inputs.checkout_branch }}
 
       - name: Merge PR de variant
         if: ${{ steps.pr-variant.outputs.PR_NUMBER != '' }}
@@ -138,8 +139,15 @@ jobs:
             [[ $i -eq 5 ]] && { echo "[ERROR] Merge falló tras 5 intentos" >&2; exit 1; }
           done
 
+      - name: Sync con base tras merge de variant
+        if: ${{ steps.pr-variant.outputs.PR_NUMBER != '' }}
+        run: |
+          git fetch origin
+          git checkout "${{ inputs.checkout_branch }}"
+          git pull --ff-only origin "${{ inputs.checkout_branch }}"
+
       # =========================================================
-      # STEP 2: script5
+      # STEP 2: script5-a (sin Docker, compatible con contenedor CI)
       # =========================================================
       - name: Ejecutar script de Fase 5
         env:
@@ -156,6 +164,7 @@ jobs:
           paths: |
             ${{ env.VARIANT_ROOT }}
           github_token: ${{ secrets.GITHUB_TOKEN }}
+          checkout_branch: ${{ inputs.checkout_branch }}
 
       - name: Merge PR de script
         if: ${{ steps.pr-script.outputs.PR_NUMBER != '' }}
@@ -169,6 +178,13 @@ jobs:
             sleep $((i * 3))
             [[ $i -eq 5 ]] && { echo "[ERROR] Merge falló tras 5 intentos" >&2; exit 1; }
           done
+
+      - name: Sync con base tras merge de script
+        if: ${{ steps.pr-script.outputs.PR_NUMBER != '' }}
+        run: |
+          git fetch origin
+          git checkout "${{ inputs.checkout_branch }}"
+          git pull --ff-only origin "${{ inputs.checkout_branch }}"
 
       # =========================================================
       # STEP 3: check5
@@ -187,6 +203,7 @@ jobs:
           paths: |
             ${{ env.VARIANT_ROOT }}
           github_token: ${{ secrets.GITHUB_TOKEN }}
+          checkout_branch: ${{ inputs.checkout_branch }}
 
       - name: Merge PR de check
         if: ${{ always() && steps.pr-check.outputs.PR_NUMBER != '' }}
@@ -200,6 +217,13 @@ jobs:
             sleep $((i * 3))
             [[ $i -eq 5 ]] && { echo "[ERROR] Merge falló tras 5 intentos" >&2; exit 1; }
           done
+
+      - name: Sync con base tras merge de check
+        if: ${{ always() && steps.pr-check.outputs.PR_NUMBER != '' }}
+        run: |
+          git fetch origin
+          git checkout "${{ inputs.checkout_branch }}"
+          git pull --ff-only origin "${{ inputs.checkout_branch }}"
 
       # =========================================================
       # STEP 4: register5
@@ -220,6 +244,7 @@ jobs:
             dvc.yaml
             dvc.lock
           github_token: ${{ secrets.GITHUB_TOKEN }}
+          checkout_branch: ${{ inputs.checkout_branch }}
 
       - name: Merge PR de register
         if: ${{ steps.pr-register.outputs.PR_NUMBER != '' }}

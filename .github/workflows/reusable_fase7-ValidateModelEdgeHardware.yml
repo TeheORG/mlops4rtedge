@@ -50,15 +50,6 @@ jobs:
       - name: Activar Entorno Virtual (Añadir al PATH)
         run: echo "$HOME/.venv/bin" >> $GITHUB_PATH
 
-      # - name: Debug runner env
-      #   run: |
-      #     echo "HOME=$HOME"
-      #     echo "whoami=$(whoami)"
-      #     echo "PATH=$PATH"
-      #     which dvc 2>/dev/null || echo "dvc NOT found in PATH"
-      #     ls "$HOME/.venv/bin/" 2>/dev/null || echo "no venv at $HOME/.venv"
-      #     find /home -name "dvc" 2>/dev/null | head -5 || true
-      #     find /opt -name "dvc" 2>/dev/null | head -5 || true
       - name: Debug runner env
         run: |
           echo "=== IDENTIDAD ==="
@@ -93,11 +84,7 @@ jobs:
           ls /.dockerenv 2>/dev/null && echo "Dentro de Docker" || echo "No es Docker"
           ls /var/run/secrets/kubernetes.io 2>/dev/null && echo "Dentro de K8s pod" || echo "No K8s secrets"
 
-
-
-
-
-      - name: Configurar Git, sincronizar Fase 6 y configurar DVC
+      - name: Configurar Git y DVC
         run: |
           git config --global user.name "github-actions[bot]"
           git config --global user.email "github-actions[bot]@users.noreply.github.com"
@@ -170,6 +157,7 @@ jobs:
           paths: |
             ${{ env.VARIANT_ROOT }}
           github_token: ${{ secrets.GITHUB_TOKEN }}
+          checkout_branch: ${{ inputs.checkout_branch }}
 
       - name: Merge PR de variant
         if: ${{ steps.pr-variant.outputs.PR_NUMBER != '' }}
@@ -183,6 +171,13 @@ jobs:
             sleep $((i * 3))
             [[ $i -eq 5 ]] && { echo "[ERROR] Merge falló tras 5 intentos" >&2; exit 1; }
           done
+
+      - name: Sync con base tras merge de variant
+        if: ${{ steps.pr-variant.outputs.PR_NUMBER != '' }}
+        run: |
+          git fetch origin
+          git checkout "${{ inputs.checkout_branch }}"
+          git pull --ff-only origin "${{ inputs.checkout_branch }}"
 
       # =========================================================
       # STEP 2: script7
@@ -202,6 +197,7 @@ jobs:
           paths: |
             ${{ env.VARIANT_ROOT }}
           github_token: ${{ secrets.GITHUB_TOKEN }}
+          checkout_branch: ${{ inputs.checkout_branch }}
 
       - name: Merge PR de script
         if: ${{ steps.pr-script.outputs.PR_NUMBER != '' }}
@@ -215,6 +211,13 @@ jobs:
             sleep $((i * 3))
             [[ $i -eq 5 ]] && { echo "[ERROR] Merge falló tras 5 intentos" >&2; exit 1; }
           done
+
+      - name: Sync con base tras merge de script
+        if: ${{ steps.pr-script.outputs.PR_NUMBER != '' }}
+        run: |
+          git fetch origin
+          git checkout "${{ inputs.checkout_branch }}"
+          git pull --ff-only origin "${{ inputs.checkout_branch }}"
 
       # =========================================================
       # STEP 3: check7
@@ -233,6 +236,7 @@ jobs:
           paths: |
             ${{ env.VARIANT_ROOT }}
           github_token: ${{ secrets.GITHUB_TOKEN }}
+          checkout_branch: ${{ inputs.checkout_branch }}
 
       - name: Merge PR de check
         if: ${{ always() && steps.pr-check.outputs.PR_NUMBER != '' }}
@@ -246,6 +250,13 @@ jobs:
             sleep $((i * 3))
             [[ $i -eq 5 ]] && { echo "[ERROR] Merge falló tras 5 intentos" >&2; exit 1; }
           done
+
+      - name: Sync con base tras merge de check
+        if: ${{ always() && steps.pr-check.outputs.PR_NUMBER != '' }}
+        run: |
+          git fetch origin
+          git checkout "${{ inputs.checkout_branch }}"
+          git pull --ff-only origin "${{ inputs.checkout_branch }}"
 
       # =========================================================
       # STEP 4: register7
@@ -266,6 +277,7 @@ jobs:
             dvc.yaml
             dvc.lock
           github_token: ${{ secrets.GITHUB_TOKEN }}
+          checkout_branch: ${{ inputs.checkout_branch }}
 
       - name: Merge PR de register
         if: ${{ steps.pr-register.outputs.PR_NUMBER != '' }}

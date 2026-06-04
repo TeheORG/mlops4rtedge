@@ -48,7 +48,7 @@ jobs:
           ref: ${{ inputs.checkout_branch }}
           token: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Configurar Git, sincronizar Fase 2 y configurar DVC
+      - name: Configurar Git y DVC
         run: |
           git config --global user.name "github-actions[bot]"
           git config --global user.email "github-actions[bot]@users.noreply.github.com"
@@ -70,6 +70,13 @@ jobs:
           import subprocess
           import sys
 
+          def to_make_value(value):
+            if isinstance(value, bool):
+              return "true" if value else "false"
+            if isinstance(value, (list, dict)):
+              return json.dumps(value, ensure_ascii=False, separators=(",", ":"))
+            return str(value)
+
           raw = '''${{ inputs.params_json }}'''.strip()
           params = json.loads(raw) if raw else {}
 
@@ -82,13 +89,6 @@ jobs:
           if not isinstance(params, dict):
             print("[ERROR] 'params_json' debe representar un objeto JSON (dict)")
             sys.exit(1)
-
-          def to_make_value(value):
-            if isinstance(value, bool):
-              return "true" if value else "false"
-            if isinstance(value, (list, dict)):
-              return json.dumps(value, ensure_ascii=False, separators=(",", ":"))
-            return str(value)
 
           extra_args = []
           for key, value in params.items():
@@ -121,6 +121,7 @@ jobs:
           paths: |
             ${{ env.VARIANT_ROOT }}
           github_token: ${{ secrets.GITHUB_TOKEN }}
+          checkout_branch: ${{ inputs.checkout_branch }}
 
       - name: Merge PR de variant
         if: ${{ steps.pr-variant.outputs.PR_NUMBER != '' }}
@@ -134,6 +135,13 @@ jobs:
             sleep $((i * 3))
             [[ $i -eq 5 ]] && { echo "[ERROR] Merge falló tras 5 intentos" >&2; exit 1; }
           done
+
+      - name: Sync con base tras merge de variant
+        if: ${{ steps.pr-variant.outputs.PR_NUMBER != '' }}
+        run: |
+          git fetch origin
+          git checkout "${{ inputs.checkout_branch }}"
+          git pull --ff-only origin "${{ inputs.checkout_branch }}"
 
       # =========================================================
       # STEP 2: script3
@@ -151,6 +159,7 @@ jobs:
           paths: |
             ${{ env.VARIANT_ROOT }}
           github_token: ${{ secrets.GITHUB_TOKEN }}
+          checkout_branch: ${{ inputs.checkout_branch }}
 
       - name: Merge PR de script
         if: ${{ steps.pr-script.outputs.PR_NUMBER != '' }}
@@ -164,6 +173,13 @@ jobs:
             sleep $((i * 3))
             [[ $i -eq 5 ]] && { echo "[ERROR] Merge falló tras 5 intentos" >&2; exit 1; }
           done
+
+      - name: Sync con base tras merge de script
+        if: ${{ steps.pr-script.outputs.PR_NUMBER != '' }}
+        run: |
+          git fetch origin
+          git checkout "${{ inputs.checkout_branch }}"
+          git pull --ff-only origin "${{ inputs.checkout_branch }}"
 
       # =========================================================
       # STEP 3: check3
@@ -182,6 +198,7 @@ jobs:
           paths: |
             ${{ env.VARIANT_ROOT }}
           github_token: ${{ secrets.GITHUB_TOKEN }}
+          checkout_branch: ${{ inputs.checkout_branch }}
 
       - name: Merge PR de check
         if: ${{ always() && steps.pr-check.outputs.PR_NUMBER != '' }}
@@ -195,6 +212,13 @@ jobs:
             sleep $((i * 3))
             [[ $i -eq 5 ]] && { echo "[ERROR] Merge falló tras 5 intentos" >&2; exit 1; }
           done
+
+      - name: Sync con base tras merge de check
+        if: ${{ always() && steps.pr-check.outputs.PR_NUMBER != '' }}
+        run: |
+          git fetch origin
+          git checkout "${{ inputs.checkout_branch }}"
+          git pull --ff-only origin "${{ inputs.checkout_branch }}"
 
       # =========================================================
       # STEP 4: register3
@@ -215,6 +239,7 @@ jobs:
             dvc.yaml
             dvc.lock
           github_token: ${{ secrets.GITHUB_TOKEN }}
+          checkout_branch: ${{ inputs.checkout_branch }}
 
       - name: Merge PR de register
         if: ${{ steps.pr-register.outputs.PR_NUMBER != '' }}
