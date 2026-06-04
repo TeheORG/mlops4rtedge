@@ -1,0 +1,38 @@
+phase: f01_explore
+variant: v1_0002
+artifacts:
+  dataset:
+    path: 01_explore_dataset.parquet
+    sha256: 1f1ee12e61b31a908e97c24c814d35a66151cb33a1f9f0b1da30a7db9d756613
+  report:
+    path: 01_explore_report.html
+    sha256: 5cc84607787fa5689e39c58937c805fc16eb179c980587e3e49b96bfa7cde1c9
+exports:
+  Tu: 10
+  n_rows: 3887242
+  n_columns: 20
+  measure_cols:
+  - Battery_Active_Power
+  - Battery_Active_Power_Set_Response
+  - PVPCS_Active_Power
+  - GE_Body_Active_Power
+  - GE_Active_Power
+  - GE_Body_Active_Power_Set_Response
+  - FC_Active_Power_FC_END_Set
+  - FC_Active_Power
+  - FC_Active_Power_FC_end_Set_Response
+  - Island_mode_MCCB_Active_Power
+  - MG-LV-MSB_AC_Voltage
+  - Receiving_Point_AC_Voltage
+  - Island_mode_MCCB_AC_Voltage
+  - Island_mode_MCCB_Frequency
+  - MG-LV-MSB_Frequency
+  - Inlet_Temperature_of_Chilled_Water
+  - Outlet_Temperature
+metrics:
+  execution_time: 75.02705166400001
+  n_nan_detected: 42543
+  n_nan_replaced: 42542
+  nan_ratio: 0.0005760138584523152
+provenance:
+  generated_at: '2026-06-04T21:06:43.872855+00:00'
