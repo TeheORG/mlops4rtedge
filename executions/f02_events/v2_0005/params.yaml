@@ -1,0 +1,13 @@
+phase: f02_events
+variant: v2_0005
+parent: v1_0004
+parameters:
+  parent_variant: v1_0004
+  Tu: 10
+  strategy: both
+  bands:
+  - 20
+  - 80
+  nan_mode: discard
+parent_hashes:
+  v1_0004: 120a6f79c4e5eb41d2dfbda60bb5ff94fa5fbfdbb5a30bfece9b95c6a9f98cef
