@@ -1,0 +1,16 @@
+phase: f04_targets
+variant: v4_0004
+parent: v3_0005
+parameters:
+  parent_variant: v3_0005
+  Tu: 10
+  OW: 900
+  LT: 100
+  PW: 150
+  event_type_count: 119
+  prediction_name: thermal_fault
+  target_operator: OR
+  target_event_types:
+  - Battery_Active_Power_0_10-to-90_100
+parent_hashes:
+  v3_0005: b7f7592a3c3e70fa1251cd008597597ea301a09efd7a7c396c19c76993a15ec9
