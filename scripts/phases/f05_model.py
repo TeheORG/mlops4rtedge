@@ -1104,6 +1104,33 @@ def build_split_leakage_report(
     }
 
 
+def build_skipped_split_leakage_report(reason: str) -> dict:
+    skipped_overlap = {
+        "skipped": True,
+        "reason": reason,
+        "possible_leakage": False,
+        "high_leakage_warning": False,
+        "max_overlap_pct": 0.0,
+    }
+    skipped_near = {
+        "skipped": True,
+        "reason": reason,
+        "n_total_pairs": 0,
+        "max_similarity": 0.0,
+        "pairwise": {},
+    }
+    return {
+        "skipped": True,
+        "reason": reason,
+        "exact_duplicates": skipped_overlap,
+        "unordered_duplicates": skipped_overlap,
+        "near_duplicates": skipped_near,
+        "possible_leakage": False,
+        "high_leakage_warning": False,
+        "max_overlap_pct": 0.0,
+    }
+
+
 def print_overlap_section(section_name: str, section: dict) -> None:
     if section.get("skipped"):
         print(f"[INFO] Leakage audit: {section_name} — skipped")
@@ -2080,6 +2107,11 @@ def main():
             },
         )
         print_split_leakage_report(leakage_report)
+    else:
+        leakage_report = build_skipped_split_leakage_report(
+            "LEAKAGE_ANALYSIS_ENABLED=False"
+        )
+        print("[INFO] Leakage analysis disabled; writing skipped leakage report")
 
     class_weights = compute_class_weights(y_train) if strategy == "auto" else None
 
