@@ -1,7 +1,7 @@
 created_at: '2026-06-05T09:57:50.160032+00:00'
 params_path: executions/f02_events/v2_0005/params.yaml
-lifecycle_state: VARIANT_CREATED
-lifecycle_updated_at: '2026-06-05T09:57:50.581976+00:00'
+lifecycle_state: EXECUTION_COMPLETED
+lifecycle_updated_at: '2026-06-05T09:58:00.931318+00:00'
 verified: none
-verified_updated_at: '2026-06-05T09:57:50.444727+00:00'
+verified_updated_at: '2026-06-05T09:57:56.774641+00:00'
 registred: none
