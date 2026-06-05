@@ -1,0 +1,557 @@
+
+    <!doctype html>
+    <html lang="es">
+    <head>
+      <meta charset="utf-8">
+      <title>F02 Events - v2_0002</title>
+      <style>
+        :root {
+          --bg: #f6f8fb;
+          --panel: #ffffff;
+          --ink: #172033;
+          --muted: #667085;
+          --line: #d9e0ea;
+          --head: #eef3f8;
+          --ok-bg: #dcfce7;
+          --ok-fg: #166534;
+          --warn-bg: #fef3c7;
+          --warn-fg: #92400e;
+          --bad-bg: #fee2e2;
+          --bad-fg: #991b1b;
+          --code: #26364f;
+        }
+        * { box-sizing: border-box; }
+        body {
+          margin: 0;
+          background: var(--bg);
+          color: var(--ink);
+          font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Arial, sans-serif;
+          line-height: 1.45;
+        }
+        main { max-width: 1480px; margin: 0 auto; padding: 28px; }
+        h1, h2, h3 { margin: 0 0 10px; color: var(--ink); }
+        h1 { font-size: 30px; letter-spacing: 0; }
+        h2 { font-size: 19px; margin-top: 4px; }
+        p { margin: 8px 0 0; }
+        code { color: var(--code); background: #eef3f8; border-radius: 4px; padding: 1px 4px; }
+        .hero {
+          background: linear-gradient(180deg, #ffffff 0%, #f9fbfd 100%);
+          border: 1px solid var(--line);
+          border-radius: 8px;
+          padding: 22px;
+          box-shadow: 0 10px 24px rgba(23, 32, 51, 0.06);
+        }
+        .meta {
+          display: flex;
+          flex-wrap: wrap;
+          gap: 8px 14px;
+          color: var(--muted);
+          font-size: 13px;
+          margin-top: 10px;
+        }
+        .lead { color: var(--muted); max-width: 1120px; }
+        .kpi-grid {
+          display: grid;
+          grid-template-columns: repeat(auto-fit, minmax(190px, 1fr));
+          gap: 12px;
+          margin-top: 18px;
+        }
+        .card {
+          border: 1px solid var(--line);
+          border-radius: 8px;
+          padding: 14px;
+          background: var(--panel);
+        }
+        .card .k {
+          min-height: 32px;
+          color: var(--muted);
+          font-size: 11px;
+          font-weight: 700;
+          text-transform: uppercase;
+          overflow-wrap: anywhere;
+        }
+        .card .v { margin-top: 7px; font-size: 23px; font-weight: 800; overflow-wrap: anywhere; }
+        .panel {
+          margin-top: 22px;
+          padding: 18px;
+          background: var(--panel);
+          border: 1px solid var(--line);
+          border-radius: 8px;
+        }
+        .table-wrap { overflow-x: auto; margin-top: 12px; }
+        .tbl {
+          border-collapse: collapse;
+          width: 100%;
+          min-width: 760px;
+          font-size: 13px;
+        }
+        .tbl th, .tbl td {
+          border: 1px solid var(--line);
+          padding: 8px 10px;
+          text-align: left;
+          vertical-align: top;
+        }
+        .tbl th {
+          position: sticky;
+          top: 0;
+          z-index: 1;
+          background: var(--head);
+          color: #344054;
+          font-size: 11px;
+          text-transform: uppercase;
+          letter-spacing: 0;
+        }
+        .tbl tr:nth-child(even) td { background: #fbfdff; }
+        .target-table { min-width: 1360px; }
+        .compact { max-width: 720px; min-width: 520px; }
+        .mini { min-width: 260px; font-size: 12px; }
+        .mini th { position: static; }
+        .measure-name { font-weight: 700; color: #111827; }
+        .badge {
+          display: inline-flex;
+          align-items: center;
+          min-height: 22px;
+          padding: 2px 8px;
+          border-radius: 999px;
+          font-size: 12px;
+          font-weight: 800;
+          white-space: nowrap;
+        }
+        .badge.ok, .badge.candidate, .badge.true { background: var(--ok-bg); color: var(--ok-fg); }
+        .badge.warning { background: var(--warn-bg); color: var(--warn-fg); }
+        .badge.reject, .badge.false { background: var(--bad-bg); color: var(--bad-fg); }
+        details { margin: 0; }
+        details > summary {
+          cursor: pointer;
+          color: #2563eb;
+          font-weight: 700;
+          white-space: nowrap;
+        }
+        details[open] > summary { margin-bottom: 10px; }
+        .details-grid {
+          display: grid;
+          grid-template-columns: minmax(280px, 1fr) minmax(220px, 0.8fr);
+          gap: 12px;
+          min-width: 560px;
+        }
+        .muted { color: var(--muted); }
+        .global-details summary { font-size: 16px; }
+        @media (max-width: 760px) {
+          main { padding: 14px; }
+          .hero, .panel { padding: 14px; }
+          .details-grid { grid-template-columns: 1fr; min-width: 0; }
+        }
+      </style>
+    </head>
+    <body>
+      <main>
+        <section class="hero">
+          <h1>F02 Events - v2_0002</h1>
+          <div class="meta">
+            <span>Parent: <code>v1_0002</code></span>
+            <span>Strategy: <code>transitions</code></span>
+            <span>Bands: <code>[10, 90]</code></span>
+            <span>NaN mode: <code>discard</code></span>
+          </div>
+          <div class="kpi-grid"><div class="card"><div class="k">f02_gate_status</div><div class="v"><span class="badge warning">warning</span></div></div><div class="card"><div class="k">f02_quality_score</div><div class="v">0.740</div></div><div class="card"><div class="k">total_events_generated</div><div class="v">22,054</div></div><div class="card"><div class="k">normalized_event_entropy</div><div class="v">0.576</div></div><div class="card"><div class="k">catalog_coverage_ratio</div><div class="v">66.67%</div></div><div class="card"><div class="k">non_eventless_measure_ratio</div><div class="v">82.35%</div></div><div class="card"><div class="k">high_rare_measure_ratio</div><div class="v">82.35%</div></div><div class="card"><div class="k">low_rare_measure_ratio</div><div class="v">70.59%</div></div></div>
+        </section>
+
+        <section class="panel">
+          <h2>Criterio de decisión F02 → F03</h2>
+          <p class="lead">
+            La variante F02 se evalúa antes de construir ventanas para evitar pasar a F03 discretizaciones degeneradas.
+            No busca elegir la mejor variante, sino descartar las que no generan una representación de eventos mínimamente útil.
+            El criterio se aplica en dos niveles: validación global de la variante y validación por medida/dirección para posibles targets F04.
+          </p>
+          <div class="table-wrap"><table class="tbl decision-table"><thead><tr><th>Bloque</th><th>Métrica</th><th>Threshold</th><th>Interpretación</th><th>Valor actual</th><th>Estado</th></tr></thead><tbody><tr><td>Actividad</td><td><code>total_events_generated</code></td><td>&gt; 0</td><td>Debe generar algún evento</td><td>22054</td><td><span class="badge ok">OK</span></td></tr><tr><td>Actividad</td><td><code>empty_rows_ratio</code></td><td>&lt; 0.995</td><td>No puede estar prácticamente vacía</td><td>99.44%</td><td><span class="badge ok">OK</span></td></tr><tr><td>Diversidad</td><td><code>normalized_event_entropy</code></td><td>&gt;= 0.50</td><td>Debe haber diversidad suficiente</td><td>0.576</td><td><span class="badge ok">OK</span></td></tr><tr><td>Dominancia</td><td><code>top1_event_ratio</code></td><td>&lt;= 0.30</td><td>No debe dominar una única transición</td><td>14.27%</td><td><span class="badge ok">OK</span></td></tr><tr><td>Dominancia</td><td><code>top5_event_ratio</code></td><td>&lt;= 0.70</td><td>No deben dominar solo cinco eventos</td><td>66.89%</td><td><span class="badge ok">OK</span></td></tr><tr><td>Catálogo</td><td><code>catalog_coverage_ratio</code></td><td>&gt;= 0.20</td><td>Debe usarse una parte mínima del catálogo</td><td>66.67%</td><td><span class="badge ok">OK</span></td></tr><tr><td>Continuidad</td><td><code>pct_jump_eq_1</code></td><td>&gt;= 0.85</td><td>La mayoría de transiciones deben ser locales</td><td>98.85%</td><td><span class="badge ok">OK</span></td></tr><tr><td>Continuidad</td><td><code>pct_jump_ge_3</code></td><td>&lt;= 0.05</td><td>No debe haber demasiados saltos bruscos</td><td>0.00%</td><td><span class="badge ok">OK</span></td></tr><tr><td>Cobertura de medidas</td><td><code>non_eventless_measure_ratio</code></td><td>&gt;= 0.50</td><td>Al menos la mitad de medidas deben generar eventos</td><td>82.35%</td><td><span class="badge ok">OK</span></td></tr></tbody></table></div>
+        </section>
+
+        <section class="panel">
+          <h2>Decisión por medida/dirección</h2>
+          <p class="lead">
+            Una variante F02 puede pasar globalmente aunque algunas medidas no sean útiles.
+            Para decidir si una medida puede generar un target high o low en F04, se comprueba el soporte de eventos extremos en la dirección correspondiente.
+          </p>
+          <div class="table-wrap"><table class="tbl compact"><thead><tr><th>Target</th><th>Métrica</th><th>Threshold</th></tr></thead><tbody><tr><td>High</td><td><code>high_rare_event_count</code></td><td>&gt; 0</td></tr><tr><td>High</td><td><code>high_rare_event_ratio</code></td><td>&gt;= 0.001</td></tr><tr><td>Low</td><td><code>low_rare_event_count</code></td><td>&gt; 0</td></tr><tr><td>Low</td><td><code>low_rare_event_ratio</code></td><td>&gt;= 0.001</td></tr><tr><td>Ambos</td><td><code>n_unique_event_types_observed</code></td><td>&gt;= 3</td></tr></tbody></table></div>
+        </section>
+
+        <section class="panel">
+          <h2>Target candidates</h2>
+          <div class="table-wrap"><table class="tbl target-table"><thead><tr><th>measure_name</th><th>high_candidate</th><th>high_reason</th><th>high_rare_event_count</th><th>high_rare_event_ratio</th><th>low_candidate</th><th>low_reason</th><th>low_rare_event_count</th><th>low_rare_event_ratio</th><th>n_events_generated</th><th>n_unique_event_types_observed</th><th>Más info</th></tr></thead><tbody><tr><td class="measure-name">Battery_Active_Power</td><td><span class="badge ok">true</span></td><td>passes high target candidate rules</td><td>107</td><td>39.78%</td><td><span class="badge ok">true</span></td><td>passes low target candidate rules</td><td>27</td><td>10.04%</td><td>269</td><td>8</td><td><details><summary>Más info</summary><div class="details-grid"><table class="tbl mini"><thead><tr><th>Métrica</th><th>Valor</th></tr></thead><tbody><tr><td><code>top1_ratio</code></td><td>20.07%</td></tr><tr><td><code>rare_event_ratio</code></td><td>49.81%</td></tr><tr><td><code>n_active_bands</code></td><td>3</td></tr><tr><td><code>max_band_ratio</code></td><td>99.98%</td></tr><tr><td><code>extreme_band_ratio</code></td><td>0.02%</td></tr><tr><td><code>occupancy_entropy</code></td><td>0.002</td></tr><tr><td><code>normalized_occupancy_entropy</code></td><td>0.002</td></tr><tr><td><code>band_degeneracy_flag</code></td><td><span class="badge ok">false</span></td></tr><tr><td><code>extreme_occupancy_flag</code></td><td><span class="badge ok">false</span></td></tr><tr><td><code>measure_transition_score</code></td><td>0.560</td></tr></tbody></table><table class="tbl mini"><thead><tr><th>Banda</th><th>Count</th></tr></thead><tbody><tr><td>0_10</td><td>570</td></tr><tr><td>10_90</td><td>3883991</td></tr><tr><td>90_100</td><td>110</td></tr></tbody></table></div></details></td></tr><tr><td class="measure-name">Battery_Active_Power_Set_Response</td><td><span class="badge reject">false</span></td><td>does not pass high target candidate rules</td><td>0</td><td>0.00%</td><td><span class="badge reject">false</span></td><td>does not pass low target candidate rules</td><td>0</td><td>0.00%</td><td>0</td><td>0</td><td><details><summary>Más info</summary><div class="details-grid"><table class="tbl mini"><thead><tr><th>Métrica</th><th>Valor</th></tr></thead><tbody><tr><td><code>top1_ratio</code></td><td>0.00%</td></tr><tr><td><code>rare_event_ratio</code></td><td>0.00%</td></tr><tr><td><code>n_active_bands</code></td><td>3</td></tr><tr><td><code>max_band_ratio</code></td><td>99.98%</td></tr><tr><td><code>extreme_band_ratio</code></td><td>0.02%</td></tr><tr><td><code>occupancy_entropy</code></td><td>0.002</td></tr><tr><td><code>normalized_occupancy_entropy</code></td><td>0.002</td></tr><tr><td><code>band_degeneracy_flag</code></td><td><span class="badge ok">false</span></td></tr><tr><td><code>extreme_occupancy_flag</code></td><td><span class="badge ok">false</span></td></tr><tr><td><code>measure_transition_score</code></td><td>0.000</td></tr></tbody></table><table class="tbl mini"><thead><tr><th>Banda</th><th>Count</th></tr></thead><tbody><tr><td>0_10</td><td>440</td></tr><tr><td>10_90</td><td>3883976</td></tr><tr><td>90_100</td><td>255</td></tr></tbody></table></div></details></td></tr><tr><td class="measure-name">PVPCS_Active_Power</td><td><span class="badge ok">true</span></td><td>passes high target candidate rules</td><td>2373</td><td>31.61%</td><td><span class="badge ok">true</span></td><td>passes low target candidate rules</td><td>1381</td><td>18.40%</td><td>7507</td><td>5</td><td><details><summary>Más info</summary><div class="details-grid"><table class="tbl mini"><thead><tr><th>Métrica</th><th>Valor</th></tr></thead><tbody><tr><td><code>top1_ratio</code></td><td>31.61%</td></tr><tr><td><code>rare_event_ratio</code></td><td>50.01%</td></tr><tr><td><code>n_active_bands</code></td><td>3</td></tr><tr><td><code>max_band_ratio</code></td><td>64.81%</td></tr><tr><td><code>extreme_band_ratio</code></td><td>65.22%</td></tr><tr><td><code>occupancy_entropy</code></td><td>0.671</td></tr><tr><td><code>normalized_occupancy_entropy</code></td><td>0.611</td></tr><tr><td><code>band_degeneracy_flag</code></td><td><span class="badge ok">false</span></td></tr><tr><td><code>extreme_occupancy_flag</code></td><td><span class="badge ok">false</span></td></tr><tr><td><code>measure_transition_score</code></td><td>0.771</td></tr></tbody></table><table class="tbl mini"><thead><tr><th>Banda</th><th>Count</th></tr></thead><tbody><tr><td>0_10</td><td>2517703</td></tr><tr><td>10_90</td><td>1351111</td></tr><tr><td>90_100</td><td>15857</td></tr></tbody></table></div></details></td></tr><tr><td class="measure-name">GE_Body_Active_Power</td><td><span class="badge ok">true</span></td><td>passes high target candidate rules</td><td>3</td><td>2.17%</td><td><span class="badge ok">true</span></td><td>passes low target candidate rules</td><td>66</td><td>47.83%</td><td>138</td><td>8</td><td><details><summary>Más info</summary><div class="details-grid"><table class="tbl mini"><thead><tr><th>Métrica</th><th>Valor</th></tr></thead><tbody><tr><td><code>top1_ratio</code></td><td>47.10%</td></tr><tr><td><code>rare_event_ratio</code></td><td>50.00%</td></tr><tr><td><code>n_active_bands</code></td><td>3</td></tr><tr><td><code>max_band_ratio</code></td><td>67.44%</td></tr><tr><td><code>extreme_band_ratio</code></td><td>67.44%</td></tr><tr><td><code>occupancy_entropy</code></td><td>0.631</td></tr><tr><td><code>normalized_occupancy_entropy</code></td><td>0.574</td></tr><tr><td><code>band_degeneracy_flag</code></td><td><span class="badge ok">false</span></td></tr><tr><td><code>extreme_occupancy_flag</code></td><td><span class="badge ok">false</span></td></tr><tr><td><code>measure_transition_score</code></td><td>0.650</td></tr></tbody></table><table class="tbl mini"><thead><tr><th>Banda</th><th>Count</th></tr></thead><tbody><tr><td>0_10</td><td>2619845</td></tr><tr><td>10_90</td><td>1264786</td></tr><tr><td>90_100</td><td>40</td></tr></tbody></table></div></details></td></tr><tr><td class="measure-name">GE_Active_Power</td><td><span class="badge ok">true</span></td><td>passes high target candidate rules</td><td>1</td><td>14.29%</td><td><span class="badge ok">true</span></td><td>passes low target candidate rules</td><td>2</td><td>28.57%</td><td>7</td><td>4</td><td><details><summary>Más info</summary><div class="details-grid"><table class="tbl mini"><thead><tr><th>Métrica</th><th>Valor</th></tr></thead><tbody><tr><td><code>top1_ratio</code></td><td>42.86%</td></tr><tr><td><code>rare_event_ratio</code></td><td>42.86%</td></tr><tr><td><code>n_active_bands</code></td><td>3</td></tr><tr><td><code>max_band_ratio</code></td><td>99.62%</td></tr><tr><td><code>extreme_band_ratio</code></td><td>0.38%</td></tr><tr><td><code>occupancy_entropy</code></td><td>0.025</td></tr><tr><td><code>normalized_occupancy_entropy</code></td><td>0.023</td></tr><tr><td><code>band_degeneracy_flag</code></td><td><span class="badge ok">false</span></td></tr><tr><td><code>extreme_occupancy_flag</code></td><td><span class="badge ok">false</span></td></tr><tr><td><code>measure_transition_score</code></td><td>0.324</td></tr></tbody></table><table class="tbl mini"><thead><tr><th>Banda</th><th>Count</th></tr></thead><tbody><tr><td>0_10</td><td>14611</td></tr><tr><td>10_90</td><td>3870057</td></tr><tr><td>90_100</td><td>3</td></tr></tbody></table></div></details></td></tr><tr><td class="measure-name">GE_Body_Active_Power_Set_Response</td><td><span class="badge reject">false</span></td><td>does not pass high target candidate rules</td><td>0</td><td>0.00%</td><td><span class="badge reject">false</span></td><td>does not pass low target candidate rules</td><td>0</td><td>0.00%</td><td>0</td><td>0</td><td><details><summary>Más info</summary><div class="details-grid"><table class="tbl mini"><thead><tr><th>Métrica</th><th>Valor</th></tr></thead><tbody><tr><td><code>top1_ratio</code></td><td>0.00%</td></tr><tr><td><code>rare_event_ratio</code></td><td>0.00%</td></tr><tr><td><code>n_active_bands</code></td><td>3</td></tr><tr><td><code>max_band_ratio</code></td><td>100.00%</td></tr><tr><td><code>extreme_band_ratio</code></td><td>0.00%</td></tr><tr><td><code>occupancy_entropy</code></td><td>0.000</td></tr><tr><td><code>normalized_occupancy_entropy</code></td><td>0.000</td></tr><tr><td><code>band_degeneracy_flag</code></td><td><span class="badge ok">false</span></td></tr><tr><td><code>extreme_occupancy_flag</code></td><td><span class="badge ok">false</span></td></tr><tr><td><code>measure_transition_score</code></td><td>0.000</td></tr></tbody></table><table class="tbl mini"><thead><tr><th>Banda</th><th>Count</th></tr></thead><tbody><tr><td>0_10</td><td>137</td></tr><tr><td>10_90</td><td>3884533</td></tr><tr><td>90_100</td><td>1</td></tr></tbody></table></div></details></td></tr><tr><td class="measure-name">FC_Active_Power_FC_END_Set</td><td><span class="badge ok">true</span></td><td>passes high target candidate rules</td><td>5</td><td>33.33%</td><td><span class="badge ok">true</span></td><td>passes low target candidate rules</td><td>3</td><td>20.00%</td><td>15</td><td>5</td><td><details><summary>Más info</summary><div class="details-grid"><table class="tbl mini"><thead><tr><th>Métrica</th><th>Valor</th></tr></thead><tbody><tr><td><code>top1_ratio</code></td><td>33.33%</td></tr><tr><td><code>rare_event_ratio</code></td><td>53.33%</td></tr><tr><td><code>n_active_bands</code></td><td>3</td></tr><tr><td><code>max_band_ratio</code></td><td>92.59%</td></tr><tr><td><code>extreme_band_ratio</code></td><td>7.41%</td></tr><tr><td><code>occupancy_entropy</code></td><td>0.282</td></tr><tr><td><code>normalized_occupancy_entropy</code></td><td>0.257</td></tr><tr><td><code>band_degeneracy_flag</code></td><td><span class="badge ok">false</span></td></tr><tr><td><code>extreme_occupancy_flag</code></td><td><span class="badge ok">false</span></td></tr><tr><td><code>measure_transition_score</code></td><td>0.440</td></tr></tbody></table><table class="tbl mini"><thead><tr><th>Banda</th><th>Count</th></tr></thead><tbody><tr><td>0_10</td><td>269108</td></tr><tr><td>10_90</td><td>3597842</td></tr><tr><td>90_100</td><td>18886</td></tr></tbody></table></div></details></td></tr><tr><td class="measure-name">FC_Active_Power</td><td><span class="badge ok">true</span></td><td>passes high target candidate rules</td><td>241</td><td>38.44%</td><td><span class="badge ok">true</span></td><td>passes low target candidate rules</td><td>73</td><td>11.64%</td><td>627</td><td>9</td><td><details><summary>Más info</summary><div class="details-grid"><table class="tbl mini"><thead><tr><th>Métrica</th><th>Valor</th></tr></thead><tbody><tr><td><code>top1_ratio</code></td><td>23.60%</td></tr><tr><td><code>rare_event_ratio</code></td><td>50.08%</td></tr><tr><td><code>n_active_bands</code></td><td>3</td></tr><tr><td><code>max_band_ratio</code></td><td>99.44%</td></tr><tr><td><code>extreme_band_ratio</code></td><td>0.56%</td></tr><tr><td><code>occupancy_entropy</code></td><td>0.038</td></tr><tr><td><code>normalized_occupancy_entropy</code></td><td>0.035</td></tr><tr><td><code>band_degeneracy_flag</code></td><td><span class="badge ok">false</span></td></tr><tr><td><code>extreme_occupancy_flag</code></td><td><span class="badge ok">false</span></td></tr><tr><td><code>measure_transition_score</code></td><td>0.618</td></tr></tbody></table><table class="tbl mini"><thead><tr><th>Banda</th><th>Count</th></tr></thead><tbody><tr><td>0_10</td><td>6171</td></tr><tr><td>10_90</td><td>3862896</td></tr><tr><td>90_100</td><td>15604</td></tr></tbody></table></div></details></td></tr><tr><td class="measure-name">FC_Active_Power_FC_end_Set_Response</td><td><span class="badge reject">false</span></td><td>does not pass high target candidate rules</td><td>0</td><td>0.00%</td><td><span class="badge reject">false</span></td><td>does not pass low target candidate rules</td><td>0</td><td>0.00%</td><td>0</td><td>0</td><td><details><summary>Más info</summary><div class="details-grid"><table class="tbl mini"><thead><tr><th>Métrica</th><th>Valor</th></tr></thead><tbody><tr><td><code>top1_ratio</code></td><td>0.00%</td></tr><tr><td><code>rare_event_ratio</code></td><td>0.00%</td></tr><tr><td><code>n_active_bands</code></td><td>3</td></tr><tr><td><code>max_band_ratio</code></td><td>92.36%</td></tr><tr><td><code>extreme_band_ratio</code></td><td>7.64%</td></tr><tr><td><code>occupancy_entropy</code></td><td>0.294</td></tr><tr><td><code>normalized_occupancy_entropy</code></td><td>0.267</td></tr><tr><td><code>band_degeneracy_flag</code></td><td><span class="badge ok">false</span></td></tr><tr><td><code>extreme_occupancy_flag</code></td><td><span class="badge ok">false</span></td></tr><tr><td><code>measure_transition_score</code></td><td>0.000</td></tr></tbody></table><table class="tbl mini"><thead><tr><th>Banda</th><th>Count</th></tr></thead><tbody><tr><td>0_10</td><td>268741</td></tr><tr><td>10_90</td><td>3587963</td></tr><tr><td>90_100</td><td>27967</td></tr></tbody></table></div></details></td></tr><tr><td class="measure-name">Island_mode_MCCB_Active_Power</td><td><span class="badge ok">true</span></td><td>passes high target candidate rules</td><td>2</td><td>0.24%</td><td><span class="badge ok">true</span></td><td>passes low target candidate rules</td><td>422</td><td>49.76%</td><td>848</td><td>4</td><td><details><summary>Más info</summary><div class="details-grid"><table class="tbl mini"><thead><tr><th>Métrica</th><th>Valor</th></tr></thead><tbody><tr><td><code>top1_ratio</code></td><td>49.76%</td></tr><tr><td><code>rare_event_ratio</code></td><td>50.00%</td></tr><tr><td><code>n_active_bands</code></td><td>3</td></tr><tr><td><code>max_band_ratio</code></td><td>99.80%</td></tr><tr><td><code>extreme_band_ratio</code></td><td>0.20%</td></tr><tr><td><code>occupancy_entropy</code></td><td>0.015</td></tr><tr><td><code>normalized_occupancy_entropy</code></td><td>0.013</td></tr><tr><td><code>band_degeneracy_flag</code></td><td><span class="badge ok">false</span></td></tr><tr><td><code>extreme_occupancy_flag</code></td><td><span class="badge ok">false</span></td></tr><tr><td><code>measure_transition_score</code></td><td>0.498</td></tr></tbody></table><table class="tbl mini"><thead><tr><th>Banda</th><th>Count</th></tr></thead><tbody><tr><td>0_10</td><td>7849</td></tr><tr><td>10_90</td><td>3876802</td></tr><tr><td>90_100</td><td>20</td></tr></tbody></table></div></details></td></tr><tr><td class="measure-name">MG-LV-MSB_AC_Voltage</td><td><span class="badge ok">true</span></td><td>passes high target candidate rules</td><td>2</td><td>66.67%</td><td><span class="badge reject">false</span></td><td>does not pass low target candidate rules</td><td>0</td><td>0.00%</td><td>3</td><td>3</td><td><details><summary>Más info</summary><div class="details-grid"><table class="tbl mini"><thead><tr><th>Métrica</th><th>Valor</th></tr></thead><tbody><tr><td><code>top1_ratio</code></td><td>33.33%</td></tr><tr><td><code>rare_event_ratio</code></td><td>66.67%</td></tr><tr><td><code>n_active_bands</code></td><td>3</td></tr><tr><td><code>max_band_ratio</code></td><td>100.00%</td></tr><tr><td><code>extreme_band_ratio</code></td><td>100.00%</td></tr><tr><td><code>occupancy_entropy</code></td><td>0.000</td></tr><tr><td><code>normalized_occupancy_entropy</code></td><td>0.000</td></tr><tr><td><code>band_degeneracy_flag</code></td><td><span class="badge ok">false</span></td></tr><tr><td><code>extreme_occupancy_flag</code></td><td><span class="badge warning">true</span></td></tr><tr><td><code>measure_transition_score</code></td><td>0.281</td></tr></tbody></table><table class="tbl mini"><thead><tr><th>Banda</th><th>Count</th></tr></thead><tbody><tr><td>0_10</td><td>13</td></tr><tr><td>10_90</td><td>2</td></tr><tr><td>90_100</td><td>3884656</td></tr></tbody></table></div></details></td></tr><tr><td class="measure-name">Receiving_Point_AC_Voltage</td><td><span class="badge ok">true</span></td><td>passes high target candidate rules</td><td>3</td><td>42.86%</td><td><span class="badge ok">true</span></td><td>passes low target candidate rules</td><td>2</td><td>28.57%</td><td>7</td><td>5</td><td><details><summary>Más info</summary><div class="details-grid"><table class="tbl mini"><thead><tr><th>Métrica</th><th>Valor</th></tr></thead><tbody><tr><td><code>top1_ratio</code></td><td>28.57%</td></tr><tr><td><code>rare_event_ratio</code></td><td>71.43%</td></tr><tr><td><code>n_active_bands</code></td><td>3</td></tr><tr><td><code>max_band_ratio</code></td><td>100.00%</td></tr><tr><td><code>extreme_band_ratio</code></td><td>100.00%</td></tr><tr><td><code>occupancy_entropy</code></td><td>0.000</td></tr><tr><td><code>normalized_occupancy_entropy</code></td><td>0.000</td></tr><tr><td><code>band_degeneracy_flag</code></td><td><span class="badge ok">false</span></td></tr><tr><td><code>extreme_occupancy_flag</code></td><td><span class="badge warning">true</span></td></tr><tr><td><code>measure_transition_score</code></td><td>0.353</td></tr></tbody></table><table class="tbl mini"><thead><tr><th>Banda</th><th>Count</th></tr></thead><tbody><tr><td>0_10</td><td>130</td></tr><tr><td>10_90</td><td>2</td></tr><tr><td>90_100</td><td>3884539</td></tr></tbody></table></div></details></td></tr><tr><td class="measure-name">Island_mode_MCCB_AC_Voltage</td><td><span class="badge reject">false</span></td><td>does not pass high target candidate rules</td><td>1</td><td>100.00%</td><td><span class="badge reject">false</span></td><td>does not pass low target candidate rules</td><td>0</td><td>0.00%</td><td>1</td><td>1</td><td><details><summary>Más info</summary><div class="details-grid"><table class="tbl mini"><thead><tr><th>Métrica</th><th>Valor</th></tr></thead><tbody><tr><td><code>top1_ratio</code></td><td>100.00%</td></tr><tr><td><code>rare_event_ratio</code></td><td>100.00%</td></tr><tr><td><code>n_active_bands</code></td><td>2</td></tr><tr><td><code>max_band_ratio</code></td><td>100.00%</td></tr><tr><td><code>extreme_band_ratio</code></td><td>100.00%</td></tr><tr><td><code>occupancy_entropy</code></td><td>0.000</td></tr><tr><td><code>normalized_occupancy_entropy</code></td><td>0.000</td></tr><tr><td><code>band_degeneracy_flag</code></td><td><span class="badge ok">false</span></td></tr><tr><td><code>extreme_occupancy_flag</code></td><td><span class="badge warning">true</span></td></tr><tr><td><code>measure_transition_score</code></td><td>0.147</td></tr></tbody></table><table class="tbl mini"><thead><tr><th>Banda</th><th>Count</th></tr></thead><tbody><tr><td>0_10</td><td>14</td></tr><tr><td>10_90</td><td>0</td></tr><tr><td>90_100</td><td>3884657</td></tr></tbody></table></div></details></td></tr><tr><td class="measure-name">Island_mode_MCCB_Frequency</td><td><span class="badge ok">true</span></td><td>passes high target candidate rules</td><td>13</td><td>52.00%</td><td><span class="badge ok">true</span></td><td>passes low target candidate rules</td><td>12</td><td>48.00%</td><td>25</td><td>3</td><td><details><summary>Más info</summary><div class="details-grid"><table class="tbl mini"><thead><tr><th>Métrica</th><th>Valor</th></tr></thead><tbody><tr><td><code>top1_ratio</code></td><td>48.00%</td></tr><tr><td><code>rare_event_ratio</code></td><td>100.00%</td></tr><tr><td><code>n_active_bands</code></td><td>3</td></tr><tr><td><code>max_band_ratio</code></td><td>100.00%</td></tr><tr><td><code>extreme_band_ratio</code></td><td>100.00%</td></tr><tr><td><code>occupancy_entropy</code></td><td>0.000</td></tr><tr><td><code>normalized_occupancy_entropy</code></td><td>0.000</td></tr><tr><td><code>band_degeneracy_flag</code></td><td><span class="badge ok">false</span></td></tr><tr><td><code>extreme_occupancy_flag</code></td><td><span class="badge warning">true</span></td></tr><tr><td><code>measure_transition_score</code></td><td>0.340</td></tr></tbody></table><table class="tbl mini"><thead><tr><th>Banda</th><th>Count</th></tr></thead><tbody><tr><td>0_10</td><td>13</td></tr><tr><td>10_90</td><td>14</td></tr><tr><td>90_100</td><td>3884644</td></tr></tbody></table></div></details></td></tr><tr><td class="measure-name">MG-LV-MSB_Frequency</td><td><span class="badge ok">true</span></td><td>passes high target candidate rules</td><td>108</td><td>50.00%</td><td><span class="badge ok">true</span></td><td>passes low target candidate rules</td><td>108</td><td>50.00%</td><td>216</td><td>3</td><td><details><summary>Más info</summary><div class="details-grid"><table class="tbl mini"><thead><tr><th>Métrica</th><th>Valor</th></tr></thead><tbody><tr><td><code>top1_ratio</code></td><td>50.00%</td></tr><tr><td><code>rare_event_ratio</code></td><td>100.00%</td></tr><tr><td><code>n_active_bands</code></td><td>3</td></tr><tr><td><code>max_band_ratio</code></td><td>100.00%</td></tr><tr><td><code>extreme_band_ratio</code></td><td>100.00%</td></tr><tr><td><code>occupancy_entropy</code></td><td>0.000</td></tr><tr><td><code>normalized_occupancy_entropy</code></td><td>0.000</td></tr><tr><td><code>band_degeneracy_flag</code></td><td><span class="badge ok">false</span></td></tr><tr><td><code>extreme_occupancy_flag</code></td><td><span class="badge warning">true</span></td></tr><tr><td><code>measure_transition_score</code></td><td>0.421</td></tr></tbody></table><table class="tbl mini"><thead><tr><th>Banda</th><th>Count</th></tr></thead><tbody><tr><td>0_10</td><td>110</td></tr><tr><td>10_90</td><td>13</td></tr><tr><td>90_100</td><td>3884548</td></tr></tbody></table></div></details></td></tr><tr><td class="measure-name">Inlet_Temperature_of_Chilled_Water</td><td><span class="badge ok">true</span></td><td>passes high target candidate rules</td><td>3044</td><td>49.94%</td><td><span class="badge reject">false</span></td><td>does not pass low target candidate rules</td><td>4</td><td>0.07%</td><td>6095</td><td>6</td><td><details><summary>Más info</summary><div class="details-grid"><table class="tbl mini"><thead><tr><th>Métrica</th><th>Valor</th></tr></thead><tbody><tr><td><code>top1_ratio</code></td><td>49.93%</td></tr><tr><td><code>rare_event_ratio</code></td><td>50.01%</td></tr><tr><td><code>n_active_bands</code></td><td>3</td></tr><tr><td><code>max_band_ratio</code></td><td>76.92%</td></tr><tr><td><code>extreme_band_ratio</code></td><td>23.08%</td></tr><tr><td><code>occupancy_entropy</code></td><td>0.541</td></tr><tr><td><code>normalized_occupancy_entropy</code></td><td>0.492</td></tr><tr><td><code>band_degeneracy_flag</code></td><td><span class="badge ok">false</span></td></tr><tr><td><code>extreme_occupancy_flag</code></td><td><span class="badge ok">false</span></td></tr><tr><td><code>measure_transition_score</code></td><td>0.735</td></tr></tbody></table><table class="tbl mini"><thead><tr><th>Banda</th><th>Count</th></tr></thead><tbody><tr><td>0_10</td><td>310</td></tr><tr><td>10_90</td><td>2988108</td></tr><tr><td>90_100</td><td>896253</td></tr></tbody></table></div></details></td></tr><tr><td class="measure-name">Outlet_Temperature</td><td><span class="badge ok">true</span></td><td>passes high target candidate rules</td><td>3147</td><td>49.98%</td><td><span class="badge reject">false</span></td><td>does not pass low target candidate rules</td><td>1</td><td>0.02%</td><td>6296</td><td>4</td><td><details><summary>Más info</summary><div class="details-grid"><table class="tbl mini"><thead><tr><th>Métrica</th><th>Valor</th></tr></thead><tbody><tr><td><code>top1_ratio</code></td><td>49.98%</td></tr><tr><td><code>rare_event_ratio</code></td><td>50.00%</td></tr><tr><td><code>n_active_bands</code></td><td>3</td></tr><tr><td><code>max_band_ratio</code></td><td>73.76%</td></tr><tr><td><code>extreme_band_ratio</code></td><td>26.24%</td></tr><tr><td><code>occupancy_entropy</code></td><td>0.576</td></tr><tr><td><code>normalized_occupancy_entropy</code></td><td>0.524</td></tr><tr><td><code>band_degeneracy_flag</code></td><td><span class="badge ok">false</span></td></tr><tr><td><code>extreme_occupancy_flag</code></td><td><span class="badge ok">false</span></td></tr><tr><td><code>measure_transition_score</code></td><td>0.704</td></tr></tbody></table><table class="tbl mini"><thead><tr><th>Banda</th><th>Count</th></tr></thead><tbody><tr><td>0_10</td><td>46</td></tr><tr><td>10_90</td><td>2865508</td></tr><tr><td>90_100</td><td>1019117</td></tr></tbody></table></div></details></td></tr></tbody></table></div>
+        </section>
+
+        <section class="panel">
+          <h2>Top events</h2>
+          <div class="table-wrap"><table border="1" class="dataframe tbl">
+  <thead>
+    <tr style="text-align: right;">
+      <th>event_id</th>
+      <th>event_name</th>
+      <th>count</th>
+      <th>ratio</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>100</td>
+      <td>Outlet_Temperature_10_90-to-90_100</td>
+      <td>3147</td>
+      <td>14.27%</td>
+    </tr>
+    <tr>
+      <td>102</td>
+      <td>Outlet_Temperature_90_100-to-10_90</td>
+      <td>3146</td>
+      <td>14.26%</td>
+    </tr>
+    <tr>
+      <td>94</td>
+      <td>Inlet_Temperature_of_Chilled_Water_10_90-to-90_100</td>
+      <td>3043</td>
+      <td>13.80%</td>
+    </tr>
+    <tr>
+      <td>96</td>
+      <td>Inlet_Temperature_of_Chilled_Water_90_100-to-10_90</td>
+      <td>3043</td>
+      <td>13.80%</td>
+    </tr>
+    <tr>
+      <td>16</td>
+      <td>PVPCS_Active_Power_10_90-to-90_100</td>
+      <td>2373</td>
+      <td>10.76%</td>
+    </tr>
+    <tr>
+      <td>18</td>
+      <td>PVPCS_Active_Power_90_100-to-10_90</td>
+      <td>2372</td>
+      <td>10.76%</td>
+    </tr>
+    <tr>
+      <td>13</td>
+      <td>PVPCS_Active_Power_0_10-to-10_90</td>
+      <td>1381</td>
+      <td>6.26%</td>
+    </tr>
+    <tr>
+      <td>15</td>
+      <td>PVPCS_Active_Power_10_90-to-0_10</td>
+      <td>1380</td>
+      <td>6.26%</td>
+    </tr>
+    <tr>
+      <td>57</td>
+      <td>Island_mode_MCCB_Active_Power_10_90-to-0_10</td>
+      <td>422</td>
+      <td>1.91%</td>
+    </tr>
+    <tr>
+      <td>55</td>
+      <td>Island_mode_MCCB_Active_Power_0_10-to-10_90</td>
+      <td>422</td>
+      <td>1.91%</td>
+    </tr>
+    <tr>
+      <td>52</td>
+      <td>FC_Active_Power_FC_end_Set_Response_10_90-to-90_100</td>
+      <td>148</td>
+      <td>0.67%</td>
+    </tr>
+    <tr>
+      <td>54</td>
+      <td>FC_Active_Power_FC_end_Set_Response_90_100-to-10_90</td>
+      <td>147</td>
+      <td>0.67%</td>
+    </tr>
+    <tr>
+      <td>86</td>
+      <td>MG-LV-MSB_Frequency_0_10-to-90_100</td>
+      <td>108</td>
+      <td>0.49%</td>
+    </tr>
+    <tr>
+      <td>89</td>
+      <td>MG-LV-MSB_Frequency_90_100-to-0_10</td>
+      <td>107</td>
+      <td>0.49%</td>
+    </tr>
+    <tr>
+      <td>46</td>
+      <td>FC_Active_Power_10_90-to-90_100</td>
+      <td>93</td>
+      <td>0.42%</td>
+    </tr>
+    <tr>
+      <td>48</td>
+      <td>FC_Active_Power_90_100-to-10_90</td>
+      <td>93</td>
+      <td>0.42%</td>
+    </tr>
+    <tr>
+      <td>45</td>
+      <td>FC_Active_Power_10_90-to-0_10</td>
+      <td>67</td>
+      <td>0.30%</td>
+    </tr>
+    <tr>
+      <td>43</td>
+      <td>FC_Active_Power_0_10-to-10_90</td>
+      <td>67</td>
+      <td>0.30%</td>
+    </tr>
+    <tr>
+      <td>19</td>
+      <td>GE_Body_Active_Power_0_10-to-10_90</td>
+      <td>65</td>
+      <td>0.29%</td>
+    </tr>
+    <tr>
+      <td>21</td>
+      <td>GE_Body_Active_Power_10_90-to-0_10</td>
+      <td>65</td>
+      <td>0.29%</td>
+    </tr>
+  </tbody>
+</table></div>
+        </section>
+
+        <section class="panel">
+          <details class="global-details">
+            <summary>Global metrics completas</summary>
+            <div class="table-wrap"><table border="1" class="dataframe tbl">
+  <thead>
+    <tr style="text-align: right;">
+      <th>metric</th>
+      <th>value</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>total_events_generated</td>
+      <td>22054</td>
+    </tr>
+    <tr>
+      <td>mean_events_per_row</td>
+      <td>0.005673</td>
+    </tr>
+    <tr>
+      <td>std_events_per_row</td>
+      <td>0.075827</td>
+    </tr>
+    <tr>
+      <td>max_events_per_row</td>
+      <td>3</td>
+    </tr>
+    <tr>
+      <td>p95_events_per_row</td>
+      <td>0.0</td>
+    </tr>
+    <tr>
+      <td>empty_rows_ratio</td>
+      <td>0.994379</td>
+    </tr>
+    <tr>
+      <td>nonempty_rows_ratio</td>
+      <td>0.005621</td>
+    </tr>
+    <tr>
+      <td>n_event_types_catalog</td>
+      <td>102</td>
+    </tr>
+    <tr>
+      <td>n_event_types_observed</td>
+      <td>68</td>
+    </tr>
+    <tr>
+      <td>catalog_coverage_ratio</td>
+      <td>0.666667</td>
+    </tr>
+    <tr>
+      <td>effective_catalog_unused_ratio</td>
+      <td>0.333333</td>
+    </tr>
+    <tr>
+      <td>rare_event_count</td>
+      <td>11151</td>
+    </tr>
+    <tr>
+      <td>rare_event_ratio</td>
+      <td>0.505623</td>
+    </tr>
+    <tr>
+      <td>rare_event_types_observed</td>
+      <td>42</td>
+    </tr>
+    <tr>
+      <td>rare_event_type_ratio</td>
+      <td>0.617647</td>
+    </tr>
+    <tr>
+      <td>top1_event_ratio</td>
+      <td>0.142695</td>
+    </tr>
+    <tr>
+      <td>top5_event_ratio</td>
+      <td>0.668904</td>
+    </tr>
+    <tr>
+      <td>event_entropy</td>
+      <td>2.428746</td>
+    </tr>
+    <tr>
+      <td>normalized_event_entropy</td>
+      <td>0.575599</td>
+    </tr>
+    <tr>
+      <td>n_consecutive_steps</td>
+      <td>3887230</td>
+    </tr>
+    <tr>
+      <td>consecutive_ratio</td>
+      <td>0.999997</td>
+    </tr>
+    <tr>
+      <td>n_broken_steps</td>
+      <td>11</td>
+    </tr>
+    <tr>
+      <td>broken_ratio</td>
+      <td>0.000003</td>
+    </tr>
+    <tr>
+      <td>n_level_events</td>
+      <td>0</td>
+    </tr>
+    <tr>
+      <td>n_unique_level_types_observed</td>
+      <td>0</td>
+    </tr>
+    <tr>
+      <td>n_measures_total</td>
+      <td>17</td>
+    </tr>
+    <tr>
+      <td>n_eventless_measures</td>
+      <td>3</td>
+    </tr>
+    <tr>
+      <td>eventless_measure_ratio</td>
+      <td>0.176471</td>
+    </tr>
+    <tr>
+      <td>n_non_eventless_measures</td>
+      <td>14</td>
+    </tr>
+    <tr>
+      <td>non_eventless_measure_ratio</td>
+      <td>0.823529</td>
+    </tr>
+    <tr>
+      <td>n_measures_with_high_rare_events</td>
+      <td>14</td>
+    </tr>
+    <tr>
+      <td>n_measures_with_low_rare_events</td>
+      <td>12</td>
+    </tr>
+    <tr>
+      <td>high_rare_measure_ratio</td>
+      <td>0.823529</td>
+    </tr>
+    <tr>
+      <td>low_rare_measure_ratio</td>
+      <td>0.705882</td>
+    </tr>
+    <tr>
+      <td>high_rare_event_count</td>
+      <td>9050</td>
+    </tr>
+    <tr>
+      <td>low_rare_event_count</td>
+      <td>2101</td>
+    </tr>
+    <tr>
+      <td>high_rare_event_ratio</td>
+      <td>0.410356</td>
+    </tr>
+    <tr>
+      <td>low_rare_event_ratio</td>
+      <td>0.095266</td>
+    </tr>
+    <tr>
+      <td>events_per_million_rows</td>
+      <td>5673.431188</td>
+    </tr>
+    <tr>
+      <td>n_transition_events</td>
+      <td>22054</td>
+    </tr>
+    <tr>
+      <td>n_unique_transition_types_observed</td>
+      <td>68</td>
+    </tr>
+    <tr>
+      <td>transition_coverage_ratio</td>
+      <td>0.666667</td>
+    </tr>
+    <tr>
+      <td>jump_size_mean</td>
+      <td>1.011488</td>
+    </tr>
+    <tr>
+      <td>jump_size_std</td>
+      <td>0.106566</td>
+    </tr>
+    <tr>
+      <td>pct_jump_eq_1</td>
+      <td>0.988512</td>
+    </tr>
+    <tr>
+      <td>pct_jump_ge_2</td>
+      <td>0.011488</td>
+    </tr>
+    <tr>
+      <td>pct_jump_ge_3</td>
+      <td>0.0</td>
+    </tr>
+    <tr>
+      <td>f02_quality_score</td>
+      <td>0.739585</td>
+    </tr>
+    <tr>
+      <td>activity_flag</td>
+      <td>warning</td>
+    </tr>
+    <tr>
+      <td>diversity_flag</td>
+      <td>ok</td>
+    </tr>
+    <tr>
+      <td>catalog_flag</td>
+      <td>ok</td>
+    </tr>
+    <tr>
+      <td>dominance_flag</td>
+      <td>ok</td>
+    </tr>
+    <tr>
+      <td>continuity_flag</td>
+      <td>ok</td>
+    </tr>
+    <tr>
+      <td>measure_coverage_flag</td>
+      <td>ok</td>
+    </tr>
+    <tr>
+      <td>f02_gate_status</td>
+      <td>warning</td>
+    </tr>
+  </tbody>
+</table></div>
+          </details>
+        </section>
+      </main>
+    </body>
+    </html>
+    
