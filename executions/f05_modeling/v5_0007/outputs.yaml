@@ -143,3 +143,7 @@ mlflow_registration:
   - /__w/mlops4rtedge/mlops4rtedge/executions/f05_modeling/v5_0007/05_modeling_model.h5
   - /__w/mlops4rtedge/mlops4rtedge/executions/f05_modeling/v5_0007/05_modeling_history.json
   - /__w/mlops4rtedge/mlops4rtedge/executions/f05_modeling/v5_0007/05_modeling_trials_summary.json
+mlflow:
+  run_id: 2ba3b5b06f2646e09a2fdcff039880c9
+  experiment_id: '1'
+  experiment_name: F05_power_surge
