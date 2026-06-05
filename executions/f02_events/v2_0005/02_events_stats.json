@@ -1,0 +1,1426 @@
+{
+  "global": {
+    "total_events_generated": 857063,
+    "mean_events_per_row": 17.14126,
+    "std_events_per_row": 0.4168280369648856,
+    "max_events_per_row": 21,
+    "p95_events_per_row": 18.0,
+    "empty_rows_ratio": 0.0,
+    "nonempty_rows_ratio": 1.0,
+    "n_event_types_catalog": 97,
+    "n_event_types_observed": 74,
+    "catalog_coverage_ratio": 0.7628865979381443,
+    "effective_catalog_unused_ratio": 0.23711340206185572,
+    "rare_event_count": 389460,
+    "rare_event_ratio": 0.45441233608264503,
+    "rare_event_types_observed": 44,
+    "rare_event_type_ratio": 0.5945945945945946,
+    "top1_event_ratio": 0.05833876856193769,
+    "top5_event_ratio": 0.2916938428096884,
+    "event_entropy": 3.216322963068594,
+    "normalized_event_entropy": 0.7472756320871987,
+    "n_consecutive_steps": 49999,
+    "consecutive_ratio": 1.0,
+    "n_broken_steps": 0,
+    "broken_ratio": 0.0,
+    "n_level_events": 850000,
+    "n_unique_level_types_observed": 36,
+    "n_measures_total": 17,
+    "n_eventless_measures": 3,
+    "eventless_measure_ratio": 0.17647058823529413,
+    "n_non_eventless_measures": 14,
+    "non_eventless_measure_ratio": 0.8235294117647058,
+    "n_measures_with_high_rare_events": 10,
+    "n_measures_with_low_rare_events": 10,
+    "high_rare_measure_ratio": 0.5882352941176471,
+    "low_rare_measure_ratio": 0.5882352941176471,
+    "high_rare_event_count": 2003,
+    "low_rare_event_count": 1895,
+    "high_rare_event_ratio": 0.0023370510685912236,
+    "low_rare_event_ratio": 0.002211039328497438,
+    "events_per_million_rows": 17141260.0,
+    "n_transition_events": 7063,
+    "n_unique_transition_types_observed": 38,
+    "transition_coverage_ratio": 0.6333333333333333,
+    "jump_size_mean": 1.1042050120345461,
+    "jump_size_std": 0.30552631228983596,
+    "pct_jump_eq_1": 0.8957949879654538,
+    "pct_jump_ge_2": 0.10420501203454623,
+    "pct_jump_ge_3": 0.0,
+    "f02_quality_score": 0.8742262848571714,
+    "activity_flag": "ok",
+    "diversity_flag": "ok",
+    "catalog_flag": "ok",
+    "dominance_flag": "ok",
+    "continuity_flag": "ok",
+    "measure_coverage_flag": "ok",
+    "f02_gate_status": "candidate"
+  },
+  "event_frequency": {
+    "1": {
+      "event_name": "Battery_Active_Power_0_100",
+      "count": 50000
+    },
+    "2": {
+      "event_name": "Battery_Active_Power_Set_Response_0_100",
+      "count": 50000
+    },
+    "12": {
+      "event_name": "GE_Body_Active_Power_0_100",
+      "count": 50000
+    },
+    "13": {
+      "event_name": "GE_Active_Power_0_100",
+      "count": 50000
+    },
+    "14": {
+      "event_name": "GE_Body_Active_Power_Set_Response_0_100",
+      "count": 50000
+    },
+    "15": {
+      "event_name": "FC_Active_Power_FC_END_Set_0_100",
+      "count": 50000
+    },
+    "25": {
+      "event_name": "FC_Active_Power_FC_end_Set_Response_0_100",
+      "count": 50000
+    },
+    "78": {
+      "event_name": "MG-LV-MSB_Frequency_20_80",
+      "count": 49358
+    },
+    "69": {
+      "event_name": "Island_mode_MCCB_Frequency_20_80",
+      "count": 49083
+    },
+    "24": {
+      "event_name": "FC_Active_Power_80_100",
+      "count": 47018
+    },
+    "51": {
+      "event_name": "Receiving_Point_AC_Voltage_20_80",
+      "count": 42824
+    },
+    "42": {
+      "event_name": "MG-LV-MSB_AC_Voltage_20_80",
+      "count": 42444
+    },
+    "60": {
+      "event_name": "Island_mode_MCCB_AC_Voltage_20_80",
+      "count": 41963
+    },
+    "96": {
+      "event_name": "Outlet_Temperature_20_80",
+      "count": 28814
+    },
+    "9": {
+      "event_name": "PVPCS_Active_Power_0_20",
+      "count": 28347
+    },
+    "87": {
+      "event_name": "Inlet_Temperature_of_Chilled_Water_20_80",
+      "count": 27712
+    },
+    "34": {
+      "event_name": "Island_mode_MCCB_Active_Power_80_100",
+      "count": 24597
+    },
+    "33": {
+      "event_name": "Island_mode_MCCB_Active_Power_20_80",
+      "count": 17313
+    },
+    "86": {
+      "event_name": "Inlet_Temperature_of_Chilled_Water_0_20",
+      "count": 16767
+    },
+    "95": {
+      "event_name": "Outlet_Temperature_0_20",
+      "count": 15723
+    },
+    "10": {
+      "event_name": "PVPCS_Active_Power_20_80",
+      "count": 14927
+    },
+    "32": {
+      "event_name": "Island_mode_MCCB_Active_Power_0_20",
+      "count": 8090
+    },
+    "61": {
+      "event_name": "Island_mode_MCCB_AC_Voltage_80_100",
+      "count": 7455
+    },
+    "43": {
+      "event_name": "MG-LV-MSB_AC_Voltage_80_100",
+      "count": 6910
+    },
+    "11": {
+      "event_name": "PVPCS_Active_Power_80_100",
+      "count": 6726
+    },
+    "52": {
+      "event_name": "Receiving_Point_AC_Voltage_80_100",
+      "count": 5637
+    },
+    "88": {
+      "event_name": "Inlet_Temperature_of_Chilled_Water_80_100",
+      "count": 5521
+    },
+    "97": {
+      "event_name": "Outlet_Temperature_80_100",
+      "count": 5463
+    },
+    "22": {
+      "event_name": "FC_Active_Power_0_20",
+      "count": 2982
+    },
+    "50": {
+      "event_name": "Receiving_Point_AC_Voltage_0_20",
+      "count": 1539
+    },
+    "41": {
+      "event_name": "MG-LV-MSB_AC_Voltage_0_20",
+      "count": 646
+    },
+    "59": {
+      "event_name": "Island_mode_MCCB_AC_Voltage_0_20",
+      "count": 582
+    },
+    "77": {
+      "event_name": "MG-LV-MSB_Frequency_0_20",
+      "count": 504
+    },
+    "68": {
+      "event_name": "Island_mode_MCCB_Frequency_0_20",
+      "count": 499
+    },
+    "70": {
+      "event_name": "Island_mode_MCCB_Frequency_80_100",
+      "count": 418
+    },
+    "91": {
+      "event_name": "Outlet_Temperature_20_80-to-0_20",
+      "count": 376
+    },
+    "89": {
+      "event_name": "Outlet_Temperature_0_20-to-20_80",
+      "count": 376
+    },
+    "20": {
+      "event_name": "FC_Active_Power_80_100-to-0_20",
+      "count": 368
+    },
+    "17": {
+      "event_name": "FC_Active_Power_0_20-to-80_100",
+      "count": 368
+    },
+    "38": {
+      "event_name": "MG-LV-MSB_AC_Voltage_20_80-to-80_100",
+      "count": 343
+    },
+    "40": {
+      "event_name": "MG-LV-MSB_AC_Voltage_80_100-to-20_80",
+      "count": 343
+    },
+    "56": {
+      "event_name": "Island_mode_MCCB_AC_Voltage_20_80-to-80_100",
+      "count": 341
+    },
+    "58": {
+      "event_name": "Island_mode_MCCB_AC_Voltage_80_100-to-20_80",
+      "count": 341
+    },
+    "47": {
+      "event_name": "Receiving_Point_AC_Voltage_20_80-to-80_100",
+      "count": 307
+    },
+    "49": {
+      "event_name": "Receiving_Point_AC_Voltage_80_100-to-20_80",
+      "count": 307
+    },
+    "6": {
+      "event_name": "PVPCS_Active_Power_20_80-to-80_100",
+      "count": 260
+    },
+    "8": {
+      "event_name": "PVPCS_Active_Power_80_100-to-20_80",
+      "count": 260
+    },
+    "28": {
+      "event_name": "Island_mode_MCCB_Active_Power_20_80-to-0_20",
+      "count": 239
+    },
+    "26": {
+      "event_name": "Island_mode_MCCB_Active_Power_0_20-to-20_80",
+      "count": 239
+    },
+    "73": {
+      "event_name": "MG-LV-MSB_Frequency_20_80-to-0_20",
+      "count": 191
+    },
+    "71": {
+      "event_name": "MG-LV-MSB_Frequency_0_20-to-20_80",
+      "count": 191
+    },
+    "64": {
+      "event_name": "Island_mode_MCCB_Frequency_20_80-to-0_20",
+      "count": 175
+    },
+    "62": {
+      "event_name": "Island_mode_MCCB_Frequency_0_20-to-20_80",
+      "count": 175
+    },
+    "31": {
+      "event_name": "Island_mode_MCCB_Active_Power_80_100-to-20_80",
+      "count": 160
+    },
+    "29": {
+      "event_name": "Island_mode_MCCB_Active_Power_20_80-to-80_100",
+      "count": 159
+    },
+    "65": {
+      "event_name": "Island_mode_MCCB_Frequency_20_80-to-80_100",
+      "count": 158
+    },
+    "67": {
+      "event_name": "Island_mode_MCCB_Frequency_80_100-to-20_80",
+      "count": 158
+    },
+    "82": {
+      "event_name": "Inlet_Temperature_of_Chilled_Water_20_80-to-0_20",
+      "count": 142
+    },
+    "80": {
+      "event_name": "Inlet_Temperature_of_Chilled_Water_0_20-to-20_80",
+      "count": 142
+    },
+    "79": {
+      "event_name": "MG-LV-MSB_Frequency_80_100",
+      "count": 138
+    },
+    "46": {
+      "event_name": "Receiving_Point_AC_Voltage_20_80-to-0_20",
+      "count": 132
+    },
+    "44": {
+      "event_name": "Receiving_Point_AC_Voltage_0_20-to-20_80",
+      "count": 132
+    },
+    "55": {
+      "event_name": "Island_mode_MCCB_AC_Voltage_20_80-to-0_20",
+      "count": 116
+    },
+    "53": {
+      "event_name": "Island_mode_MCCB_AC_Voltage_0_20-to-20_80",
+      "count": 116
+    },
+    "37": {
+      "event_name": "MG-LV-MSB_AC_Voltage_20_80-to-0_20",
+      "count": 111
+    },
+    "35": {
+      "event_name": "MG-LV-MSB_AC_Voltage_0_20-to-20_80",
+      "count": 111
+    },
+    "3": {
+      "event_name": "PVPCS_Active_Power_0_20-to-20_80",
+      "count": 45
+    },
+    "5": {
+      "event_name": "PVPCS_Active_Power_20_80-to-0_20",
+      "count": 45
+    },
+    "74": {
+      "event_name": "MG-LV-MSB_Frequency_20_80-to-80_100",
+      "count": 40
+    },
+    "76": {
+      "event_name": "MG-LV-MSB_Frequency_80_100-to-20_80",
+      "count": 40
+    },
+    "94": {
+      "event_name": "Outlet_Temperature_80_100-to-20_80",
+      "count": 19
+    },
+    "92": {
+      "event_name": "Outlet_Temperature_20_80-to-80_100",
+      "count": 18
+    },
+    "85": {
+      "event_name": "Inlet_Temperature_of_Chilled_Water_80_100-to-20_80",
+      "count": 10
+    },
+    "83": {
+      "event_name": "Inlet_Temperature_of_Chilled_Water_20_80-to-80_100",
+      "count": 9
+    }
+  },
+  "per_measure": {
+    "Battery_Active_Power": {
+      "n_events_generated": 100000,
+      "n_unique_event_types_observed": 2,
+      "top1_ratio": 0.5,
+      "rare_event_count": 50000,
+      "rare_event_ratio": 0.5,
+      "high_rare_event_count": 0,
+      "low_rare_event_count": 0,
+      "rare_event_type_count": 1,
+      "high_rare_event_type_count": 0,
+      "low_rare_event_type_count": 0,
+      "high_rare_event_ratio": 0.0,
+      "low_rare_event_ratio": 0.0,
+      "mean_events_per_row_contributed": 2.0,
+      "band_occupancy": {
+        "0_100": 50000
+      },
+      "total_band_count": 50000,
+      "n_active_bands": 1,
+      "max_band_count": 50000,
+      "max_band_ratio": 1.0,
+      "min_nonzero_band_count": 50000,
+      "extreme_band_count": 50000,
+      "extreme_band_ratio": 1.0,
+      "middle_band_count": 0,
+      "middle_band_ratio": 0.0,
+      "occupancy_entropy": -0.0,
+      "normalized_occupancy_entropy": 0.0,
+      "is_eventless_measure": false,
+      "band_degeneracy_flag": true,
+      "extreme_occupancy_flag": true,
+      "jump_size_mean": 0.0,
+      "measure_transition_score": 0.5397772151733807,
+      "high_target_candidate": false,
+      "low_target_candidate": false
+    },
+    "Battery_Active_Power_Set_Response": {
+      "n_events_generated": 0,
+      "n_unique_event_types_observed": 0,
+      "top1_ratio": 0.0,
+      "rare_event_count": 0,
+      "rare_event_ratio": 0.0,
+      "high_rare_event_count": 0,
+      "low_rare_event_count": 0,
+      "rare_event_type_count": 0,
+      "high_rare_event_type_count": 0,
+      "low_rare_event_type_count": 0,
+      "high_rare_event_ratio": 0.0,
+      "low_rare_event_ratio": 0.0,
+      "mean_events_per_row_contributed": 0.0,
+      "band_occupancy": {
+        "0_100": 50000
+      },
+      "total_band_count": 50000,
+      "n_active_bands": 1,
+      "max_band_count": 50000,
+      "max_band_ratio": 1.0,
+      "min_nonzero_band_count": 50000,
+      "extreme_band_count": 50000,
+      "extreme_band_ratio": 1.0,
+      "middle_band_count": 0,
+      "middle_band_ratio": 0.0,
+      "occupancy_entropy": -0.0,
+      "normalized_occupancy_entropy": 0.0,
+      "is_eventless_measure": true,
+      "band_degeneracy_flag": true,
+      "extreme_occupancy_flag": true,
+      "jump_size_mean": 0.0,
+      "measure_transition_score": 0.0,
+      "high_target_candidate": false,
+      "low_target_candidate": false
+    },
+    "PVPCS_Active_Power": {
+      "n_events_generated": 50610,
+      "n_unique_event_types_observed": 7,
+      "top1_ratio": 0.5601066982809721,
+      "rare_event_count": 35378,
+      "rare_event_ratio": 0.6990318118948824,
+      "high_rare_event_count": 260,
+      "low_rare_event_count": 45,
+      "rare_event_type_count": 4,
+      "high_rare_event_type_count": 1,
+      "low_rare_event_type_count": 1,
+      "high_rare_event_ratio": 0.005137324639399328,
+      "low_rare_event_ratio": 0.0008891523414344991,
+      "mean_events_per_row_contributed": 1.0122,
+      "band_occupancy": {
+        "0_20": 28347,
+        "20_80": 14927,
+        "80_100": 6726
+      },
+      "total_band_count": 50000,
+      "n_active_bands": 3,
+      "max_band_count": 28347,
+      "max_band_ratio": 0.56694,
+      "min_nonzero_band_count": 6726,
+      "extreme_band_count": 35073,
+      "extreme_band_ratio": 0.70146,
+      "middle_band_count": 14927,
+      "middle_band_ratio": 0.29854,
+      "occupancy_entropy": 0.9524827761821708,
+      "normalized_occupancy_entropy": 0.8669871855674421,
+      "is_eventless_measure": false,
+      "band_degeneracy_flag": false,
+      "extreme_occupancy_flag": false,
+      "jump_size_mean": 1.0,
+      "measure_transition_score": 0.829823378135544,
+      "high_target_candidate": true,
+      "low_target_candidate": false
+    },
+    "GE_Body_Active_Power": {
+      "n_events_generated": 100000,
+      "n_unique_event_types_observed": 2,
+      "top1_ratio": 0.5,
+      "rare_event_count": 50000,
+      "rare_event_ratio": 0.5,
+      "high_rare_event_count": 0,
+      "low_rare_event_count": 0,
+      "rare_event_type_count": 1,
+      "high_rare_event_type_count": 0,
+      "low_rare_event_type_count": 0,
+      "high_rare_event_ratio": 0.0,
+      "low_rare_event_ratio": 0.0,
+      "mean_events_per_row_contributed": 2.0,
+      "band_occupancy": {
+        "0_100": 50000
+      },
+      "total_band_count": 50000,
+      "n_active_bands": 1,
+      "max_band_count": 50000,
+      "max_band_ratio": 1.0,
+      "min_nonzero_band_count": 50000,
+      "extreme_band_count": 50000,
+      "extreme_band_ratio": 1.0,
+      "middle_band_count": 0,
+      "middle_band_ratio": 0.0,
+      "occupancy_entropy": -0.0,
+      "normalized_occupancy_entropy": 0.0,
+      "is_eventless_measure": false,
+      "band_degeneracy_flag": true,
+      "extreme_occupancy_flag": true,
+      "jump_size_mean": 0.0,
+      "measure_transition_score": 0.5397772151733807,
+      "high_target_candidate": false,
+      "low_target_candidate": false
+    },
+    "GE_Active_Power": {
+      "n_events_generated": 50000,
+      "n_unique_event_types_observed": 1,
+      "top1_ratio": 1.0,
+      "rare_event_count": 50000,
+      "rare_event_ratio": 1.0,
+      "high_rare_event_count": 0,
+      "low_rare_event_count": 0,
+      "rare_event_type_count": 1,
+      "high_rare_event_type_count": 0,
+      "low_rare_event_type_count": 0,
+      "high_rare_event_ratio": 0.0,
+      "low_rare_event_ratio": 0.0,
+      "mean_events_per_row_contributed": 1.0,
+      "band_occupancy": {
+        "0_100": 50000
+      },
+      "total_band_count": 50000,
+      "n_active_bands": 1,
+      "max_band_count": 50000,
+      "max_band_ratio": 1.0,
+      "min_nonzero_band_count": 50000,
+      "extreme_band_count": 50000,
+      "extreme_band_ratio": 1.0,
+      "middle_band_count": 0,
+      "middle_band_ratio": 0.0,
+      "occupancy_entropy": -0.0,
+      "normalized_occupancy_entropy": 0.0,
+      "is_eventless_measure": false,
+      "band_degeneracy_flag": true,
+      "extreme_occupancy_flag": true,
+      "jump_size_mean": 0.0,
+      "measure_transition_score": 0.4487188505590237,
+      "high_target_candidate": false,
+      "low_target_candidate": false
+    },
+    "GE_Body_Active_Power_Set_Response": {
+      "n_events_generated": 0,
+      "n_unique_event_types_observed": 0,
+      "top1_ratio": 0.0,
+      "rare_event_count": 0,
+      "rare_event_ratio": 0.0,
+      "high_rare_event_count": 0,
+      "low_rare_event_count": 0,
+      "rare_event_type_count": 0,
+      "high_rare_event_type_count": 0,
+      "low_rare_event_type_count": 0,
+      "high_rare_event_ratio": 0.0,
+      "low_rare_event_ratio": 0.0,
+      "mean_events_per_row_contributed": 0.0,
+      "band_occupancy": {
+        "0_100": 50000
+      },
+      "total_band_count": 50000,
+      "n_active_bands": 1,
+      "max_band_count": 50000,
+      "max_band_ratio": 1.0,
+      "min_nonzero_band_count": 50000,
+      "extreme_band_count": 50000,
+      "extreme_band_ratio": 1.0,
+      "middle_band_count": 0,
+      "middle_band_ratio": 0.0,
+      "occupancy_entropy": -0.0,
+      "normalized_occupancy_entropy": 0.0,
+      "is_eventless_measure": true,
+      "band_degeneracy_flag": true,
+      "extreme_occupancy_flag": true,
+      "jump_size_mean": 0.0,
+      "measure_transition_score": 0.0,
+      "high_target_candidate": false,
+      "low_target_candidate": false
+    },
+    "FC_Active_Power_FC_END_Set": {
+      "n_events_generated": 50000,
+      "n_unique_event_types_observed": 1,
+      "top1_ratio": 1.0,
+      "rare_event_count": 50000,
+      "rare_event_ratio": 1.0,
+      "high_rare_event_count": 0,
+      "low_rare_event_count": 0,
+      "rare_event_type_count": 1,
+      "high_rare_event_type_count": 0,
+      "low_rare_event_type_count": 0,
+      "high_rare_event_ratio": 0.0,
+      "low_rare_event_ratio": 0.0,
+      "mean_events_per_row_contributed": 1.0,
+      "band_occupancy": {
+        "0_100": 50000
+      },
+      "total_band_count": 50000,
+      "n_active_bands": 1,
+      "max_band_count": 50000,
+      "max_band_ratio": 1.0,
+      "min_nonzero_band_count": 50000,
+      "extreme_band_count": 50000,
+      "extreme_band_ratio": 1.0,
+      "middle_band_count": 0,
+      "middle_band_ratio": 0.0,
+      "occupancy_entropy": -0.0,
+      "normalized_occupancy_entropy": 0.0,
+      "is_eventless_measure": false,
+      "band_degeneracy_flag": true,
+      "extreme_occupancy_flag": true,
+      "jump_size_mean": 0.0,
+      "measure_transition_score": 0.4487188505590237,
+      "high_target_candidate": false,
+      "low_target_candidate": false
+    },
+    "FC_Active_Power": {
+      "n_events_generated": 100736,
+      "n_unique_event_types_observed": 5,
+      "top1_ratio": 0.4963468869123253,
+      "rare_event_count": 50736,
+      "rare_event_ratio": 0.5036531130876747,
+      "high_rare_event_count": 368,
+      "low_rare_event_count": 368,
+      "rare_event_type_count": 4,
+      "high_rare_event_type_count": 1,
+      "low_rare_event_type_count": 1,
+      "high_rare_event_ratio": 0.003653113087674714,
+      "low_rare_event_ratio": 0.003653113087674714,
+      "mean_events_per_row_contributed": 2.01472,
+      "band_occupancy": {
+        "0_20": 2982,
+        "20_80": 0,
+        "80_100": 47018
+      },
+      "total_band_count": 50000,
+      "n_active_bands": 2,
+      "max_band_count": 47018,
+      "max_band_ratio": 0.94036,
+      "min_nonzero_band_count": 2982,
+      "extreme_band_count": 50000,
+      "extreme_band_ratio": 1.0,
+      "middle_band_count": 0,
+      "middle_band_ratio": 0.0,
+      "occupancy_entropy": 0.22597581869403438,
+      "normalized_occupancy_entropy": 0.32601419299070694,
+      "is_eventless_measure": false,
+      "band_degeneracy_flag": false,
+      "extreme_occupancy_flag": true,
+      "jump_size_mean": 2.0,
+      "measure_transition_score": 0.6818688595564442,
+      "high_target_candidate": true,
+      "low_target_candidate": true
+    },
+    "FC_Active_Power_FC_end_Set_Response": {
+      "n_events_generated": 0,
+      "n_unique_event_types_observed": 0,
+      "top1_ratio": 0.0,
+      "rare_event_count": 0,
+      "rare_event_ratio": 0.0,
+      "high_rare_event_count": 0,
+      "low_rare_event_count": 0,
+      "rare_event_type_count": 0,
+      "high_rare_event_type_count": 0,
+      "low_rare_event_type_count": 0,
+      "high_rare_event_ratio": 0.0,
+      "low_rare_event_ratio": 0.0,
+      "mean_events_per_row_contributed": 0.0,
+      "band_occupancy": {
+        "0_100": 50000
+      },
+      "total_band_count": 50000,
+      "n_active_bands": 1,
+      "max_band_count": 50000,
+      "max_band_ratio": 1.0,
+      "min_nonzero_band_count": 50000,
+      "extreme_band_count": 50000,
+      "extreme_band_ratio": 1.0,
+      "middle_band_count": 0,
+      "middle_band_ratio": 0.0,
+      "occupancy_entropy": -0.0,
+      "normalized_occupancy_entropy": 0.0,
+      "is_eventless_measure": true,
+      "band_degeneracy_flag": true,
+      "extreme_occupancy_flag": true,
+      "jump_size_mean": 0.0,
+      "measure_transition_score": 0.0,
+      "high_target_candidate": false,
+      "low_target_candidate": false
+    },
+    "Island_mode_MCCB_Active_Power": {
+      "n_events_generated": 50797,
+      "n_unique_event_types_observed": 7,
+      "top1_ratio": 0.4842215091442408,
+      "rare_event_count": 33085,
+      "rare_event_ratio": 0.6513179912199539,
+      "high_rare_event_count": 159,
+      "low_rare_event_count": 239,
+      "rare_event_type_count": 4,
+      "high_rare_event_type_count": 1,
+      "low_rare_event_type_count": 1,
+      "high_rare_event_ratio": 0.0031301061086284622,
+      "low_rare_event_ratio": 0.0047050022639132235,
+      "mean_events_per_row_contributed": 1.01594,
+      "band_occupancy": {
+        "0_20": 8090,
+        "20_80": 17313,
+        "80_100": 24597
+      },
+      "total_band_count": 50000,
+      "n_active_bands": 3,
+      "max_band_count": 24597,
+      "max_band_ratio": 0.49194,
+      "min_nonzero_band_count": 8090,
+      "extreme_band_count": 32687,
+      "extreme_band_ratio": 0.65374,
+      "middle_band_count": 17313,
+      "middle_band_ratio": 0.34626,
+      "occupancy_entropy": 1.0109144570691102,
+      "normalized_occupancy_entropy": 0.920173993588476,
+      "is_eventless_measure": false,
+      "band_degeneracy_flag": false,
+      "extreme_occupancy_flag": false,
+      "jump_size_mean": 1.0,
+      "measure_transition_score": 0.8508206462626158,
+      "high_target_candidate": true,
+      "low_target_candidate": true
+    },
+    "MG-LV-MSB_AC_Voltage": {
+      "n_events_generated": 50908,
+      "n_unique_event_types_observed": 7,
+      "top1_ratio": 0.8337392944134517,
+      "rare_event_count": 8010,
+      "rare_event_ratio": 0.15734265734265734,
+      "high_rare_event_count": 343,
+      "low_rare_event_count": 111,
+      "rare_event_type_count": 4,
+      "high_rare_event_type_count": 1,
+      "low_rare_event_type_count": 1,
+      "high_rare_event_ratio": 0.006737644378093816,
+      "low_rare_event_ratio": 0.002180403865797124,
+      "mean_events_per_row_contributed": 1.01816,
+      "band_occupancy": {
+        "0_20": 646,
+        "20_80": 42444,
+        "80_100": 6910
+      },
+      "total_band_count": 50000,
+      "n_active_bands": 3,
+      "max_band_count": 42444,
+      "max_band_ratio": 0.84888,
+      "min_nonzero_band_count": 646,
+      "extreme_band_count": 7556,
+      "extreme_band_ratio": 0.15112,
+      "middle_band_count": 42444,
+      "middle_band_ratio": 0.84888,
+      "occupancy_entropy": 0.4687723119201568,
+      "normalized_occupancy_entropy": 0.42669494666627805,
+      "is_eventless_measure": false,
+      "band_degeneracy_flag": false,
+      "extreme_occupancy_flag": false,
+      "jump_size_mean": 1.0,
+      "measure_transition_score": 0.6712367490617267,
+      "high_target_candidate": true,
+      "low_target_candidate": true
+    },
+    "Receiving_Point_AC_Voltage": {
+      "n_events_generated": 50878,
+      "n_unique_event_types_observed": 7,
+      "top1_ratio": 0.8416997523487558,
+      "rare_event_count": 7615,
+      "rare_event_ratio": 0.14967176382719447,
+      "high_rare_event_count": 307,
+      "low_rare_event_count": 132,
+      "rare_event_type_count": 4,
+      "high_rare_event_type_count": 1,
+      "low_rare_event_type_count": 1,
+      "high_rare_event_ratio": 0.00603404221864067,
+      "low_rare_event_ratio": 0.0025944416054090175,
+      "mean_events_per_row_contributed": 1.01756,
+      "band_occupancy": {
+        "0_20": 1539,
+        "20_80": 42824,
+        "80_100": 5637
+      },
+      "total_band_count": 50000,
+      "n_active_bands": 3,
+      "max_band_count": 42824,
+      "max_band_ratio": 0.85648,
+      "min_nonzero_band_count": 1539,
+      "extreme_band_count": 7176,
+      "extreme_band_ratio": 0.14352,
+      "middle_band_count": 42824,
+      "middle_band_ratio": 0.85648,
+      "occupancy_entropy": 0.48590570199113653,
+      "normalized_occupancy_entropy": 0.4422904303939826,
+      "is_eventless_measure": false,
+      "band_degeneracy_flag": false,
+      "extreme_occupancy_flag": false,
+      "jump_size_mean": 1.0,
+      "measure_transition_score": 0.6704862189046182,
+      "high_target_candidate": true,
+      "low_target_candidate": true
+    },
+    "Island_mode_MCCB_AC_Voltage": {
+      "n_events_generated": 50914,
+      "n_unique_event_types_observed": 7,
+      "top1_ratio": 0.8241937384609341,
+      "rare_event_count": 8494,
+      "rare_event_ratio": 0.1668303413599403,
+      "high_rare_event_count": 341,
+      "low_rare_event_count": 116,
+      "rare_event_type_count": 4,
+      "high_rare_event_type_count": 1,
+      "low_rare_event_type_count": 1,
+      "high_rare_event_ratio": 0.006697568448756727,
+      "low_rare_event_ratio": 0.0022783517303688575,
+      "mean_events_per_row_contributed": 1.01828,
+      "band_occupancy": {
+        "0_20": 582,
+        "20_80": 41963,
+        "80_100": 7455
+      },
+      "total_band_count": 50000,
+      "n_active_bands": 3,
+      "max_band_count": 41963,
+      "max_band_ratio": 0.83926,
+      "min_nonzero_band_count": 582,
+      "extreme_band_count": 8037,
+      "extreme_band_ratio": 0.16074,
+      "middle_band_count": 41963,
+      "middle_band_ratio": 0.83926,
+      "occupancy_entropy": 0.482661885196155,
+      "normalized_occupancy_entropy": 0.4393377811031995,
+      "is_eventless_measure": false,
+      "band_degeneracy_flag": false,
+      "extreme_occupancy_flag": false,
+      "jump_size_mean": 1.0,
+      "measure_transition_score": 0.6800994357159881,
+      "high_target_candidate": true,
+      "low_target_candidate": true
+    },
+    "Island_mode_MCCB_Frequency": {
+      "n_events_generated": 50666,
+      "n_unique_event_types_observed": 7,
+      "top1_ratio": 0.9687561678443137,
+      "rare_event_count": 1250,
+      "rare_event_ratio": 0.02467137725496388,
+      "high_rare_event_count": 158,
+      "low_rare_event_count": 175,
+      "rare_event_type_count": 4,
+      "high_rare_event_type_count": 1,
+      "low_rare_event_type_count": 1,
+      "high_rare_event_ratio": 0.0031184620850274345,
+      "low_rare_event_ratio": 0.0034539928156949434,
+      "mean_events_per_row_contributed": 1.01332,
+      "band_occupancy": {
+        "0_20": 499,
+        "20_80": 49083,
+        "80_100": 418
+      },
+      "total_band_count": 50000,
+      "n_active_bands": 3,
+      "max_band_count": 49083,
+      "max_band_ratio": 0.98166,
+      "min_nonzero_band_count": 418,
+      "extreme_band_count": 917,
+      "extreme_band_ratio": 0.01834,
+      "middle_band_count": 49083,
+      "middle_band_ratio": 0.98166,
+      "occupancy_entropy": 0.10414708466467251,
+      "normalized_occupancy_entropy": 0.09479876180061125,
+      "is_eventless_measure": false,
+      "band_degeneracy_flag": false,
+      "extreme_occupancy_flag": false,
+      "jump_size_mean": 1.0,
+      "measure_transition_score": 0.5082806114758651,
+      "high_target_candidate": true,
+      "low_target_candidate": true
+    },
+    "MG-LV-MSB_Frequency": {
+      "n_events_generated": 50462,
+      "n_unique_event_types_observed": 7,
+      "top1_ratio": 0.9781221513217867,
+      "rare_event_count": 873,
+      "rare_event_ratio": 0.017300146645000198,
+      "high_rare_event_count": 40,
+      "low_rare_event_count": 191,
+      "rare_event_type_count": 4,
+      "high_rare_event_type_count": 1,
+      "low_rare_event_type_count": 1,
+      "high_rare_event_ratio": 0.000792675676746859,
+      "low_rare_event_ratio": 0.003785026356466252,
+      "mean_events_per_row_contributed": 1.00924,
+      "band_occupancy": {
+        "0_20": 504,
+        "20_80": 49358,
+        "80_100": 138
+      },
+      "total_band_count": 50000,
+      "n_active_bands": 3,
+      "max_band_count": 49358,
+      "max_band_ratio": 0.98716,
+      "min_nonzero_band_count": 138,
+      "extreme_band_count": 642,
+      "extreme_band_ratio": 0.01284,
+      "middle_band_count": 49358,
+      "middle_band_ratio": 0.98716,
+      "occupancy_entropy": 0.07536037632359446,
+      "normalized_occupancy_entropy": 0.06859597066309604,
+      "is_eventless_measure": false,
+      "band_degeneracy_flag": false,
+      "extreme_occupancy_flag": false,
+      "jump_size_mean": 1.0,
+      "measure_transition_score": 0.4969851294730975,
+      "high_target_candidate": false,
+      "low_target_candidate": true
+    },
+    "Inlet_Temperature_of_Chilled_Water": {
+      "n_events_generated": 50303,
+      "n_unique_event_types_observed": 7,
+      "top1_ratio": 0.5509015366876727,
+      "rare_event_count": 22439,
+      "rare_event_ratio": 0.44607677474504503,
+      "high_rare_event_count": 9,
+      "low_rare_event_count": 142,
+      "rare_event_type_count": 4,
+      "high_rare_event_type_count": 1,
+      "low_rare_event_type_count": 1,
+      "high_rare_event_ratio": 0.000178915770431187,
+      "low_rare_event_ratio": 0.002822893266803173,
+      "mean_events_per_row_contributed": 1.00606,
+      "band_occupancy": {
+        "0_20": 16767,
+        "20_80": 27712,
+        "80_100": 5521
+      },
+      "total_band_count": 50000,
+      "n_active_bands": 3,
+      "max_band_count": 27712,
+      "max_band_ratio": 0.55424,
+      "min_nonzero_band_count": 5521,
+      "extreme_band_count": 22288,
+      "extreme_band_ratio": 0.44576,
+      "middle_band_count": 27712,
+      "middle_band_ratio": 0.55424,
+      "occupancy_entropy": 0.93679132320965,
+      "normalized_occupancy_entropy": 0.8527042095490834,
+      "is_eventless_measure": false,
+      "band_degeneracy_flag": false,
+      "extreme_occupancy_flag": false,
+      "jump_size_mean": 1.0,
+      "measure_transition_score": 0.8269883003001152,
+      "high_target_candidate": false,
+      "low_target_candidate": true
+    },
+    "Outlet_Temperature": {
+      "n_events_generated": 50789,
+      "n_unique_event_types_observed": 7,
+      "top1_ratio": 0.5673275709307134,
+      "rare_event_count": 21580,
+      "rare_event_ratio": 0.42489515446258047,
+      "high_rare_event_count": 18,
+      "low_rare_event_count": 376,
+      "rare_event_type_count": 4,
+      "high_rare_event_type_count": 1,
+      "low_rare_event_type_count": 1,
+      "high_rare_event_ratio": 0.0003544074504321802,
+      "low_rare_event_ratio": 0.007403177853472208,
+      "mean_events_per_row_contributed": 1.01578,
+      "band_occupancy": {
+        "0_20": 15723,
+        "20_80": 28814,
+        "80_100": 5463
+      },
+      "total_band_count": 50000,
+      "n_active_bands": 3,
+      "max_band_count": 28814,
+      "max_band_ratio": 0.57628,
+      "min_nonzero_band_count": 5463,
+      "extreme_band_count": 21186,
+      "extreme_band_ratio": 0.42372,
+      "middle_band_count": 28814,
+      "middle_band_ratio": 0.57628,
+      "occupancy_entropy": 0.923326053646973,
+      "normalized_occupancy_entropy": 0.8404475929960303,
+      "is_eventless_measure": false,
+      "band_degeneracy_flag": false,
+      "extreme_occupancy_flag": false,
+      "jump_size_mean": 1.0,
+      "measure_transition_score": 0.8225736549239953,
+      "high_target_candidate": false,
+      "low_target_candidate": true
+    }
+  },
+  "top_events": [
+    {
+      "event_id": 1,
+      "event_name": "Battery_Active_Power_0_100",
+      "count": 50000,
+      "ratio": 0.05833876856193769
+    },
+    {
+      "event_id": 2,
+      "event_name": "Battery_Active_Power_Set_Response_0_100",
+      "count": 50000,
+      "ratio": 0.05833876856193769
+    },
+    {
+      "event_id": 12,
+      "event_name": "GE_Body_Active_Power_0_100",
+      "count": 50000,
+      "ratio": 0.05833876856193769
+    },
+    {
+      "event_id": 13,
+      "event_name": "GE_Active_Power_0_100",
+      "count": 50000,
+      "ratio": 0.05833876856193769
+    },
+    {
+      "event_id": 14,
+      "event_name": "GE_Body_Active_Power_Set_Response_0_100",
+      "count": 50000,
+      "ratio": 0.05833876856193769
+    },
+    {
+      "event_id": 15,
+      "event_name": "FC_Active_Power_FC_END_Set_0_100",
+      "count": 50000,
+      "ratio": 0.05833876856193769
+    },
+    {
+      "event_id": 25,
+      "event_name": "FC_Active_Power_FC_end_Set_Response_0_100",
+      "count": 50000,
+      "ratio": 0.05833876856193769
+    },
+    {
+      "event_id": 78,
+      "event_name": "MG-LV-MSB_Frequency_20_80",
+      "count": 49358,
+      "ratio": 0.057589698773602406
+    },
+    {
+      "event_id": 69,
+      "event_name": "Island_mode_MCCB_Frequency_20_80",
+      "count": 49083,
+      "ratio": 0.05726883554651175
+    },
+    {
+      "event_id": 24,
+      "event_name": "FC_Active_Power_80_100",
+      "count": 47018,
+      "ratio": 0.05485944440490372
+    },
+    {
+      "event_id": 51,
+      "event_name": "Receiving_Point_AC_Voltage_20_80",
+      "count": 42824,
+      "ratio": 0.04996598849792839
+    },
+    {
+      "event_id": 42,
+      "event_name": "MG-LV-MSB_AC_Voltage_20_80",
+      "count": 42444,
+      "ratio": 0.04952261385685766
+    },
+    {
+      "event_id": 60,
+      "event_name": "Island_mode_MCCB_AC_Voltage_20_80",
+      "count": 41963,
+      "ratio": 0.04896139490329182
+    },
+    {
+      "event_id": 96,
+      "event_name": "Outlet_Temperature_20_80",
+      "count": 28814,
+      "ratio": 0.03361946554687345
+    },
+    {
+      "event_id": 9,
+      "event_name": "PVPCS_Active_Power_0_20",
+      "count": 28347,
+      "ratio": 0.033074581448504954
+    },
+    {
+      "event_id": 87,
+      "event_name": "Inlet_Temperature_of_Chilled_Water_20_80",
+      "count": 27712,
+      "ratio": 0.032333679087768345
+    },
+    {
+      "event_id": 34,
+      "event_name": "Island_mode_MCCB_Active_Power_80_100",
+      "count": 24597,
+      "ratio": 0.028699173806359626
+    },
+    {
+      "event_id": 33,
+      "event_name": "Island_mode_MCCB_Active_Power_20_80",
+      "count": 17313,
+      "ratio": 0.020200382002256545
+    },
+    {
+      "event_id": 86,
+      "event_name": "Inlet_Temperature_of_Chilled_Water_0_20",
+      "count": 16767,
+      "ratio": 0.019563322649560184
+    },
+    {
+      "event_id": 95,
+      "event_name": "Outlet_Temperature_0_20",
+      "count": 15723,
+      "ratio": 0.018345209161986925
+    }
+  ],
+  "band_occupancy": {
+    "Battery_Active_Power": {
+      "0_100": 50000
+    },
+    "Battery_Active_Power_Set_Response": {
+      "0_100": 50000
+    },
+    "PVPCS_Active_Power": {
+      "0_20": 28347,
+      "20_80": 14927,
+      "80_100": 6726
+    },
+    "GE_Body_Active_Power": {
+      "0_100": 50000
+    },
+    "GE_Active_Power": {
+      "0_100": 50000
+    },
+    "GE_Body_Active_Power_Set_Response": {
+      "0_100": 50000
+    },
+    "FC_Active_Power_FC_END_Set": {
+      "0_100": 50000
+    },
+    "FC_Active_Power": {
+      "0_20": 2982,
+      "20_80": 0,
+      "80_100": 47018
+    },
+    "FC_Active_Power_FC_end_Set_Response": {
+      "0_100": 50000
+    },
+    "Island_mode_MCCB_Active_Power": {
+      "0_20": 8090,
+      "20_80": 17313,
+      "80_100": 24597
+    },
+    "MG-LV-MSB_AC_Voltage": {
+      "0_20": 646,
+      "20_80": 42444,
+      "80_100": 6910
+    },
+    "Receiving_Point_AC_Voltage": {
+      "0_20": 1539,
+      "20_80": 42824,
+      "80_100": 5637
+    },
+    "Island_mode_MCCB_AC_Voltage": {
+      "0_20": 582,
+      "20_80": 41963,
+      "80_100": 7455
+    },
+    "Island_mode_MCCB_Frequency": {
+      "0_20": 499,
+      "20_80": 49083,
+      "80_100": 418
+    },
+    "MG-LV-MSB_Frequency": {
+      "0_20": 504,
+      "20_80": 49358,
+      "80_100": 138
+    },
+    "Inlet_Temperature_of_Chilled_Water": {
+      "0_20": 16767,
+      "20_80": 27712,
+      "80_100": 5521
+    },
+    "Outlet_Temperature": {
+      "0_20": 15723,
+      "20_80": 28814,
+      "80_100": 5463
+    }
+  },
+  "target_candidates": {
+    "Battery_Active_Power": {
+      "high": {
+        "candidate": false,
+        "extreme_event_count": 0,
+        "extreme_event_ratio": 0.0,
+        "reason": "does not pass high target candidate rules"
+      },
+      "low": {
+        "candidate": false,
+        "extreme_event_count": 0,
+        "extreme_event_ratio": 0.0,
+        "reason": "does not pass low target candidate rules"
+      }
+    },
+    "Battery_Active_Power_Set_Response": {
+      "high": {
+        "candidate": false,
+        "extreme_event_count": 0,
+        "extreme_event_ratio": 0.0,
+        "reason": "does not pass high target candidate rules"
+      },
+      "low": {
+        "candidate": false,
+        "extreme_event_count": 0,
+        "extreme_event_ratio": 0.0,
+        "reason": "does not pass low target candidate rules"
+      }
+    },
+    "PVPCS_Active_Power": {
+      "high": {
+        "candidate": true,
+        "extreme_event_count": 260,
+        "extreme_event_ratio": 0.005137324639399328,
+        "reason": "passes high target candidate rules"
+      },
+      "low": {
+        "candidate": false,
+        "extreme_event_count": 45,
+        "extreme_event_ratio": 0.0008891523414344991,
+        "reason": "does not pass low target candidate rules"
+      }
+    },
+    "GE_Body_Active_Power": {
+      "high": {
+        "candidate": false,
+        "extreme_event_count": 0,
+        "extreme_event_ratio": 0.0,
+        "reason": "does not pass high target candidate rules"
+      },
+      "low": {
+        "candidate": false,
+        "extreme_event_count": 0,
+        "extreme_event_ratio": 0.0,
+        "reason": "does not pass low target candidate rules"
+      }
+    },
+    "GE_Active_Power": {
+      "high": {
+        "candidate": false,
+        "extreme_event_count": 0,
+        "extreme_event_ratio": 0.0,
+        "reason": "does not pass high target candidate rules"
+      },
+      "low": {
+        "candidate": false,
+        "extreme_event_count": 0,
+        "extreme_event_ratio": 0.0,
+        "reason": "does not pass low target candidate rules"
+      }
+    },
+    "GE_Body_Active_Power_Set_Response": {
+      "high": {
+        "candidate": false,
+        "extreme_event_count": 0,
+        "extreme_event_ratio": 0.0,
+        "reason": "does not pass high target candidate rules"
+      },
+      "low": {
+        "candidate": false,
+        "extreme_event_count": 0,
+        "extreme_event_ratio": 0.0,
+        "reason": "does not pass low target candidate rules"
+      }
+    },
+    "FC_Active_Power_FC_END_Set": {
+      "high": {
+        "candidate": false,
+        "extreme_event_count": 0,
+        "extreme_event_ratio": 0.0,
+        "reason": "does not pass high target candidate rules"
+      },
+      "low": {
+        "candidate": false,
+        "extreme_event_count": 0,
+        "extreme_event_ratio": 0.0,
+        "reason": "does not pass low target candidate rules"
+      }
+    },
+    "FC_Active_Power": {
+      "high": {
+        "candidate": true,
+        "extreme_event_count": 368,
+        "extreme_event_ratio": 0.003653113087674714,
+        "reason": "passes high target candidate rules"
+      },
+      "low": {
+        "candidate": true,
+        "extreme_event_count": 368,
+        "extreme_event_ratio": 0.003653113087674714,
+        "reason": "passes low target candidate rules"
+      }
+    },
+    "FC_Active_Power_FC_end_Set_Response": {
+      "high": {
+        "candidate": false,
+        "extreme_event_count": 0,
+        "extreme_event_ratio": 0.0,
+        "reason": "does not pass high target candidate rules"
+      },
+      "low": {
+        "candidate": false,
+        "extreme_event_count": 0,
+        "extreme_event_ratio": 0.0,
+        "reason": "does not pass low target candidate rules"
+      }
+    },
+    "Island_mode_MCCB_Active_Power": {
+      "high": {
+        "candidate": true,
+        "extreme_event_count": 159,
+        "extreme_event_ratio": 0.0031301061086284622,
+        "reason": "passes high target candidate rules"
+      },
+      "low": {
+        "candidate": true,
+        "extreme_event_count": 239,
+        "extreme_event_ratio": 0.0047050022639132235,
+        "reason": "passes low target candidate rules"
+      }
+    },
+    "MG-LV-MSB_AC_Voltage": {
+      "high": {
+        "candidate": true,
+        "extreme_event_count": 343,
+        "extreme_event_ratio": 0.006737644378093816,
+        "reason": "passes high target candidate rules"
+      },
+      "low": {
+        "candidate": true,
+        "extreme_event_count": 111,
+        "extreme_event_ratio": 0.002180403865797124,
+        "reason": "passes low target candidate rules"
+      }
+    },
+    "Receiving_Point_AC_Voltage": {
+      "high": {
+        "candidate": true,
+        "extreme_event_count": 307,
+        "extreme_event_ratio": 0.00603404221864067,
+        "reason": "passes high target candidate rules"
+      },
+      "low": {
+        "candidate": true,
+        "extreme_event_count": 132,
+        "extreme_event_ratio": 0.0025944416054090175,
+        "reason": "passes low target candidate rules"
+      }
+    },
+    "Island_mode_MCCB_AC_Voltage": {
+      "high": {
+        "candidate": true,
+        "extreme_event_count": 341,
+        "extreme_event_ratio": 0.006697568448756727,
+        "reason": "passes high target candidate rules"
+      },
+      "low": {
+        "candidate": true,
+        "extreme_event_count": 116,
+        "extreme_event_ratio": 0.0022783517303688575,
+        "reason": "passes low target candidate rules"
+      }
+    },
+    "Island_mode_MCCB_Frequency": {
+      "high": {
+        "candidate": true,
+        "extreme_event_count": 158,
+        "extreme_event_ratio": 0.0031184620850274345,
+        "reason": "passes high target candidate rules"
+      },
+      "low": {
+        "candidate": true,
+        "extreme_event_count": 175,
+        "extreme_event_ratio": 0.0034539928156949434,
+        "reason": "passes low target candidate rules"
+      }
+    },
+    "MG-LV-MSB_Frequency": {
+      "high": {
+        "candidate": false,
+        "extreme_event_count": 40,
+        "extreme_event_ratio": 0.000792675676746859,
+        "reason": "does not pass high target candidate rules"
+      },
+      "low": {
+        "candidate": true,
+        "extreme_event_count": 191,
+        "extreme_event_ratio": 0.003785026356466252,
+        "reason": "passes low target candidate rules"
+      }
+    },
+    "Inlet_Temperature_of_Chilled_Water": {
+      "high": {
+        "candidate": false,
+        "extreme_event_count": 9,
+        "extreme_event_ratio": 0.000178915770431187,
+        "reason": "does not pass high target candidate rules"
+      },
+      "low": {
+        "candidate": true,
+        "extreme_event_count": 142,
+        "extreme_event_ratio": 0.002822893266803173,
+        "reason": "passes low target candidate rules"
+      }
+    },
+    "Outlet_Temperature": {
+      "high": {
+        "candidate": false,
+        "extreme_event_count": 18,
+        "extreme_event_ratio": 0.0003544074504321802,
+        "reason": "does not pass high target candidate rules"
+      },
+      "low": {
+        "candidate": true,
+        "extreme_event_count": 376,
+        "extreme_event_ratio": 0.007403177853472208,
+        "reason": "passes low target candidate rules"
+      }
+    }
+  }
+}
