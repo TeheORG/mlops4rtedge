@@ -194,6 +194,7 @@ jobs:
       # STEP 3: check5
       # =========================================================
       - name: Verificar resultados
+        if: always()
         run: make check5 VARIANT=${{ inputs.variant_id }}
 
       - name: PR — publicar check
