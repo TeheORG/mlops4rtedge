@@ -530,20 +530,25 @@ check-results-generic: check-variant-format
 	@test -n "$(VARIANT)" || (echo "[ERROR] VARIANT not defined"; exit 1)
 
 	@VARIANT_NORM="$$($(NORMALIZE_VARIANT))"; \
+	CHECK_RESULTS_LOG="$(VARIANTS_DIR)/$$VARIANT_NORM/check_results.log"; \
 	$(UPDATE_VARIANT_VERIFIED) $(PHASE) $$VARIANT_NORM none >/dev/null 2>&1 || true; \
 	echo "==> Regenerating lineage dashboard"; \
 	$(MAKE) --no-print-directory generate_lineage || true; \
-	if ! $(PYTHON) -m scripts.core.phase_checker \
+	echo "==> Writing check report to $$CHECK_RESULTS_LOG"; \
+	mkdir -p "$$(dirname "$$CHECK_RESULTS_LOG")"; \
+	if ! (set -o pipefail; $(PYTHON) -m scripts.core.phase_checker \
 		--spec $(CHECK_FILE) \
 		--phase $(PHASE) \
-		--variant-dir "$(VARIANTS_DIR)/$$VARIANT_NORM"; then \
+		--variant-dir "$(VARIANTS_DIR)/$$VARIANT_NORM" 2>&1 | tee "$$CHECK_RESULTS_LOG"); then \
 		$(UPDATE_VARIANT_VERIFIED) $(PHASE) $$VARIANT_NORM false >/dev/null 2>&1 || true; \
 		echo "==> Regenerating lineage dashboard"; \
 		$(MAKE) --no-print-directory generate_lineage || true; \
 		echo "[ERROR] Phase checker validation failed"; \
+		echo "[INFO] Check report saved to $$CHECK_RESULTS_LOG"; \
 		exit 1; \
 	fi; \
 	$(UPDATE_VARIANT_VERIFIED) $(PHASE) $$VARIANT_NORM true >/dev/null 2>&1 || true; \
+	echo "[INFO] Check report saved to $$CHECK_RESULTS_LOG"; \
 	echo "==> Regenerating lineage dashboard"; \
 	$(MAKE) --no-print-directory generate_lineage || true
 
