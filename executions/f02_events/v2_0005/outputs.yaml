@@ -1,0 +1,234 @@
+phase: f02_events
+variant: v2_0005
+artifacts:
+  events:
+    path: 02_events.parquet
+    sha256: 96f90d2c58941f224bab403659f38eb0dff572f8d2e0ec3f4e16f59d80a3fa85
+  catalog:
+    path: 02_events_catalog.json
+    sha256: b8526dcb2a3e78f27bb635240321d60a0bd7c4a8601c97d33b471b1e7c805b3c
+  stats:
+    path: 02_events_stats.json
+    sha256: 6fb078b467f7633bba264806dca63da119b31391c88172aad70c0aa9aa57a27a
+  report:
+    path: 02_events_report.html
+    sha256: 31d68f48f1172432851810377d588a4e66af227eaa4e10f65cbc6edea24ca310
+exports:
+  Tu: 10
+  n_events: 50000
+  n_types: 97
+  n_types_observed: 74
+  target_candidates:
+    Battery_Active_Power:
+      high:
+        candidate: false
+        extreme_event_count: 0
+        extreme_event_ratio: 0.0
+        reason: does not pass high target candidate rules
+      low:
+        candidate: false
+        extreme_event_count: 0
+        extreme_event_ratio: 0.0
+        reason: does not pass low target candidate rules
+    Battery_Active_Power_Set_Response:
+      high:
+        candidate: false
+        extreme_event_count: 0
+        extreme_event_ratio: 0.0
+        reason: does not pass high target candidate rules
+      low:
+        candidate: false
+        extreme_event_count: 0
+        extreme_event_ratio: 0.0
+        reason: does not pass low target candidate rules
+    PVPCS_Active_Power:
+      high:
+        candidate: true
+        extreme_event_count: 260
+        extreme_event_ratio: 0.005137324639399328
+        reason: passes high target candidate rules
+      low:
+        candidate: false
+        extreme_event_count: 45
+        extreme_event_ratio: 0.0008891523414344991
+        reason: does not pass low target candidate rules
+    GE_Body_Active_Power:
+      high:
+        candidate: false
+        extreme_event_count: 0
+        extreme_event_ratio: 0.0
+        reason: does not pass high target candidate rules
+      low:
+        candidate: false
+        extreme_event_count: 0
+        extreme_event_ratio: 0.0
+        reason: does not pass low target candidate rules
+    GE_Active_Power:
+      high:
+        candidate: false
+        extreme_event_count: 0
+        extreme_event_ratio: 0.0
+        reason: does not pass high target candidate rules
+      low:
+        candidate: false
+        extreme_event_count: 0
+        extreme_event_ratio: 0.0
+        reason: does not pass low target candidate rules
+    GE_Body_Active_Power_Set_Response:
+      high:
+        candidate: false
+        extreme_event_count: 0
+        extreme_event_ratio: 0.0
+        reason: does not pass high target candidate rules
+      low:
+        candidate: false
+        extreme_event_count: 0
+        extreme_event_ratio: 0.0
+        reason: does not pass low target candidate rules
+    FC_Active_Power_FC_END_Set:
+      high:
+        candidate: false
+        extreme_event_count: 0
+        extreme_event_ratio: 0.0
+        reason: does not pass high target candidate rules
+      low:
+        candidate: false
+        extreme_event_count: 0
+        extreme_event_ratio: 0.0
+        reason: does not pass low target candidate rules
+    FC_Active_Power:
+      high:
+        candidate: true
+        extreme_event_count: 368
+        extreme_event_ratio: 0.003653113087674714
+        reason: passes high target candidate rules
+      low:
+        candidate: true
+        extreme_event_count: 368
+        extreme_event_ratio: 0.003653113087674714
+        reason: passes low target candidate rules
+    FC_Active_Power_FC_end_Set_Response:
+      high:
+        candidate: false
+        extreme_event_count: 0
+        extreme_event_ratio: 0.0
+        reason: does not pass high target candidate rules
+      low:
+        candidate: false
+        extreme_event_count: 0
+        extreme_event_ratio: 0.0
+        reason: does not pass low target candidate rules
+    Island_mode_MCCB_Active_Power:
+      high:
+        candidate: true
+        extreme_event_count: 159
+        extreme_event_ratio: 0.0031301061086284622
+        reason: passes high target candidate rules
+      low:
+        candidate: true
+        extreme_event_count: 239
+        extreme_event_ratio: 0.0047050022639132235
+        reason: passes low target candidate rules
+    MG-LV-MSB_AC_Voltage:
+      high:
+        candidate: true
+        extreme_event_count: 343
+        extreme_event_ratio: 0.006737644378093816
+        reason: passes high target candidate rules
+      low:
+        candidate: true
+        extreme_event_count: 111
+        extreme_event_ratio: 0.002180403865797124
+        reason: passes low target candidate rules
+    Receiving_Point_AC_Voltage:
+      high:
+        candidate: true
+        extreme_event_count: 307
+        extreme_event_ratio: 0.00603404221864067
+        reason: passes high target candidate rules
+      low:
+        candidate: true
+        extreme_event_count: 132
+        extreme_event_ratio: 0.0025944416054090175
+        reason: passes low target candidate rules
+    Island_mode_MCCB_AC_Voltage:
+      high:
+        candidate: true
+        extreme_event_count: 341
+        extreme_event_ratio: 0.006697568448756727
+        reason: passes high target candidate rules
+      low:
+        candidate: true
+        extreme_event_count: 116
+        extreme_event_ratio: 0.0022783517303688575
+        reason: passes low target candidate rules
+    Island_mode_MCCB_Frequency:
+      high:
+        candidate: true
+        extreme_event_count: 158
+        extreme_event_ratio: 0.0031184620850274345
+        reason: passes high target candidate rules
+      low:
+        candidate: true
+        extreme_event_count: 175
+        extreme_event_ratio: 0.0034539928156949434
+        reason: passes low target candidate rules
+    MG-LV-MSB_Frequency:
+      high:
+        candidate: false
+        extreme_event_count: 40
+        extreme_event_ratio: 0.000792675676746859
+        reason: does not pass high target candidate rules
+      low:
+        candidate: true
+        extreme_event_count: 191
+        extreme_event_ratio: 0.003785026356466252
+        reason: passes low target candidate rules
+    Inlet_Temperature_of_Chilled_Water:
+      high:
+        candidate: false
+        extreme_event_count: 9
+        extreme_event_ratio: 0.000178915770431187
+        reason: does not pass high target candidate rules
+      low:
+        candidate: true
+        extreme_event_count: 142
+        extreme_event_ratio: 0.002822893266803173
+        reason: passes low target candidate rules
+    Outlet_Temperature:
+      high:
+        candidate: false
+        extreme_event_count: 18
+        extreme_event_ratio: 0.0003544074504321802
+        reason: does not pass high target candidate rules
+      low:
+        candidate: true
+        extreme_event_count: 376
+        extreme_event_ratio: 0.007403177853472208
+        reason: passes low target candidate rules
+  parent_f01: v1_0004
+metrics:
+  execution_time: 1.1734867369999904
+  n_rows_in: 50000
+  n_rows_out: 50000
+  total_events_generated: 857063
+  mean_events_per_row: 17.14126
+  empty_rows_ratio: 0.0
+  n_event_types_observed: 74
+  catalog_coverage_ratio: 0.7628865979381443
+  top1_event_ratio: 0.05833876856193769
+  rare_event_ratio: 0.45441233608264503
+  eventless_measure_ratio: 0.17647058823529413
+  non_eventless_measure_ratio: 0.8235294117647058
+  high_rare_measure_ratio: 0.5882352941176471
+  low_rare_measure_ratio: 0.5882352941176471
+  high_rare_event_ratio: 0.0023370510685912236
+  low_rare_event_ratio: 0.002211039328497438
+  f02_quality_score: 0.8742262848571714
+  f02_gate_status: candidate
+  event_entropy: 3.216322963068594
+  normalized_event_entropy: 0.7472756320871987
+  n_transition_events: 7063
+  jump_size_mean: 1.1042050120345461
+provenance:
+  generated_at: '2026-06-05T09:58:00.610186+00:00'
