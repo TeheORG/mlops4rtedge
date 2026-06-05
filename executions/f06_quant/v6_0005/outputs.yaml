@@ -1,0 +1,29 @@
+phase: f06_quant
+variant: v6_0005
+artifacts:
+  calibration_dataset:
+    path: 06_calibration_dataset.parquet
+    sha256: e15f140c50e2e0525e30cc9b11eb09fb20c45033e2e32bd40aee81a50c819c21
+  report:
+    path: 06_quant_report.html
+    sha256: 5fa879da09f341eaacbedc95fad9a2d81a1c55ae93628e0025bec4a983eebe48
+exports:
+  Tu: 10
+  OW: 900
+  LT: 100
+  PW: 150
+  event_type_count: 119
+  prediction_name: thermal_fault
+  runtime_model_name: thermal_fault-sequence_embedding-v5_0006
+  model_family: sequence_embedding
+  edge_capable: false
+  incompatibility_reason: 'Parent F05 no produjo un modelo entrenable: Dataset monoclase:
+    solo contiene la clase 0 con 165051 muestra(s)'
+metrics:
+  execution_time: 0.09145314300002383
+  tflm_compatible: false
+  operators_detected: 0
+  unsupported_operators: 0
+  n_calibration_samples: 165051
+  single_input_output_int8: false
+  single_input_output_integer: false
