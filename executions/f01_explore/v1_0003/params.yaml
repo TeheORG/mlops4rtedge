@@ -1,0 +1,12 @@
+phase: f01_explore
+variant: v1_0003
+parent: null
+parameters:
+  raw_path: data/raw.csv
+  cleaning: strict
+  nan_values:
+  - -999999
+  - -1
+  - 0
+  error_values: {}
+parent_hashes: {}
