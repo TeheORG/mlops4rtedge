@@ -1,0 +1,62 @@
+phase: f05_modeling
+variant: v5_0006
+parent: v4_0004
+parameters:
+  parent_variant: v4_0004
+  Tu: 10
+  OW: 900
+  LT: 100
+  PW: 150
+  prediction_name: thermal_fault
+  event_type_count: 119
+  model_family: sequence_embedding
+  automl:
+    enabled: true
+    max_trials: 8
+    seed: 42
+  search_space:
+    common:
+      batch_size:
+      - 128
+      - 256
+      learning_rate:
+      - 0.001
+      - 0.0005
+      n_layers:
+      - 1
+      - 2
+      units:
+      - 64
+      - 128
+      dropout:
+      - 0
+      - 0.2
+    dense_bow: {}
+    sequence_embedding:
+      embed_dim:
+      - 32
+      - 64
+      - 128
+    cnn1d:
+      embed_dim:
+      - 64
+      filters:
+      - 64
+      - 128
+      kernel_size:
+      - 3
+      - 5
+  training:
+    epochs: 10
+    max_samples: null
+  deduplication_mode: none
+  seed: 42
+  evaluation:
+    split:
+      train: 0.7
+      val: 0.15
+      test: 0.15
+  imbalance_strategy: rare_events
+  imbalance_max_majority_samples: null
+parent_hashes:
+  v4_0004: fb67a9c386d0a62398c564fd7217aa2cc77963e28d1e0ed084e376979fa57943
