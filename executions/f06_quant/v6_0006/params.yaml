@@ -1,0 +1,33 @@
+phase: f06_quant
+variant: v6_0006
+parent: v5_0007
+parameters:
+  parent_variant: v5_0007
+  Tu: 10
+  OW: 900
+  LT: 100
+  PW: 150
+  prediction_name: power_surge
+  event_type_count: 119
+  deployment:
+    target: esp32
+    runtime: esp-tflite-micro
+    runtime_version: 1.3.3
+    require_int8: true
+    memory_limit_bytes: 524288
+  quantization:
+    tflite_optimization: DEFAULT
+    representative_dataset: val
+    calibration_samples: 512
+    symmetric_int8: true
+    per_channel: true
+    keep_float_fallback: false
+  thresholding:
+    strategy: recalibrate_on_quantized
+    maximize_metric: recall
+    grid_points: 101
+  eedu:
+    version: 1.0
+    layout: compact
+parent_hashes:
+  v5_0007: ddc7db6eba6a603217d1a1f472dcfccf9289378c8d724bbfe6c02efdafe6c913
