@@ -1,0 +1,145 @@
+phase: f05_modeling
+variant: v5_0007
+artifacts:
+  model:
+    path: 05_modeling_model.h5
+    sha256: 018b9299735f5d579ddd9ad1837245b2f4ae4426f70e2da11a7ae93af703ab7b
+  labeled_dataset:
+    path: 05_modeling_training_dataset.parquet
+    sha256: d27cdb3aab4e53a5ee7e3a054b543fe0455fa469194c8d6a341a6ed2f0ea8634
+  history:
+    path: 05_modeling_history.json
+    sha256: 5c6b78a0e134c974d2f0b6c53aa8de0c0369f1453d5263f363341c8db1a422e6
+  split_hash_leakage:
+    path: 05_modeling_split_hash_leakage.json
+    sha256: 19ba3e03989ba5d6295cea62d080dadc4b923073c1407208a6d357903b3ffc1c
+  report:
+    path: 05_modeling_report.html
+    sha256: c34d28e2d87ddbad93df2e656ebac8633b1a4fe24b2c61f2c23223a05b9b106f
+exports:
+  Tu: 10
+  OW: 900
+  LT: 100
+  PW: 150
+  event_type_count: 119
+  prediction_name: power_surge
+  measure_name: power_surge
+  model_family: cnn1d
+  window_strategy: synchro
+  deduplication_mode: none
+  deduplication_mode_effective: none
+  seed: 7
+  trainable: true
+  possible_split_leakage: false
+  high_split_leakage_warning: false
+  decision_threshold: 0.5
+  threshold_source: fixed
+  threshold_policy: fixed_0_5
+  best_val_recall: 0.7915407854984894
+  val_precision: 0.8534201954397395
+  val_recall: 0.7915407854984894
+  val_f1: 0.8213166144200627
+  test_precision: 0.796875
+  test_recall: 0.770392749244713
+  test_f1: 0.783410138248848
+  imbalance_strategy: rare_events
+  parent_f04: v4_0005
+  parent_f03: v3_0005
+  parent_f02: v2_0004
+  parent_f01: v1_0003
+metrics:
+  execution_time: 1743.097149897
+  mejor_modelo_f1:
+    f1: 0.8240887480190174
+    recall: 0.7854984894259819
+    precision: 0.8666666666666667
+  mejor_modelo_precision:
+    f1: 0.8240887480190174
+    recall: 0.7854984894259819
+    precision: 0.8666666666666667
+  mejor_modelo_recall:
+    f1: 0.8213166144200627
+    recall: 0.7915407854984894
+    precision: 0.8534201954397395
+  n_train: 21544
+  n_val: 24758
+  n_test: 24758
+  n_exact_train: 0
+  n_exact_val: 0
+  n_exact_test: 0
+  n_exact_intersection_train_val: 0
+  n_exact_intersection_train_test: 0
+  n_exact_intersection_val_test: 0
+  n_exact_intersection_all_three: 0
+  n_unordered_train: 0
+  n_unordered_val: 0
+  n_unordered_test: 0
+  n_unordered_intersection_train_val: 0
+  n_unordered_intersection_train_test: 0
+  n_unordered_intersection_val_test: 0
+  n_unordered_intersection_all_three: 0
+  n_near_pairs_train_val: 0
+  n_near_pairs_train_test: 0
+  n_near_pairs_val_test: 0
+  n_near_pairs_total: 0
+  max_split_overlap_pct: 0.0
+  positive_ratio_train: 0.07166728555514296
+  positive_ratio_val: 0.013369415946360772
+  positive_ratio_test: 0.013369415946360772
+  val_positive_ratio: 0.013369415946360772
+  test_positive_ratio: 0.013369415946360772
+  val_cap_used: false
+  test_cap_used: false
+  val_max_samples: null
+  test_max_samples: null
+  val_positive_ratio_before: 0.013369415946360772
+  val_positive_ratio_after: 0.013369415946360772
+  test_positive_ratio_before: 0.013369415946360772
+  test_positive_ratio_after: 0.013369415946360772
+  tp: 255
+  tn: 24362
+  fp: 65
+  fn: 76
+  n_samples_before_dedup: 115535
+  n_samples_after_dedup: 115535
+  n_removed_by_dedup: 0
+  removed_ratio_by_dedup: 0.0
+  train_n_samples_before_dedup: 115535
+  train_n_samples_after_dedup: 115535
+  train_n_removed_by_dedup: 0
+  train_removed_ratio_by_dedup: 0.0
+provenance:
+  generated_at: '2026-06-05T11:08:10.415320+00:00'
+  parent_phase: f04_targets
+  parent_variant: v4_0005
+mlflow_registration:
+  experiment_name: F05_power_surge
+  run_name: power_surge__v5_0007
+  metrics:
+    val_precision: 0.8534201954397395
+    val_recall: 0.7915407854984894
+    val_f1: 0.8213166144200627
+    test_precision: 0.796875
+    test_recall: 0.770392749244713
+    test_f1: 0.783410138248848
+    test_tp: 255
+    test_tn: 24362
+    test_fp: 65
+    test_fn: 76
+  params:
+    batch_size: 256
+    learning_rate: 0.0005
+    n_layers: 2
+    units: 128
+    dropout: 0.2
+    embed_dim: 64
+    filters: 256
+    kernel_size: 5
+    model_family: cnn1d
+    decision_threshold: 0.5
+    threshold_source: fixed
+    threshold_policy: fixed_0_5
+  artifacts:
+  - /__w/mlops4rtedge/mlops4rtedge/executions/f05_modeling/v5_0007/05_modeling_model.h5
+  - /__w/mlops4rtedge/mlops4rtedge/executions/f05_modeling/v5_0007/05_modeling_history.json
+  - /__w/mlops4rtedge/mlops4rtedge/executions/f05_modeling/v5_0007/05_modeling_trials_summary.json
