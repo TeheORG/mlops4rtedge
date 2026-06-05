@@ -1,0 +1,40 @@
+phase: f05_modeling
+variant: v5_0006
+artifacts:
+  labeled_dataset:
+    path: 05_modeling_training_dataset.parquet
+    sha256: e15f140c50e2e0525e30cc9b11eb09fb20c45033e2e32bd40aee81a50c819c21
+  report:
+    path: 05_modeling_report.html
+    sha256: 8fb505b087307c76be2f14727cb265fdf706872cee38444f760ea0a92d6380a3
+exports:
+  Tu: 10
+  OW: 900
+  LT: 100
+  PW: 150
+  event_type_count: 119
+  prediction_name: thermal_fault
+  model_family: sequence_embedding
+  trainable: false
+  incompatibility_reason: 'Dataset monoclase: solo contiene la clase 0 con 165051
+    muestra(s)'
+metrics:
+  execution_time: 0.1695066949999955
+  mejor_modelo_f1: null
+  mejor_modelo_precision: null
+  mejor_modelo_recall: null
+  n_train: 0
+  n_val: 0
+  n_test: 0
+  positive_ratio_train: 0.0
+  tp: 0
+  tn: 0
+  fp: 0
+  fn: 0
+  n_samples_total: 165051
+  positive_samples: 0
+  negative_samples: 165051
+provenance:
+  generated_at: '2026-06-05T10:38:24.717351+00:00'
+  parent_phase: f04_targets
+  parent_variant: v4_0004
