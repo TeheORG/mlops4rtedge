@@ -241,8 +241,17 @@ jobs:
       # STEP 3: check8
       # =========================================================
       - name: Verificar resultados
+        id: run-check
         if: always()
-        run: make check8 VARIANT=${{ inputs.variant_id }}
+        run: |
+          set +e
+          make check8 VARIANT=${{ inputs.variant_id }}
+          rc=$?
+          echo "exit_code=$rc" >> "$GITHUB_OUTPUT"
+          if [ "$rc" -ne 0 ]; then
+            echo "[WARN] check8 failed with exit code $rc; continuing so verification metadata can be published"
+          fi
+          exit 0
 
       - name: PR — publicar check
         id: pr-check
@@ -281,10 +290,12 @@ jobs:
       # STEP 4: register8
       # =========================================================
       - name: Registrar resultados de F8
+        if: ${{ steps.run-check.outputs.exit_code == '0' }}
         run: make register8 VARIANT=${{ inputs.variant_id }}
 
       - name: PR — publicar register
         id: pr-register
+        if: ${{ steps.run-check.outputs.exit_code == '0' }}
         uses: ./.github/actions/commit-and-pr
         with:
           variant_id: ${{ inputs.variant_id }}
@@ -299,7 +310,7 @@ jobs:
           checkout_branch: ${{ inputs.checkout_branch }}
 
       - name: Merge PR de register
-        if: ${{ steps.pr-register.outputs.PR_NUMBER != '' }}
+        if: ${{ steps.run-check.outputs.exit_code == '0' && steps.pr-register.outputs.PR_NUMBER != '' }}
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |

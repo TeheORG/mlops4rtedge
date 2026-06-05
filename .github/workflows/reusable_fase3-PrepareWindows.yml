@@ -190,8 +190,17 @@ jobs:
       # STEP 3: check3
       # =========================================================
       - name: Verificar resultados de Fase 3
+        id: run-check
         if: always()
-        run: make check3 VARIANT=${{ inputs.variant_id }}
+        run: |
+          set +e
+          make check3 VARIANT=${{ inputs.variant_id }}
+          rc=$?
+          echo "exit_code=$rc" >> "$GITHUB_OUTPUT"
+          if [ "$rc" -ne 0 ]; then
+            echo "[WARN] check3 failed with exit code $rc; continuing so verification metadata can be published"
+          fi
+          exit 0
 
       - name: PR — publicar check
         id: pr-check
@@ -230,10 +239,12 @@ jobs:
       # STEP 4: register3
       # =========================================================
       - name: Registrar resultados de Fase 3
+        if: ${{ steps.run-check.outputs.exit_code == '0' }}
         run: make register3 VARIANT=${{ inputs.variant_id }}
 
       - name: PR — publicar register
         id: pr-register
+        if: ${{ steps.run-check.outputs.exit_code == '0' }}
         uses: ./.github/actions/commit-and-pr
         with:
           variant_id: ${{ inputs.variant_id }}
@@ -248,7 +259,7 @@ jobs:
           checkout_branch: ${{ inputs.checkout_branch }}
 
       - name: Merge PR de register
-        if: ${{ steps.pr-register.outputs.PR_NUMBER != '' }}
+        if: ${{ steps.run-check.outputs.exit_code == '0' && steps.pr-register.outputs.PR_NUMBER != '' }}
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
