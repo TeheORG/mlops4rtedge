@@ -127,9 +127,12 @@ jobs:
       # STEP 1: variant4
       # =========================================================
       - name: Crear variante Fase 4
+        env:
+          PARAMS_JSON: ${{ inputs.params_json }}
         run: |
           python - <<'PY'
           import json
+          import os
           import subprocess
           import sys
 
@@ -140,7 +143,7 @@ jobs:
                   return json.dumps(value, ensure_ascii=False, separators=(",", ":"))
               return str(value)
 
-          raw = '''${{ inputs.params_json }}'''.strip()
+          raw = os.environ.get("PARAMS_JSON", "").strip()
           params = json.loads(raw) if raw else {}
 
           if isinstance(params, str):
