@@ -1,0 +1,62 @@
+phase: f05_modeling
+variant: v5_0007
+parent: v4_0005
+parameters:
+  parent_variant: v4_0005
+  Tu: 10
+  OW: 900
+  LT: 100
+  PW: 150
+  prediction_name: power_surge
+  event_type_count: 119
+  model_family: cnn1d
+  automl:
+    enabled: true
+    max_trials: 5
+    seed: 7
+  search_space:
+    common:
+      batch_size:
+      - 256
+      - 512
+      learning_rate:
+      - 0.0005
+      - 0.0001
+      n_layers:
+      - 2
+      - 3
+      units:
+      - 128
+      - 256
+      dropout:
+      - 0.1
+      - 0.2
+    dense_bow: {}
+    sequence_embedding:
+      embed_dim:
+      - 64
+      - 128
+    cnn1d:
+      embed_dim:
+      - 64
+      filters:
+      - 64
+      - 128
+      - 256
+      kernel_size:
+      - 5
+      - 7
+  training:
+    epochs: 20
+    max_samples: null
+  deduplication_mode: none
+  seed: 7
+  evaluation:
+    split:
+      train: 0.7
+      val: 0.15
+      test: 0.15
+  imbalance_strategy: rare_events
+  imbalance_max_majority_samples: null
+parent_hashes:
+  v4_0005: c62cc06cd80e89d53612bab488768c2066bea3e519f977855c98ea1c4022f257
