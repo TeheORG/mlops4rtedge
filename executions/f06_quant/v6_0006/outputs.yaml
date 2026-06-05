@@ -1,0 +1,60 @@
+phase: f06_quant
+variant: v6_0006
+artifacts:
+  calibration_dataset:
+    path: 06_calibration_dataset.parquet
+    sha256: d27cdb3aab4e53a5ee7e3a054b543fe0455fa469194c8d6a341a6ed2f0ea8634
+  report:
+    path: 06_quant_report.html
+    sha256: c6cfb979a96318fcfea358f0c5478cac9582e7acbbc19371e27e64dacc791622
+  model_float:
+    path: 06_model_float.h5
+    sha256: 018b9299735f5d579ddd9ad1837245b2f4ae4426f70e2da11a7ae93af703ab7b
+  model_tflite:
+    path: 06_model_tflite.tflite
+    sha256: d98f5ef957d436d667a4afa06ed9bafda9668bba2ffe7981b0752fffc3f01007
+  eedu_manifest:
+    path: eedu/eedu_manifest.yaml
+    sha256: 83b9693000d74aa8e949f5dcf2b689e617e6ebb6b0d67db38302b942cf047aaa
+exports:
+  Tu: 10
+  OW: 900
+  LT: 100
+  PW: 150
+  event_type_count: 119
+  prediction_name: power_surge
+  runtime_model_name: power_surge-cnn1d-v5_0007
+  model_family: cnn1d
+  edge_capable: true
+  decision_threshold: 0.6735848784446716
+  model_size_bytes: 152424
+  arena_estimated_bytes: 228636
+  footprint_estimated_bytes: 381060
+  operators:
+  - CAST
+  - CONV_2D
+  - DEQUANTIZE
+  - EXPAND_DIMS
+  - FULLY_CONNECTED
+  - GATHER
+  - LOGISTIC
+  - REDUCE_MAX
+  - RESHAPE
+  input_dtype: int8
+  output_dtype: int8
+  input_shape:
+  - 1
+  - 68
+  output_shape:
+  - 1
+  - 1
+  input_bytes: 68
+  output_bytes: 1
+metrics:
+  execution_time: 10.310004614000007
+  tflm_compatible: true
+  operators_detected: 8
+  unsupported_operators: 0
+  n_calibration_samples: 71060
+  single_input_output_int8: true
+  single_input_output_integer: true
