@@ -1,0 +1,21 @@
+{
+  "trial_id": 4,
+  "hyperparameters": {
+    "batch_size": 256,
+    "learning_rate": 0.001,
+    "n_layers": 1,
+    "units": 64,
+    "dropout": 0.0,
+    "embed_dim": 64,
+    "filters": 128,
+    "kernel_size": 5
+  },
+  "decision_threshold": 0.5,
+  "threshold_source": "fixed",
+  "threshold_policy": "fixed_0_5",
+  "val_precision": 0.8775510204081632,
+  "val_recall": 0.706700379266751,
+  "val_f1": 0.7829131652661064,
+  "epochs": 10,
+  "batch_size": 256
+}

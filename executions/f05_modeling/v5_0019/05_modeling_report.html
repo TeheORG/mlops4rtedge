@@ -1,0 +1,59 @@
+
+    <html>
+    <body>
+      <h1>F05 Modeling — v5_0019</h1>
+      <p><b>Parent F04:</b> v4_0019</p>
+      <p><b>Prediction:</b> battery_overheat</p>
+      <p><b>Model family:</b> cnn1d</p>
+      <h2>Geometry</h2>
+      <ul>
+        <li>Tu = 10</li>
+        <li>OW = 600</li>
+        <li>LT = 100</li>
+        <li>PW = 100</li>
+      </ul>
+      <h2>AutoML</h2>
+      <pre>{
+  "batch_size": 256,
+  "learning_rate": 0.001,
+  "n_layers": 1,
+  "units": 128,
+  "dropout": 0.2,
+  "embed_dim": 64,
+  "filters": 128,
+  "kernel_size": 5
+}</pre>
+      <h2>Validation @0.5</h2>
+      <p>val_precision = 0.8681</p>
+      <p>val_recall = 0.7408</p>
+      <p>val_f1 = 0.7995</p>
+      <h2>Test @0.5</h2>
+      <ul>
+        <li>precision = 0.8783</li>
+        <li>recall = 0.7118</li>
+        <li>f1 = 0.7863</li>
+                <li>tp = 563</li>
+                <li>tn = 4777</li>
+                <li>fp = 78</li>
+                <li>fn = 228</li>
+      </ul>
+      <h2>Threshold</h2>
+      <ul>
+        <li>decision_threshold = 0.5</li>
+        <li>threshold_source = fixed</li>
+        <li>threshold_policy = fixed_0_5</li>
+      </ul>
+      <h2>Split Leakage Audit</h2>
+      <ul>
+        <li>possible_split_leakage = False</li>
+        <li>high_split_leakage_warning = False</li>
+        <li>max_overlap_pct = 0.0000</li>
+      </ul>
+      <h3>exact_duplicates</h3><p><em>Análisis desactivado.</em></p>
+      <h3>unordered_duplicates</h3><p><em>Análisis desactivado.</em></p>
+      <h3>near_duplicates</h3><p><em>Análisis desactivado.</em></p>
+      <h2>Execution</h2>
+      <p>execution_time = 383.5 s</p>
+    </body>
+    </html>
+    

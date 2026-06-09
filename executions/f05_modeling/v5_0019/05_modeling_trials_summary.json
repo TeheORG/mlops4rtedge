@@ -1,0 +1,107 @@
+[
+  {
+    "trial_id": 0,
+    "hyperparameters": {
+      "batch_size": 128,
+      "learning_rate": 0.0005,
+      "n_layers": 2,
+      "units": 64,
+      "dropout": 0.0,
+      "embed_dim": 64,
+      "filters": 128,
+      "kernel_size": 3
+    },
+    "decision_threshold": 0.5,
+    "threshold_source": "fixed",
+    "threshold_policy": "fixed_0_5",
+    "val_precision": 0.8564668769716088,
+    "val_recall": 0.6864728192161821,
+    "val_f1": 0.7621052631578947,
+    "epochs": 10,
+    "batch_size": 128
+  },
+  {
+    "trial_id": 1,
+    "hyperparameters": {
+      "batch_size": 256,
+      "learning_rate": 0.001,
+      "n_layers": 1,
+      "units": 128,
+      "dropout": 0.2,
+      "embed_dim": 64,
+      "filters": 128,
+      "kernel_size": 5
+    },
+    "decision_threshold": 0.5,
+    "threshold_source": "fixed",
+    "threshold_policy": "fixed_0_5",
+    "val_precision": 0.8681481481481481,
+    "val_recall": 0.7408343868520859,
+    "val_f1": 0.7994542974079127,
+    "epochs": 10,
+    "batch_size": 256
+  },
+  {
+    "trial_id": 2,
+    "hyperparameters": {
+      "batch_size": 256,
+      "learning_rate": 0.0005,
+      "n_layers": 2,
+      "units": 64,
+      "dropout": 0.2,
+      "embed_dim": 64,
+      "filters": 64,
+      "kernel_size": 5
+    },
+    "decision_threshold": 0.5,
+    "threshold_source": "fixed",
+    "threshold_policy": "fixed_0_5",
+    "val_precision": 0.887459807073955,
+    "val_recall": 0.6978508217446271,
+    "val_f1": 0.7813163481953291,
+    "epochs": 10,
+    "batch_size": 256
+  },
+  {
+    "trial_id": 3,
+    "hyperparameters": {
+      "batch_size": 128,
+      "learning_rate": 0.001,
+      "n_layers": 2,
+      "units": 128,
+      "dropout": 0.2,
+      "embed_dim": 64,
+      "filters": 64,
+      "kernel_size": 5
+    },
+    "decision_threshold": 0.5,
+    "threshold_source": "fixed",
+    "threshold_policy": "fixed_0_5",
+    "val_precision": 0.8928571428571429,
+    "val_recall": 0.695322376738306,
+    "val_f1": 0.7818052594171997,
+    "epochs": 10,
+    "batch_size": 128
+  },
+  {
+    "trial_id": 4,
+    "hyperparameters": {
+      "batch_size": 256,
+      "learning_rate": 0.001,
+      "n_layers": 1,
+      "units": 64,
+      "dropout": 0.0,
+      "embed_dim": 64,
+      "filters": 128,
+      "kernel_size": 5
+    },
+    "decision_threshold": 0.5,
+    "threshold_source": "fixed",
+    "threshold_policy": "fixed_0_5",
+    "val_precision": 0.8775510204081632,
+    "val_recall": 0.706700379266751,
+    "val_f1": 0.7829131652661064,
+    "epochs": 10,
+    "batch_size": 256
+  }
+]
