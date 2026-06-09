@@ -1423,7 +1423,7 @@ endif
 ifneq ($(TIME_SCALE),)
 	@$(eval EXTRA_FLAGS += time_scale_factor=$(TIME_SCALE))
 else
-	@echo "[INFO] TIME_SCALE not provided -> default=1.0"
+	@echo "[INFO] TIME_SCALE not provided -> schema default=0.01"
 endif
 
 ifneq ($(MAX_ROWS),)

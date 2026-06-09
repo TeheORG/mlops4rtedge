@@ -1046,7 +1046,7 @@ phases:
       # Geometría heredada desde F06
       # -------------------------------------------------
 
-      time_scale:
+      time_scale_factor:
         type: float
         required: false
         default: 0.01

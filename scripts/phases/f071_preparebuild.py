@@ -184,7 +184,7 @@ def main():
     params_data = load_variant_params(get_variant_dir, PHASE, variant, "F07")
     params = params_data.get("parameters", {})
 
-    time_scale = float(params.get("time_scale_factor", 1.0))
+    time_scale = float(params.get("time_scale_factor", 0.01))
 
     parent_variant = params_data.get("parent")
 
