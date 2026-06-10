@@ -3,7 +3,7 @@
 [INFO] Spec: makefile_check_phases.yml
 [OK] exists: 02_events_catalog.json
 [OK] exists: 02_events_report.html
-[OK] exists: 02_events.parquet
+[⭕️FAIL] missing required file: 02_events.parquet
 [OK] exists: outputs.yaml
 [OK] exists: metadata.yaml
 [OK] exists: params.yaml
@@ -14,6 +14,6 @@
 [OK] size: params.yaml (> 0B & < 1KB)
 
 ======####@@@@@@@@@@@@####======
-✅[SUCCESS] Validation passed
+❌[ERROR] Validation failed with 1 issue(s)
 ======####@@@@@@@@@@@@####======
 
