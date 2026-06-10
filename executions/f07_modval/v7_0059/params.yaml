@@ -1,0 +1,18 @@
+phase: f07_modval
+variant: v7_0059
+parent: v6_0022
+parameters:
+  parent_variant: v6_0022
+  time_scale_factor: 0.01
+  Tu: 10
+  OW: 600
+  LT: 100
+  PW: 100
+  prediction_name: battery_overheat
+  decision_threshold: 0.4859292805194855
+  event_type_count: 60
+  MTI_MS: 100
+  max_rows: 5000
+  platform: esp32
+parent_hashes:
+  v6_0022: 7d940e0ac4cb111bcf4dbb1ebcce749282ceb67688f47aafab677e1abf9ded40
