@@ -4,4 +4,4 @@ lifecycle_state: EXECUTION_COMPLETED
 lifecycle_updated_at: '2026-06-10T05:57:19.194406+00:00'
 verified: false
 verified_updated_at: '2026-06-10T05:57:34.363084+00:00'
-registred: none
+registred: true
