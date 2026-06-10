@@ -76,8 +76,10 @@ def run_and_log(
             raise KeyboardInterrupt
 
         if process.returncode != 0:
+            tail = _tail_text(log_path, max_lines=200)
             raise RuntimeError(
-                f"[F07] Command failed ({process.returncode}): {' '.join(cmd)}"
+                f"[F07] Command failed ({process.returncode}): {' '.join(cmd)}\n"
+                f"[F07] Últimas líneas de {log_path}:\n{tail}"
             )
 
 
@@ -160,6 +162,15 @@ def get_host_user_spec() -> str:
     """Devuelve UID:GID del proceso host para ejecutar Docker sin root."""
     return f"{os.getuid()}:{os.getgid()}"
 
+def get_host_uid() -> str:
+    """Devuelve UID del proceso host para restaurar ownership del volumen."""
+    return str(os.getuid())
+
+
+def get_host_gid() -> str:
+    """Devuelve GID del proceso host para restaurar ownership del volumen."""
+    return str(os.getgid())
+
 
 def get_serial_device_gid(port: str | None) -> str | None:
     """Devuelve el GID del dispositivo serie para group-add en Docker."""
@@ -170,7 +181,6 @@ def get_serial_device_gid(port: str | None) -> str | None:
     except OSError:
         return None
 
-
 def build_idf_command(
     idf_args: list[str],
     esp_project_dir: Path,
@@ -180,21 +190,51 @@ def build_idf_command(
     docker_memory_swap: str | None = None,
     docker_cpus: str | None = None,
 ) -> list[str]:
-    """Construye comando para ejecutar idf.py en Docker (obligatorio)."""
+    """Construye comando para ejecutar idf.py en Docker.
+
+    Se ejecuta como root dentro del contenedor para evitar problemas de ownership
+    con /opt/esp/idf, pero al finalizar devuelve la propiedad de los artefactos
+    generados en /project al usuario del runner.
+    """
     quoted_args = " ".join(shlex.quote(arg) for arg in idf_args)
+
     parallel_prefix = ""
     if cmake_parallel_level is not None:
         level = shlex.quote(str(cmake_parallel_level))
         parallel_prefix = f"export CMAKE_BUILD_PARALLEL_LEVEL={level} && "
 
-    shell_cmd = (
+    # Rutas generadas por ESP-IDF que pueden quedar como root en el volumen.
+    # Incluyo /project/build y ficheros típicos modificados por idf.py.
+    fix_owner_cmd = (
+        'chown -R "$HOST_UID:$HOST_GID" '
+        '/project/build '
+        '/project/build_generated '
+        '/project/sdkconfig '
+        '/project/dependencies.lock '
+        '/project/managed_components '
+        '2>/dev/null || true'
+    )
+
+    idf_cmd = (
         "source /opt/esp/idf/export.sh >/dev/null 2>&1 && "
         f"{parallel_prefix}idf.py {quoted_args}"
     )
 
+    # Importante:
+    # - Capturamos rc para no ocultar errores reales de idf.py.
+    # - Ejecutamos chown aunque idf.py falle.
+    # - Salimos con el mismo rc original.
+    shell_cmd = (
+        f"{idf_cmd}; "
+        "rc=$?; "
+        f"{fix_owner_cmd}; "
+        "exit $rc"
+    )
+
     cmd = [
         "docker", "run", "--rm", "-i",
-        "--user", get_host_user_spec(),
+        "-e", f"HOST_UID={get_host_uid()}",
+        "-e", f"HOST_GID={get_host_gid()}",
         "-v", f"{esp_project_dir.resolve()}:/project",
         "-w", "/project",
         "--entrypoint", "/bin/bash",
@@ -211,9 +251,6 @@ def build_idf_command(
 
     if port:
         cmd.extend(["--device", f"{port}:{port}"])
-        serial_gid = get_serial_device_gid(port)
-        if serial_gid:
-            cmd.extend(["--group-add", serial_gid])
 
     cmd.extend([IDF_DOCKER_IMAGE, "-lc", shell_cmd])
     return cmd
@@ -243,13 +280,10 @@ def run_idf_and_log(
 
 def can_map_docker_device(port: str, image_name: str) -> tuple[bool, str]:
     """Valida que Docker puede mapear el dispositivo serie indicado."""
-    serial_gid = get_serial_device_gid(port)
     probe = subprocess.run(
         [
             "docker", "run", "--rm",
-            "--user", get_host_user_spec(),
             "--device", f"{port}:{port}",
-            *(["--group-add", serial_gid] if serial_gid else []),
             "--entrypoint", "/bin/bash",
             image_name,
             "-lc", f"test -e {shlex.quote(port)}",
@@ -265,7 +299,6 @@ def can_map_docker_device(port: str, image_name: str) -> tuple[bool, str]:
 
     stderr = (probe.stderr or "").strip()
     return False, stderr
-
 
 def run_host_esptool_flash(port: str, esp_project_dir: Path, flash_log: Path) -> bool:
     build_dir = esp_project_dir / "build"
@@ -878,6 +911,7 @@ def main():
     parser.add_argument("--drain-seconds", type=float, default=None)
     parser.add_argument("--build-only", action="store_true")
     parser.add_argument("--no-clean-build", action="store_true")
+    parser.add_argument("--skip-flash", action="store_true", help="Omite el flasheo mediante esptool (requerido para QEMU)")
     args = parser.parse_args()
 
     try:
@@ -1026,15 +1060,18 @@ def main():
         # =========================================================
         # FLASH
         # =========================================================
-        print("\n=== FLASH ===")
-        flash_portable(
-            port=port,
-            flash_log=flash_log,
-            esp_project_dir=esp_project_dir,
-            docker_memory_limit=docker_memory_limit,
-            docker_memory_swap=docker_memory_swap,
-            docker_cpus=docker_cpus,
-        )
+        if not args.skip_flash:
+            print("\n=== FLASH ===")
+            flash_portable(
+                port=port,
+                flash_log=flash_log,
+                esp_project_dir=esp_project_dir,
+                docker_memory_limit=docker_memory_limit,
+                docker_memory_swap=docker_memory_swap,
+                docker_cpus=docker_cpus,
+            )
+        else:
+            print("\n=== FLASH (SALTADO POR --skip-flash) ===")
 
         # =========================================================
         # RUN
