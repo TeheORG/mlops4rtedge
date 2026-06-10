@@ -1,7 +1,7 @@
 created_at: '2026-06-10T04:33:33.938758+00:00'
 params_path: executions/f01_explore/v1_0019/params.yaml
-lifecycle_state: VARIANT_CREATED
-lifecycle_updated_at: '2026-06-10T04:33:34.348835+00:00'
+lifecycle_state: EXECUTION_COMPLETED
+lifecycle_updated_at: '2026-06-10T04:33:48.730340+00:00'
 verified: none
-verified_updated_at: '2026-06-10T04:33:34.214131+00:00'
+verified_updated_at: '2026-06-10T04:33:40.835708+00:00'
 registred: none
