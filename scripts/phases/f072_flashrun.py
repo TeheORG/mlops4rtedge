@@ -778,6 +778,17 @@ def serial_send_and_monitor(
     print(f"[F07-serial] Drenado final: {post_wait_s:.2f}s")
     print("[F07-serial] Progreso: '*' cada 100 líneas enviadas (10 '*' por línea)")
 
+    if not Path(port).exists():
+        raise RuntimeError(
+            f"[F07-serial] El puerto serie no existe: {port}\n"
+            "[F07-serial] Si usas ESP32 virtual, arranca primero socat+QEMU:\n"
+            "  make esp32-virt-start VARIANT=<variant>\n"
+            "[F07-serial] Diagnóstico:\n"
+            "  ls -l /dev/ttyVUSB0\n"
+            "  cat /tmp/esp32-virt/socat.log\n"
+            "  cat /tmp/esp32-virt/qemu.log"
+        )
+
     ser = serial.Serial(port, baud, timeout=0)
 
     # Espera arranque tras flash
@@ -1021,37 +1032,43 @@ def main():
         # =========================================================
         # BUILD
         # =========================================================
-        print("\n=== BUILD ===")
-        if not args.no_clean_build:
-            build_dir = esp_project_dir / "build"
-            if build_dir.exists():
-                shutil.rmtree(build_dir)
-                print(f"[F07] build limpio: {build_dir}")
+        if args.skip_flash:
+            print("\n=== BUILD (SALTADO) ===")
+            docker_memory_limit = resolve_docker_memory_limit()
+            docker_memory_swap = resolve_docker_memory_swap()
+            docker_cpus = resolve_docker_cpus()
+        else:
+            print("\n=== BUILD ===")
+            if not args.no_clean_build:
+                build_dir = esp_project_dir / "build"
+                if build_dir.exists():
+                    shutil.rmtree(build_dir)
+                    print(f"[F07] build limpio: {build_dir}")
 
-        sync_generated_sources_for_build(esp_project_dir)
-        sanitize_sdkconfig_for_docker(esp_project_dir)
-        ensure_docker_image_exists(IDF_DOCKER_IMAGE)
-        docker_memory_limit = resolve_docker_memory_limit()
-        docker_memory_swap = resolve_docker_memory_swap()
-        docker_cpus = resolve_docker_cpus()
+            sync_generated_sources_for_build(esp_project_dir)
+            sanitize_sdkconfig_for_docker(esp_project_dir)
+            ensure_docker_image_exists(IDF_DOCKER_IMAGE)
+            docker_memory_limit = resolve_docker_memory_limit()
+            docker_memory_swap = resolve_docker_memory_swap()
+            docker_cpus = resolve_docker_cpus()
 
-        if docker_memory_limit:
-            print(f"[F07] Docker memory limit por defecto: {docker_memory_limit}")
-        if docker_memory_swap:
-            print(f"[F07] Docker memory-swap: {docker_memory_swap}")
-        if docker_cpus:
-            print(f"[F07] Docker cpus: {docker_cpus}")
+            if docker_memory_limit:
+                print(f"[F07] Docker memory limit por defecto: {docker_memory_limit}")
+            if docker_memory_swap:
+                print(f"[F07] Docker memory-swap: {docker_memory_swap}")
+            if docker_cpus:
+                print(f"[F07] Docker cpus: {docker_cpus}")
 
-        build_jobs = os.environ.get("F07_DOCKER_BUILD_JOBS", "1")
-        run_idf_and_log(
-            ["build"],
-            build_log,
-            esp_project_dir=esp_project_dir,
-            cmake_parallel_level=build_jobs,
-            docker_memory_limit=docker_memory_limit,
-            docker_memory_swap=docker_memory_swap,
-            docker_cpus=docker_cpus,
-        )
+            build_jobs = os.environ.get("F07_DOCKER_BUILD_JOBS", "1")
+            run_idf_and_log(
+                ["build"],
+                build_log,
+                esp_project_dir=esp_project_dir,
+                cmake_parallel_level=build_jobs,
+                docker_memory_limit=docker_memory_limit,
+                docker_memory_swap=docker_memory_swap,
+                docker_cpus=docker_cpus,
+            )
 
         if args.build_only:
             print("\n[F07] Build-only completado con éxito.")

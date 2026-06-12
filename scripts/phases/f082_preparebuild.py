@@ -3,6 +3,10 @@
 F08 — SYSTEM VALIDATION (MULTI-MODEL EDGE) — PREPARE BUILD
 """
 
+# True  → memory_events.h embeds the full dataset (or max_rows rows) in the binary.
+# False → memory_events.h gets a 1-row placeholder; use serial mode for validation.
+EMBED_DATASET = False
+
 import argparse
 import math
 import shutil
@@ -447,7 +451,7 @@ def main():
         csv_variant,
         memory_events_path,
         event_type_count=event_type_count,
-        max_rows=max_rows,
+        max_rows=max_rows if EMBED_DATASET else 1,
     )
 
     recommended_drain_seconds = compute_recommended_drain_seconds(

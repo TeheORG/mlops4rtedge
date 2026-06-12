@@ -3,6 +3,10 @@
 F07 — MODEL VALIDATION (EDGE) — PREPARE BUILD
 """
 
+# True  → memory_events.h embeds the full dataset (or max_rows rows) in the binary.
+# False → memory_events.h gets a 1-row placeholder; use serial mode for validation.
+EMBED_DATASET = False
+
 import argparse
 import shutil
 from pathlib import Path
@@ -378,7 +382,7 @@ def main():
     csv_variant = variant_dir / "07_input_dataset.csv"
     csv_project = edge_project_dir / "data" / "input_dataset.csv"
 
-    copy_dataset_to_csv(calib_path, csv_variant, csv_project, allow_csv=False)
+    copy_dataset_to_csv(calib_path, csv_variant, csv_project, allow_csv=False, max_rows=max_rows)
 
     evaluation_dataset_variant = variant_dir / "07_evaluation_dataset.csv"
     copy_or_convert_dataset_to_csv(
@@ -396,7 +400,7 @@ def main():
         csv_variant,
         memory_events_path,
         event_type_count=event_type_count,
-        max_rows=max_rows,
+        max_rows=max_rows if EMBED_DATASET else 1,
     )
 
     recommended_drain_seconds = compute_recommended_drain_seconds(
