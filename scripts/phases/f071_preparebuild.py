@@ -382,7 +382,13 @@ def main():
     csv_variant = variant_dir / "07_input_dataset.csv"
     csv_project = edge_project_dir / "data" / "input_dataset.csv"
 
-    copy_dataset_to_csv(calib_path, csv_variant, csv_project, allow_csv=False, max_rows=max_rows)
+    copy_dataset_to_csv(
+        calib_path,
+        csv_variant,
+        csv_project,
+        allow_csv=False,
+        max_rows=max_rows,
+    )
 
     evaluation_dataset_variant = variant_dir / "07_evaluation_dataset.csv"
     copy_or_convert_dataset_to_csv(
