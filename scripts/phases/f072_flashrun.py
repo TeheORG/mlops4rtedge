@@ -24,6 +24,7 @@ from scripts.core.artifacts import PROJECT_ROOT, get_variant_dir
 PHASE = "f07_modval"
 IDF_DOCKER_IMAGE = "mlops4ofp-idf:6.0"
 FLASH_RETRY_ATTEMPTS = 3
+DEFAULT_FLASH_BAUD = 115200
 
 # ── Límites del contenedor Docker de build ────────────────────────────────────
 # None  → usa toda la RAM disponible del sistema (comportamiento por defecto)
@@ -154,6 +155,8 @@ def looks_like_connection_failure(log_path: Path, extra_text: str = "") -> bool:
         "chip is",
         "invalid head of packet",
         "wrong boot mode",
+        "chip stopped responding",
+        "stopiteration",
     )
     return any(pattern in text for pattern in patterns)
 
@@ -306,7 +309,8 @@ def run_host_esptool_flash(port: str, esp_project_dir: Path, flash_log: Path) ->
     if not flash_args.exists():
         return False
 
-    print("[F07] Intentando flash en host con esptool")
+    flash_baud = os.environ.get("F07_FLASH_BAUD", str(DEFAULT_FLASH_BAUD))
+    print(f"[F07] Intentando flash en host con esptool a {flash_baud} baud")
     rc, _ = run_and_log_result(
         [
             sys.executable,
@@ -317,7 +321,7 @@ def run_host_esptool_flash(port: str, esp_project_dir: Path, flash_log: Path) ->
             "-p",
             port,
             "-b",
-            "460800",
+            flash_baud,
             "--before",
             "default-reset",
             "--after",
@@ -383,10 +387,11 @@ def flash_portable(
     docker_ok, docker_err = can_map_docker_device(port, IDF_DOCKER_IMAGE)
 
     if docker_ok:
-        print("[F07] Flash vía Docker")
+        flash_baud = os.environ.get("F07_FLASH_BAUD", str(DEFAULT_FLASH_BAUD))
+        print(f"[F07] Flash vía Docker a {flash_baud} baud")
         def docker_flash_once():
             run_idf_and_log(
-                ["-p", port, "flash"],
+                ["-p", port, "-b", flash_baud, "flash"],
                 flash_log,
                 esp_project_dir=esp_project_dir,
                 port=port,

@@ -343,16 +343,40 @@ verify:
 # ==============================================================================
 start-socat:
 	@mkdir -p $(PID_DIR)
-	@if [ -f $(SOCAT_PID) ] && kill -0 $$(cat $(SOCAT_PID)) 2>/dev/null; then \
-		echo "[socat] Ya corriendo (PID $$(cat $(SOCAT_PID)))"; \
+	@PID="$$(cat $(SOCAT_PID) 2>/dev/null || true)"; \
+	if [ -n "$$PID" ] && kill -0 "$$PID" 2>/dev/null && \
+		ps -p "$$PID" -o comm= 2>/dev/null | grep -qx socat && \
+		[ -e "$(VIRTUAL_PORT)" ]; then \
+		echo "[socat] Ya corriendo (PID $$PID, puerto $(VIRTUAL_PORT))"; \
 	else \
+		if [ -n "$$PID" ] && kill -0 "$$PID" 2>/dev/null && \
+			ps -p "$$PID" -o comm= 2>/dev/null | grep -qx socat; then \
+			echo "[socat] Estado incompleto; reiniciando PID $$PID"; \
+			kill "$$PID" 2>/dev/null || true; \
+		fi; \
+		for stale_pid in $$(pgrep -f '^socat .*link=$(VIRTUAL_PORT).*tcp-listen:$(SOCAT_PORT)' 2>/dev/null || true); do \
+			echo "[socat] Deteniendo listener obsoleto PID $$stale_pid"; \
+			kill "$$stale_pid" 2>/dev/null || true; \
+		done; \
+		sleep 0.2; \
+		rm -f $(SOCAT_PID) $(VIRTUAL_PORT); \
 		echo "[socat] Creando $(VIRTUAL_PORT) -> TCP $(SOCAT_PORT)..."; \
 		socat \
 			pty,link=$(VIRTUAL_PORT),raw,echo=0,ignoreeof \
 			tcp-listen:$(SOCAT_PORT),reuseaddr,fork \
 			>> $(PID_DIR)/socat.log 2>&1 & \
 		echo $$! > $(SOCAT_PID); \
-		sleep 1; \
+		for i in 1 2 3 4 5; do \
+			[ -e "$(VIRTUAL_PORT)" ] && break; \
+			sleep 0.2; \
+		done; \
+		[ -e "$(VIRTUAL_PORT)" ] || { \
+			echo "[socat] ERROR: no se creó $(VIRTUAL_PORT)"; \
+			tail -20 $(PID_DIR)/socat.log 2>/dev/null || true; \
+			kill "$$(cat $(SOCAT_PID) 2>/dev/null)" 2>/dev/null || true; \
+			rm -f $(SOCAT_PID); \
+			exit 1; \
+		}; \
 		chmod 666 $(VIRTUAL_PORT) 2>/dev/null || true; \
 		echo "[socat] PID=$$(cat $(SOCAT_PID))  puerto=$(VIRTUAL_PORT)  TCP=$(SOCAT_PORT)"; \
 	fi
