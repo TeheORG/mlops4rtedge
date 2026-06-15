@@ -217,6 +217,7 @@ def copy_dataset_to_csv(
     csv_project: Path,
     *,
     allow_csv: bool,
+    max_rows: int | None = None,
 ):
     suffix = src_path.suffix.lower()
     if suffix == ".parquet":
@@ -227,6 +228,19 @@ def copy_dataset_to_csv(
         if allow_csv:
             raise RuntimeError(f"Dataset source no soportado: {src_path} (se espera .parquet o .csv)")
         raise RuntimeError(f"Dataset source no soportado: {src_path} (se espera .parquet)")
+
+    if max_rows is not None:
+        max_rows = int(max_rows)
+        if max_rows < 1:
+            raise RuntimeError("max_rows must be >= 1 when provided")
+        df = df.head(max_rows)
+
+    for column in df.select_dtypes(include=["object"]).columns:
+        df[column] = df[column].map(
+            lambda value: " ".join(str(value).split())
+            if "\n" in str(value) or "\r" in str(value)
+            else value
+        )
 
     csv_variant.parent.mkdir(parents=True, exist_ok=True)
     df.to_csv(csv_variant, index=False, sep=";")
