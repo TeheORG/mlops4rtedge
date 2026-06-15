@@ -1,0 +1,13 @@
+phase: f03_windows
+variant: v3_0001
+parent: v2_0002
+parameters:
+  parent_variant: v2_0002
+  Tu: 10
+  OW: 600
+  LT: 100
+  PW: 100
+  window_strategy: synchro
+  nan_mode: discard
+parent_hashes:
+  v2_0002: 36199680d604b7b12fadacfb90b2b3bfb4f32759300015b7a0ad45c32be9ecee
