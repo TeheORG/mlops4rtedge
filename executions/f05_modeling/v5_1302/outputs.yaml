@@ -143,3 +143,7 @@ mlflow_registration:
   - /__w/mlops4rtedge/mlops4rtedge/executions/f05_modeling/v5_1302/05_modeling_model.h5
   - /__w/mlops4rtedge/mlops4rtedge/executions/f05_modeling/v5_1302/05_modeling_history.json
   - /__w/mlops4rtedge/mlops4rtedge/executions/f05_modeling/v5_1302/05_modeling_trials_summary.json
+mlflow:
+  run_id: 07a8978a9bf94cdcb8c9f5ec0a7d7c20
+  experiment_id: '0'
+  experiment_name: F05_battery_overheat
