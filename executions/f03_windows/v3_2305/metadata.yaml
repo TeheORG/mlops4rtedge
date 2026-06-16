@@ -1,7 +1,7 @@
 created_at: '2026-06-16T07:24:01.584701+00:00'
 params_path: executions/f03_windows/v3_2305/params.yaml
-lifecycle_state: VARIANT_CREATED
-lifecycle_updated_at: '2026-06-16T07:24:02.555257+00:00'
+lifecycle_state: EXECUTION_COMPLETED
+lifecycle_updated_at: '2026-06-16T07:25:01.882364+00:00'
 verified: none
-verified_updated_at: '2026-06-16T07:24:02.242399+00:00'
+verified_updated_at: '2026-06-16T07:24:27.323057+00:00'
 registred: none
