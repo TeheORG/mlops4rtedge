@@ -1,7 +1,7 @@
 created_at: '2026-06-16T15:38:16.077701+00:00'
 params_path: executions/f05_modeling/v5_1201/params.yaml
-lifecycle_state: VARIANT_CREATED
-lifecycle_updated_at: '2026-06-16T15:38:16.500234+00:00'
+lifecycle_state: EXECUTION_COMPLETED
+lifecycle_updated_at: '2026-06-16T15:48:14.536012+00:00'
 verified: none
-verified_updated_at: '2026-06-16T15:38:16.365104+00:00'
+verified_updated_at: '2026-06-16T15:38:24.435694+00:00'
 registred: none
