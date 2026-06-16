@@ -211,7 +211,7 @@ jobs:
 
       - name: PR — publicar variant
         id: pr-variant
-        uses: ./.github/actions/commit-and-pr
+        uses: TeheORG/mlops4rtedge/.github/actions/commit-and-pr@test
         with:
           variant_id: ${{ inputs.variant_id }}
           phase_id: f4
@@ -261,7 +261,7 @@ jobs:
 
       - name: PR — publicar script
         id: pr-script
-        uses: ./.github/actions/commit-and-pr
+        uses: TeheORG/mlops4rtedge/.github/actions/commit-and-pr@test
         with:
           variant_id: ${{ inputs.variant_id }}
           phase_id: f4
@@ -310,7 +310,7 @@ jobs:
       - name: PR — publicar check
         id: pr-check
         if: always()
-        uses: ./.github/actions/commit-and-pr
+        uses: TeheORG/mlops4rtedge/.github/actions/commit-and-pr@test
         with:
           variant_id: ${{ inputs.variant_id }}
           phase_id: f4
@@ -348,7 +348,7 @@ jobs:
 
       - name: PR — publicar register
         id: pr-register
-        uses: ./.github/actions/commit-and-pr
+        uses: TeheORG/mlops4rtedge/.github/actions/commit-and-pr@test
         with:
           variant_id: ${{ inputs.variant_id }}
           phase_id: f4
