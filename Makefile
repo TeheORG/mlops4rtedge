@@ -1383,7 +1383,7 @@ help6:
 #
 #   make script7-prepare-build VARIANT=v701
 #   make script7-build-only   VARIANT=v701
-#   make script7-flash-run    VARIANT=v701 PORT=/dev/ttyUSB0 [MODE=serial|memory] [BAUD=115200] [DRAIN_SECONDS=..]
+#   make script7-flash-run    VARIANT=v701 PORT=/dev/ttyUSB0 [BAUD=115200] [DRAIN_SECONDS=..]
 #   make script7-post         VARIANT=v701
 #
 #   make script7 VARIANT=v701 PORT=/dev/ttyUSB0
@@ -1465,7 +1465,6 @@ script7-flash-run:
 	$(PYTHON) -m $(SCRIPT7_RUN) \
 		--variant $$VARIANT_NORM \
 		$(if $(PORT),--port $(PORT),) \
-		$(if $(MODE),--mode $(MODE),) \
 		$(if $(BAUD),--baud $(BAUD),) \
 		$(if $(DRAIN_SECONDS),--drain-seconds $(DRAIN_SECONDS),)
 
@@ -1512,7 +1511,6 @@ esp32-flash-run-virtual:
 	$(PYTHON) -m $(FLASH_MODULE) --variant $$VARIANT_NORM \
 		--port $(VIRTUAL_PORT) \
 		--skip-flash \
-		$(if $(MODE),--mode $(MODE),) \
 		$(if $(BAUD),--baud $(BAUD),) \
 		$(if $(DRAIN_SECONDS),--drain-seconds $(DRAIN_SECONDS),)
 
@@ -1543,7 +1541,6 @@ script7:
 			$(MAKE) --no-print-directory esp32-qemu-start PHASE=$(PHASE7) VARIANT=$(VARIANT) || { $(UPDATE_VARIANT_STATE) $(PHASE7) $$VARIANT_NORM $(LIFECYCLE_STATE_EXECUTION_FAILED) >/dev/null 2>&1 || true; $(MAKE) --no-print-directory generate_lineage || true; $(MAKE) -C $(ESP32_VIRT_DIR) stop || true; exit 1; }; \
 			set +e; \
 			$(MAKE) --no-print-directory esp32-flash-run-virtual PHASE=$(PHASE7) FLASH_MODULE=$(SCRIPT7_RUN) VARIANT=$(VARIANT) \
-				$(if $(MODE),MODE=$(MODE),) \
 				$(if $(BAUD),BAUD=$(BAUD),) \
 				$(if $(DRAIN_SECONDS),DRAIN_SECONDS=$(DRAIN_SECONDS),); \
 			rc=$$?; set -e; \
@@ -1559,7 +1556,6 @@ script7:
 			set +e; \
 			$(PYTHON) -m $(SCRIPT7_RUN) --variant $$VARIANT_NORM \
 				$(if $(PORT),--port $(PORT),) \
-				$(if $(MODE),--mode $(MODE),) \
 				$(if $(BAUD),--baud $(BAUD),) \
 				$(if $(DRAIN_SECONDS),--drain-seconds $(DRAIN_SECONDS),); \
 			rc=$$?; \
@@ -1585,7 +1581,6 @@ script7-virtualESP32:
 	[ "$$VIRTUALIZED" = "true" ] || { echo "[ERROR] $(PHASE7):$$VARIANT_NORM has virtual=false. Create it with VIRTUAL=true."; exit 1; }
 	@$(MAKE) --no-print-directory esp32-virt-verify
 	@$(MAKE) --no-print-directory script7 VARIANT=$(VARIANT) \
-		$(if $(MODE),MODE=$(MODE),) \
 		$(if $(BAUD),BAUD=$(BAUD),) \
 		$(if $(DRAIN_SECONDS),DRAIN_SECONDS=$(DRAIN_SECONDS),)
 
@@ -1694,7 +1689,7 @@ help7:
 #   make script8-select-config VARIANT=v801
 #   make script8-prepare-build VARIANT=v801
 #   make script8-build-only    VARIANT=v801
-#   make script8-flash-run     VARIANT=v801 PORT=/dev/ttyUSB0 [MODE=serial|memory] [BAUD=115200] [DRAIN_SECONDS=..]
+#   make script8-flash-run     VARIANT=v801 PORT=/dev/ttyUSB0 [BAUD=115200] [DRAIN_SECONDS=..]
 #   make script8-post          VARIANT=v801
 #
 #   make script8 VARIANT=v801 PORT=/dev/ttyUSB0
@@ -1771,7 +1766,6 @@ script8-flash-run:
 	$(PYTHON) -m scripts.phases.f083_flashrun \
 		--variant $$VARIANT_NORM \
 		$(if $(PORT),--port $(PORT),) \
-		$(if $(MODE),--mode $(MODE),) \
 		$(if $(BAUD),--baud $(BAUD),) \
 		$(if $(DRAIN_SECONDS),--drain-seconds $(DRAIN_SECONDS),)
 
@@ -1785,7 +1779,6 @@ script8-virtualESP32:
 	[ "$$VIRTUALIZED" = "true" ] || { echo "[ERROR] $(PHASE8):$$VARIANT_NORM has virtual=false. Create it with VIRTUAL=true."; exit 1; }
 	@$(MAKE) --no-print-directory esp32-virt-verify
 	@$(MAKE) --no-print-directory script8 VARIANT=$(VARIANT) \
-		$(if $(MODE),MODE=$(MODE),) \
 		$(if $(BAUD),BAUD=$(BAUD),) \
 		$(if $(DRAIN_SECONDS),DRAIN_SECONDS=$(DRAIN_SECONDS),)
 
@@ -1818,7 +1811,6 @@ script8:
 			$(MAKE) --no-print-directory esp32-qemu-start PHASE=$(PHASE8) VARIANT=$(VARIANT) || { $(UPDATE_VARIANT_STATE) $(PHASE8) $$VARIANT_NORM $(LIFECYCLE_STATE_EXECUTION_FAILED) >/dev/null 2>&1 || true; $(MAKE) --no-print-directory generate_lineage || true; $(MAKE) -C $(ESP32_VIRT_DIR) stop || true; exit 1; }; \
 			set +e; \
 			$(MAKE) --no-print-directory esp32-flash-run-virtual PHASE=$(PHASE8) FLASH_MODULE=scripts.phases.f083_flashrun VARIANT=$(VARIANT) \
-				$(if $(MODE),MODE=$(MODE),) \
 				$(if $(BAUD),BAUD=$(BAUD),) \
 				$(if $(DRAIN_SECONDS),DRAIN_SECONDS=$(DRAIN_SECONDS),); \
 			rc=$$?; set -e; \
@@ -1834,7 +1826,6 @@ script8:
 			set +e; \
 			$(PYTHON) -m scripts.phases.f083_flashrun --variant $$VARIANT_NORM \
 				$(if $(PORT),--port $(PORT),) \
-				$(if $(MODE),--mode $(MODE),) \
 				$(if $(BAUD),--baud $(BAUD),) \
 				$(if $(DRAIN_SECONDS),--drain-seconds $(DRAIN_SECONDS),); \
 			rc=$$?; \
