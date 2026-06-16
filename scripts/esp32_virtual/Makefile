@@ -503,7 +503,6 @@ run:
 	@echo "    Puerto serie : $(VIRTUAL_PORT)   (--skip-flash activado)"
 	cd "$(RUNNER_DIR)" && $(PYTHON) -m scripts.f072_flashrun \
 		--variant $(VARIANT) \
-		--mode serial \
 		--port $(VIRTUAL_PORT) \
 		--skip-flash
 

@@ -483,18 +483,8 @@ def describe_serial_ports() -> str:
 
 
 # ============================================================
-# SERIAL / RUN
+# MONITOR (modo memoria)
 # ============================================================
-
-def load_lines_for_serial(path: Path) -> list[str]:
-    text = path.read_text()
-    lines = []
-    for line in text.splitlines():
-        stripped = line.strip()
-        if stripped:
-            lines.append(stripped)
-    return lines
-
 
 def resolve_max_mti_ms(edge_cfg: dict):
     models = edge_cfg.get("models")
@@ -618,7 +608,7 @@ def run_platform_runner_flow(
             "F08_PROJECT_DIR": str(project_dir.resolve()),
             "F08_EDGE_CONFIG": str(edge_cfg_path.resolve()),
             "F08_INPUT_DATASET": str(dataset_csv.resolve()),
-            "F08_MODE": str(args.mode),
+            "F08_MODE": "memory",
             "F08_BAUD": str(args.baud),
             "F08_TU_MS": str(tu_ms) if tu_ms is not None else "",
             "F08_RECOMMENDED_DRAIN_SECONDS": str(recommended) if recommended is not None else "",
@@ -650,96 +640,6 @@ def run_platform_runner_flow(
     export_platform_build_artifacts(variant_dir, project_dir, platform)
 
     print("\n[F08] Flash-run completado con éxito.")
-
-
-def serial_send_and_monitor(
-    port: str,
-    baud: int,
-    input_file: Path,
-    log_path: Path,
-    tunit_ms: float | None,
-    post_wait_s: float,
-):
-    period = (tunit_ms or 1000.0) / 1000.0
-
-    lines = load_lines_for_serial(input_file)
-    if not lines:
-        print("[F08-serial] No hay datos para enviar.")
-        return
-
-    print(f"[F08-serial] Puerto: {port}")
-    print(f"[F08-serial] Baud: {baud}")
-    print(f"[F08-serial] Periodo envío: {period:.3f}s")
-    print(f"[F08-serial] Líneas a enviar: {len(lines)}")
-    print(f"[F08-serial] Drenado final: {post_wait_s:.2f}s")
-    print("[F08-serial] Progreso: '*' cada 100 líneas enviadas (10 '*' por línea)")
-
-    ser = serial.Serial(port, baud, timeout=0)
-    time.sleep(8.0)
-
-    log_path.parent.mkdir(parents=True, exist_ok=True)
-    logf = open(log_path, "w")
-
-    stopped_by_user = False
-    progress_marks = 0
-
-    def emit_progress(sent_lines: int):
-        nonlocal progress_marks
-        target_marks = (sent_lines + 99) // 100
-        while progress_marks < target_marks:
-            sys.stdout.write("*")
-            progress_marks += 1
-            if progress_marks % 10 == 0:
-                sys.stdout.write("\n")
-            sys.stdout.flush()
-
-    try:
-        next_send = time.monotonic()
-
-        def drain_serial_once():
-            pending = getattr(ser, "in_waiting", 0)
-            if pending and pending > 0:
-                data = ser.read(pending)
-                if data:
-                    text = data.decode("utf-8", errors="ignore")
-                    logf.write(text)
-                    logf.flush()
-
-        for index, line in enumerate(lines, start=1):
-            ser.write((line + "\n").encode("utf-8"))
-            ser.flush()
-            emit_progress(index)
-
-            next_send += period
-
-            while True:
-                now = time.monotonic()
-                remaining = next_send - now
-                if remaining <= 0:
-                    break
-                drain_serial_once()
-                time.sleep(min(0.01, max(0.0, remaining)))
-
-        end_time = time.monotonic() + post_wait_s
-        while time.monotonic() < end_time:
-            drain_serial_once()
-            time.sleep(0.05)
-
-    except KeyboardInterrupt:
-        stopped_by_user = True
-        print("\n[F08-serial] Captura interrumpida por usuario (Ctrl+C). Continuando flujo.")
-
-    finally:
-        logf.close()
-        ser.close()
-
-    if progress_marks % 10 != 0:
-        print("")
-
-    if stopped_by_user:
-        print("[F08-serial] Finalizado por usuario.")
-    else:
-        print("\n[F08-serial] Finalizado correctamente.")
 
 
 def serial_monitor_only(
@@ -794,7 +694,6 @@ def serial_monitor_only(
 def main():
     parser = argparse.ArgumentParser()
     parser.add_argument("--variant", required=True)
-    parser.add_argument("--mode", choices=["serial", "memory"], default="serial")
     parser.add_argument("--port", default=None)
     parser.add_argument("--baud", type=int, default=115200)
     parser.add_argument("--drain-seconds", type=float, default=None)
@@ -805,7 +704,6 @@ def main():
 
     try:
         variant = args.variant
-        mode = args.mode
 
         variant_dir = get_variant_dir(PHASE, variant)
 
@@ -952,22 +850,12 @@ def main():
 
         print("\n=== RUN ===")
 
-        if mode == "serial":
-            serial_send_and_monitor(
-                port=port,
-                baud=args.baud,
-                input_file=dataset_csv,
-                log_path=monitor_log,
-                tunit_ms=tu_ms,
-                post_wait_s=post_wait_s,
-            )
-        else:
-            serial_monitor_only(
-                port=port,
-                baud=args.baud,
-                log_path=monitor_log,
-                post_wait_s=post_wait_s,
-            )
+        serial_monitor_only(
+            port=port,
+            baud=args.baud,
+            log_path=monitor_log,
+            post_wait_s=post_wait_s,
+        )
 
         print("\n[F08] Flash-run completado con éxito.")
     except KeyboardInterrupt:
