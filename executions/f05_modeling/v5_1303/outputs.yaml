@@ -1,0 +1,145 @@
+phase: f05_modeling
+variant: v5_1303
+artifacts:
+  model:
+    path: 05_modeling_model.h5
+    sha256: 0ea8ec6c2ce1099243f7aabeaa4fddb2c834fc698804fd274f233e37b32ae641
+  labeled_dataset:
+    path: 05_modeling_training_dataset.parquet
+    sha256: 0b72cfcb8ee0e3435318a7af12cfa0a6153061b7bf15843b837ca07aabe16af9
+  history:
+    path: 05_modeling_history.json
+    sha256: aa3d24f44cc6d901b0e58081643771aa67a83f0994d391251a15e81e14d224cd
+  split_hash_leakage:
+    path: 05_modeling_split_hash_leakage.json
+    sha256: 19ba3e03989ba5d6295cea62d080dadc4b923073c1407208a6d357903b3ffc1c
+  report:
+    path: 05_modeling_report.html
+    sha256: 26a8ece21e7b2d0f387a1e8199cb209d09ac8238da3adc39eaab391dabfa91e7
+exports:
+  Tu: 10
+  OW: 600
+  LT: 100
+  PW: 100
+  event_type_count: 102
+  prediction_name: battery_overheat
+  measure_name: battery_overheat
+  model_family: cnn1d
+  window_strategy: synchro
+  deduplication_mode: none
+  deduplication_mode_effective: none
+  seed: 42
+  trainable: true
+  possible_split_leakage: false
+  high_split_leakage_warning: false
+  decision_threshold: 0.5
+  threshold_source: fixed
+  threshold_policy: fixed_0_5
+  best_val_recall: 0.6818181818181818
+  val_precision: 0.2860548271752086
+  val_recall: 0.6818181818181818
+  val_f1: 0.40302267002518893
+  test_precision: 0.2838785046728972
+  test_recall: 0.6903409090909091
+  test_f1: 0.402317880794702
+  imbalance_strategy: rare_events
+  parent_f04: v4_0001
+  parent_f03: v3_0001
+  parent_f02: v2_0002
+  parent_f01: v1_0001
+metrics:
+  execution_time: 2362.9352063396946
+  mejor_modelo_f1:
+    f1: 0.5131004366812227
+    recall: 0.6676136363636364
+    precision: 0.4166666666666667
+  mejor_modelo_precision:
+    f1: 0.5131004366812227
+    recall: 0.6676136363636364
+    precision: 0.4166666666666667
+  mejor_modelo_recall:
+    f1: 0.40302267002518893
+    recall: 0.6818181818181818
+    precision: 0.2860548271752086
+  n_train: 21642
+  n_val: 172527
+  n_test: 172527
+  n_exact_train: 0
+  n_exact_val: 0
+  n_exact_test: 0
+  n_exact_intersection_train_val: 0
+  n_exact_intersection_train_test: 0
+  n_exact_intersection_val_test: 0
+  n_exact_intersection_all_three: 0
+  n_unordered_train: 0
+  n_unordered_val: 0
+  n_unordered_test: 0
+  n_unordered_intersection_train_val: 0
+  n_unordered_intersection_train_test: 0
+  n_unordered_intersection_val_test: 0
+  n_unordered_intersection_all_three: 0
+  n_near_pairs_train_val: 0
+  n_near_pairs_train_test: 0
+  n_near_pairs_val_test: 0
+  n_near_pairs_total: 0
+  max_split_overlap_pct: 0.0
+  positive_ratio_train: 0.07587099159042603
+  positive_ratio_val: 0.002040260365044312
+  positive_ratio_test: 0.002040260365044312
+  val_positive_ratio: 0.002040260365044312
+  test_positive_ratio: 0.002040260365044312
+  val_cap_used: false
+  test_cap_used: false
+  val_max_samples: null
+  test_max_samples: null
+  val_positive_ratio_before: 0.002040260365044312
+  val_positive_ratio_after: 0.002040260365044312
+  test_positive_ratio_before: 0.002040260365044312
+  test_positive_ratio_after: 0.002040260365044312
+  tp: 243
+  tn: 171562
+  fp: 613
+  fn: 109
+  n_samples_before_dedup: 805124
+  n_samples_after_dedup: 805124
+  n_removed_by_dedup: 0
+  removed_ratio_by_dedup: 0.0
+  train_n_samples_before_dedup: 805124
+  train_n_samples_after_dedup: 805124
+  train_n_removed_by_dedup: 0
+  train_removed_ratio_by_dedup: 0.0
+provenance:
+  generated_at: '2026-06-16T17:43:04.145452+00:00'
+  parent_phase: f04_targets
+  parent_variant: v4_0001
+mlflow_registration:
+  experiment_name: F05_battery_overheat
+  run_name: battery_overheat__v5_1303
+  metrics:
+    val_precision: 0.2860548271752086
+    val_recall: 0.6818181818181818
+    val_f1: 0.40302267002518893
+    test_precision: 0.2838785046728972
+    test_recall: 0.6903409090909091
+    test_f1: 0.402317880794702
+    test_tp: 243
+    test_tn: 171562
+    test_fp: 613
+    test_fn: 109
+  params:
+    batch_size: 128
+    learning_rate: 0.0005
+    n_layers: 2
+    units: 64
+    dropout: 0.0
+    embed_dim: 64
+    filters: 128
+    kernel_size: 3
+    model_family: cnn1d
+    decision_threshold: 0.5
+    threshold_source: fixed
+    threshold_policy: fixed_0_5
+  artifacts:
+  - /__w/mlops4rtedge/mlops4rtedge/executions/f05_modeling/v5_1303/05_modeling_model.h5
+  - /__w/mlops4rtedge/mlops4rtedge/executions/f05_modeling/v5_1303/05_modeling_history.json
+  - /__w/mlops4rtedge/mlops4rtedge/executions/f05_modeling/v5_1303/05_modeling_trials_summary.json
