@@ -2,6 +2,6 @@ created_at: '2026-06-16T17:03:51.639349+00:00'
 params_path: executions/f05_modeling/v5_1302/params.yaml
 lifecycle_state: EXECUTION_COMPLETED
 lifecycle_updated_at: '2026-06-16T17:43:48.673496+00:00'
-verified: none
-verified_updated_at: '2026-06-16T17:04:23.024809+00:00'
+verified: true
+verified_updated_at: '2026-06-16T17:44:10.299450+00:00'
 registred: none
