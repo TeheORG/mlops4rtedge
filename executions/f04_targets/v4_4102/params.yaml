@@ -1,0 +1,17 @@
+phase: f04_targets
+variant: v4_4102
+parent: v3_4102
+parameters:
+  parent_variant: v3_4102
+  Tu: 10
+  OW: 300
+  LT: 50
+  PW: 50
+  event_type_count: 102
+  prediction_name: battery_overheat
+  target_operator: OR
+  target_event_types:
+  - Battery_Active_Power_0_10-to-90_100
+  - Battery_Active_Power_10_90-to-90_100
+parent_hashes:
+  v3_4102: 93f651d14a7ee0859c6bdc0b679c548ae352679a4925df199a76dd537079749c
