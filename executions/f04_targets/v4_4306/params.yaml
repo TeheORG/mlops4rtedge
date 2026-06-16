@@ -1,0 +1,16 @@
+phase: f04_targets
+variant: v4_4306
+parent: v3_4304
+parameters:
+  parent_variant: v3_4304
+  Tu: 10
+  OW: 900
+  LT: 150
+  PW: 150
+  event_type_count: 51
+  prediction_name: battery_critical
+  target_operator: OR
+  target_event_types:
+  - Battery_Active_Power_0_10-to-90_100
+parent_hashes:
+  v3_4304: 43004b6fdc73335c1db6ed1db578f6d6e34e21cd924431443942e50ae6c86d7e
