@@ -1,0 +1,48 @@
+phase: f04_targets
+variant: v4_4102
+artifacts:
+  dataset:
+    path: 04_targets.parquet
+    sha256: 1227b5db3b9781cb285516490f192703f01117b4db13047e0129e64dd6738ae6
+  report:
+    path: 04_targets_report.html
+    sha256: 2ada6fa78c76c8b4074960800d184ba6a0b8fd6d0ea2600c9730da3a789659c1
+exports:
+  Tu: 10
+  OW: 300
+  LT: 50
+  PW: 50
+  prediction_name: battery_overheat
+  measure_name: battery_overheat
+  target_operator: OR
+  target_event_types:
+  - Battery_Active_Power_0_10-to-90_100
+  - Battery_Active_Power_10_90-to-90_100
+  target_event_count: 2
+  event_type_count: 102
+  window_strategy: synchro
+  parent_f03: v3_4102
+  parent_f02: v2_4101
+  parent_f01: v1_4101
+  n_windows: 717343
+  n_windows_pos: 1413
+  n_windows_neg: 715930
+  class_balance_ratio: 0.001969768994748677
+  deduplication_stats:
+    total_sequences: 717343
+    unique_ow_sequences: 9409
+    num_duplicate_sequences: 707934
+    duplicate_ratio: 0.9868835410675227
+    ambiguous_sequences: 29
+    ambiguous_samples: 101657
+    ambiguous_ratio: 0.14171323899445593
+    avg_label_consistency_per_ow: 0.9992605506925193
+  unique_ratio: 0.013116458932477211
+  dup_ratio_ow_parent: 0.9868835410675227
+  dup_ratio_pw_parent: 0.9945939390221972
+  seq_len_mean_ow_parent: 9.223202847173528
+metrics:
+  execution_time: 1.6582521929958602
+  positive_ratio: 0.001969768994748677
+provenance:
+  generated_at: '2026-06-16T21:02:50.678675+00:00'
