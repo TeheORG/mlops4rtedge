@@ -1,7 +1,7 @@
 created_at: '2026-06-16T23:20:49.210650+00:00'
 params_path: executions/f07_modval/v7_3501/params.yaml
-lifecycle_state: VARIANT_CREATED
-lifecycle_updated_at: '2026-06-16T23:20:49.270183+00:00'
-verified: none
-verified_updated_at: '2026-06-16T23:20:49.248961+00:00'
+lifecycle_state: EXECUTION_FAILED
+lifecycle_updated_at: '2026-06-16T23:26:08.181287+00:00'
+verified: false
+verified_updated_at: '2026-06-16T23:26:08.292604+00:00'
 registred: none
