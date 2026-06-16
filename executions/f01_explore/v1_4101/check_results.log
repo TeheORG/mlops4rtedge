@@ -1,0 +1,16 @@
+
+===== CHECKING f01_explore (v1_4101) with spec =====
+[INFO] Spec: makefile_check_phases.yml
+[OK] exists: 01_explore_dataset.parquet
+[⭕️FAIL] missing required file: 01_explore_report.html
+[⭕️FAIL] missing required file: outputs.yaml
+[OK] exists: params.yaml
+[OK] exists: metadata.yaml
+[OK] size: 01_explore_dataset.parquet (> 5MB)
+[OK] size: params.yaml (> 0B & < 1KB)
+[OK] not empty: metadata.yaml
+
+======####@@@@@@@@@@@@####======
+❌[ERROR] Validation failed with 2 issue(s)
+======####@@@@@@@@@@@@####======
+
