@@ -1477,24 +1477,27 @@ script7-post:
 ############################################
 # Virtual ESP32 — Infraestructura compartida
 ############################################
+# Bare "python3" + $(abspath) = /repo/python3 (doesn't exist).
+# If PYTHON has no slash it's a command name → resolve via which.
+PYTHON_ABS = $(if $(findstring /,$(PYTHON)),$(abspath $(PYTHON)),$(shell which $(PYTHON)))
 
 esp32-virt-verify:
-	@$(MAKE) -C $(ESP32_VIRT_DIR) verify PYTHON="$(abspath $(PYTHON))" || { \
+	@$(MAKE) -C $(ESP32_VIRT_DIR) verify PYTHON="$(PYTHON_ABS)" || { \
 		echo "[ERROR] Entorno virtual ESP32 no configurado. Ejecuta: make -C scripts/esp32_virtual install"; \
 		exit 1; \
 	}
 
 esp32-virt-install:
-	@$(MAKE) -C $(ESP32_VIRT_DIR) install PYTHON="$(abspath $(PYTHON))"
+	@$(MAKE) -C $(ESP32_VIRT_DIR) install PYTHON="$(PYTHON_ABS)"
 
 esp32-virt-stop:
-	@$(MAKE) -C $(ESP32_VIRT_DIR) stop PYTHON="$(abspath $(PYTHON))"
+	@$(MAKE) -C $(ESP32_VIRT_DIR) stop PYTHON="$(PYTHON_ABS)"
 
 esp32-socat-start:
 	@$(MAKE) -C $(ESP32_VIRT_DIR) start-socat \
 		VIRTUAL_PORT=$(VIRTUAL_PORT) \
 		SOCAT_PORT=$(SOCAT_PORT) \
-		PYTHON="$(abspath $(PYTHON))"
+		PYTHON="$(PYTHON_ABS)"
 
 # Requiere: PHASE VARIANT
 esp32-qemu-start:
@@ -1503,7 +1506,7 @@ esp32-qemu-start:
 		VARIANT=$$VARIANT_NORM \
 		SOCAT_PORT=$(SOCAT_PORT) \
 		ESP_PROJECT_DIR="$(abspath executions/$(PHASE)/$$VARIANT_NORM/esp32_project)" \
-		PYTHON="$(abspath $(PYTHON))"
+		PYTHON="$(PYTHON_ABS)"
 
 # Requiere: PHASE FLASH_MODULE VARIANT
 esp32-flash-run-virtual:
