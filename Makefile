@@ -1604,6 +1604,17 @@ check7: check-variant-format
 register7: check-variant-format
 	@test -n "$(VARIANT)" || (echo "[ERROR] Usage: make register7 VARIANT=v7XX"; exit 1)
 
+	@VARIANT_NORM="$$($(NORMALIZE_VARIANT_FOR_PHASE) $(PHASE7) $(VARIANT))"; \
+	ESP_DIR="$(VARIANTS_DIR7)/$$VARIANT_NORM/esp32_project"; \
+	if [ -d "$$ESP_DIR/build_generated" ]; then \
+		echo "==> DVC-tracking esp32_project/build_generated"; \
+		$(DVC) add "$$ESP_DIR/build_generated" || true; \
+	fi; \
+	if [ -d "$$ESP_DIR/data" ]; then \
+		echo "==> DVC-tracking esp32_project/data"; \
+		$(DVC) add "$$ESP_DIR/data" || true; \
+	fi
+
 	$(MAKE) register-generic \
 		PHASE=$(PHASE7) \
 		VARIANTS_DIR=$(VARIANTS_DIR7) \
