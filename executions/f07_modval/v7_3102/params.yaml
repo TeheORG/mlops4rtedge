@@ -12,7 +12,8 @@ parameters:
   decision_threshold: 0.9822037220001221
   event_type_count: 102
   MTI_MS: 100
+  max_rows: 10000
   platform: esp32
-  virtual: false
+  virtual: true
 parent_hashes:
   v6_0001: f5a5851983128bf6b9497e004d4504e70255119a032a8be50ecec664938d0e60
