@@ -482,10 +482,6 @@ def describe_serial_ports() -> str:
 
 
 
-# ============================================================
-# MONITOR (modo memoria)
-# ============================================================
-
 def resolve_max_mti_ms(edge_cfg: dict):
     models = edge_cfg.get("models")
     if isinstance(models, list) and models:
