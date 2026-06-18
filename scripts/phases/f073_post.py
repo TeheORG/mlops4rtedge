@@ -554,12 +554,8 @@ def _update_model_profile(
 
     timing_block = profile.get("timing", {}) or {}
     _raw_itmax = models_row.get("infer_worst_ms", models_row.get("infer_max_ms"))
-    # QEMU timing (time_scale_factor < 1) is unreliable — raw values vary wildly between
-    # runs due to emulator scheduling. Don't overwrite itmax_ms so f081 falls back to
-    # limits.itmax_ms (the configured ITmax from the hardware spec).
-    # On real hardware (time_scale_factor == 1.0) the measured value is trustworthy.
     if time_scale_factor < 1.0:
-        _itmax_to_store = timing_block.get("itmax_ms")  # keep existing profile value
+        _itmax_to_store = timing_block.get("itmax_ms")
     else:
         _itmax_to_store = _raw_itmax
     timing_block.update(
