@@ -1,0 +1,12 @@
+selection_mode: manual
+objective: max_global_recall
+solver_status: NoCandidates
+reason: no_edge_capable_parents
+candidates_considered: 1
+candidates_feasible_after_filters: 0
+selected_count: 0
+selected_variants: []
+excluded_parents:
+- parent_variant: v7_3101
+  stage: build_candidate
+  reason: '[F08] model_tflite no encontrado para v7_3101: /home/tehe/Work/tfm/dash_ctrl_mlops/app_ctrl_v2/external/mlops4rtedge/repo_local_runner/executions/f06_quant/v6_0001/06_model_tflite.tflite'
