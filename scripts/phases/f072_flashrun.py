@@ -216,7 +216,7 @@ def build_idf_command(
     )
 
     idf_cmd = (
-        "source /opt/esp/idf/export.sh >/dev/null 2>&1 && "
+        "source /opt/esp/idf/export.sh >/dev/null && "
         f"{parallel_prefix}idf.py {quoted_args}"
     )
 

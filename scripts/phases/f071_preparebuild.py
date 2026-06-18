@@ -193,7 +193,7 @@ def main():
     params = params_data.get("parameters", {})
     virtualized = bool(params.get("virtual", False)) or args.virtual
 
-    time_scale = float(params.get("time_scale_factor", 0.01))
+    time_scale = float(params.get("time_scale_factor", 1.0))
 
     parent_variant = params_data.get("parent")
 
