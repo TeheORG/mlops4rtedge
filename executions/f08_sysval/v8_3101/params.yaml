@@ -1,0 +1,14 @@
+phase: f08_sysval
+variant: v8_3101
+parent: null
+parameters:
+  parent_variant:
+  - v7_3101
+  selection_mode: manual
+  solver_time_limit_sec: 30
+  time_scale_factor: 1.0
+  MTI_MS: 300
+  platform: esp32
+  virtual: false
+parent_hashes:
+  v7_3101: 9cf2fe5b9d67918be2c5086aef0494ac116938fd7983b452fd5287a090f43248
