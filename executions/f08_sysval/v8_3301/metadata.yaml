@@ -1,7 +1,7 @@
 created_at: '2026-06-18T13:38:58.347227+00:00'
 params_path: executions/f08_sysval/v8_3301/params.yaml
-lifecycle_state: VARIANT_CREATED
-lifecycle_updated_at: '2026-06-18T13:38:58.400436+00:00'
+lifecycle_state: EXECUTION_COMPLETED
+lifecycle_updated_at: '2026-06-18T13:39:10.521820+00:00'
 verified: none
-verified_updated_at: '2026-06-18T13:38:58.382793+00:00'
+verified_updated_at: '2026-06-18T13:39:10.020214+00:00'
 registred: none
