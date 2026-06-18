@@ -3,6 +3,9 @@
 F08 — SYSTEM VALIDATION (MULTI-MODEL EDGE) — PREPARE BUILD
 """
 
+# memory_events.h embebe max_rows filas del dataset en el binario (modo memoria).
+# NOTE: con 2MB flash / 1MB app partition, max_rows seguro ≈ 10000 (~56 bytes/fila
+# compilada). Full dataset (~35K filas) → ~2.2MB binario → overflow.
 import argparse
 import math
 import shutil

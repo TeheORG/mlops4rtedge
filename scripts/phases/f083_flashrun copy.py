@@ -1,8 +1,9 @@
 #!/usr/bin/env python3
 """
-F07 — MODEL VALIDATION (EDGE) — FLASH & RUN
+F08 — SYSTEM VALIDATION (MULTI-MODEL EDGE) — FLASH & RUN
 
 Flujo nativo para ESP32 y flujo basado en runners para otras plataformas.
+Además exporta artefactos de build reproducibles al directorio de variante.
 """
 
 import argparse
@@ -12,7 +13,6 @@ import sys
 import shutil
 import os
 import shlex
-import platform
 from pathlib import Path
 
 import serial
@@ -21,15 +21,9 @@ import yaml
 
 from scripts.core.artifacts import PROJECT_ROOT, get_variant_dir
 
-PHASE = "f07_modval"
+PHASE = "f08_sysval"
 IDF_DOCKER_IMAGE = "mlops4ofp-idf:6.0"
-FLASH_RETRY_ATTEMPTS = 3
 DEFAULT_FLASH_BAUD = 115200
-
-# ── Límites del contenedor Docker de build ────────────────────────────────────
-# None  → usa toda la RAM disponible del sistema (comportamiento por defecto)
-# "8g"  → limita a 8 GB RAM (recomendado si el sistema tiene poca RAM libre)
-DOCKER_MEMORY_LIMIT: str | None = None
 
 
 # ============================================================
@@ -43,7 +37,6 @@ def run_and_log(
     env: dict[str, str] | None = None,
     echo_output: bool = False,
 ):
-    """Ejecuta comando y guarda stdout+stderr en log."""
     log_path.parent.mkdir(parents=True, exist_ok=True)
 
     with open(log_path, "w") as log:
@@ -77,10 +70,8 @@ def run_and_log(
             raise KeyboardInterrupt
 
         if process.returncode != 0:
-            tail = _tail_text(log_path, max_lines=200)
             raise RuntimeError(
-                f"[F07] Command failed ({process.returncode}): {' '.join(cmd)}\n"
-                f"[F07] Últimas líneas de {log_path}:\n{tail}"
+                f"[F08] Command failed ({process.returncode}): {' '.join(cmd)}"
             )
 
 
@@ -91,7 +82,6 @@ def run_and_log_result(
     env: dict[str, str] | None = None,
     echo_output: bool = False,
 ) -> tuple[int, str]:
-    """Ejecuta comando, guarda stdout+stderr en log y devuelve (rc, output)."""
     log_path.parent.mkdir(parents=True, exist_ok=True)
     lines: list[str] = []
 
@@ -126,52 +116,9 @@ def run_and_log_result(
     return process.returncode, "".join(lines)
 
 
-def _tail_text(path: Path, max_lines: int = 80) -> str:
-    if not path.exists():
-        return ""
-    try:
-        lines = path.read_text(errors="replace").splitlines()
-    except OSError:
-        return ""
-    return "\n".join(lines[-max_lines:])
-
-
-def looks_like_connection_failure(log_path: Path, extra_text: str = "") -> bool:
-    text = f"{_tail_text(log_path)}\n{extra_text}".lower()
-    patterns = (
-        "failed to connect",
-        "timed out waiting for packet header",
-        "could not open port",
-        "ser_open",
-        "serial exception",
-        "uart",
-        "no serial data received",
-        "rst:0x",
-        "waiting for download",
-        "port is busy",
-        "device or resource busy",
-        "permission denied",
-        "write-flash failed",
-        "chip is",
-        "invalid head of packet",
-        "wrong boot mode",
-        "chip stopped responding",
-        "stopiteration",
-    )
-    return any(pattern in text for pattern in patterns)
-
-
 def get_host_user_spec() -> str:
     """Devuelve UID:GID del proceso host para ejecutar Docker sin root."""
     return f"{os.getuid()}:{os.getgid()}"
-
-
-def get_host_uid() -> str:
-    return str(os.getuid())
-
-
-def get_host_gid() -> str:
-    return str(os.getgid())
 
 
 def get_serial_device_gid(port: str | None) -> str | None:
@@ -193,44 +140,20 @@ def build_idf_command(
     docker_memory_swap: str | None = None,
     docker_cpus: str | None = None,
 ) -> list[str]:
-    """Construye comando para ejecutar idf.py en Docker.
-
-    Se ejecuta como root dentro del contenedor para evitar problemas de ownership
-    con /opt/esp/idf, pero al finalizar devuelve la propiedad de los artefactos
-    generados en /project al usuario del runner.
-    """
     quoted_args = " ".join(shlex.quote(arg) for arg in idf_args)
     parallel_prefix = ""
     if cmake_parallel_level is not None:
         level = shlex.quote(str(cmake_parallel_level))
         parallel_prefix = f"export CMAKE_BUILD_PARALLEL_LEVEL={level} && "
 
-    fix_owner_cmd = (
-        'chown -R "$HOST_UID:$HOST_GID" '
-        '/project/build '
-        '/project/build_generated '
-        '/project/sdkconfig '
-        '/project/dependencies.lock '
-        '/project/managed_components '
-        '2>/dev/null || true'
-    )
-
-    idf_cmd = (
+    shell_cmd = (
         "source /opt/esp/idf/export.sh >/dev/null 2>&1 && "
         f"{parallel_prefix}idf.py {quoted_args}"
     )
 
-    shell_cmd = (
-        f"{idf_cmd}; "
-        "rc=$?; "
-        f"{fix_owner_cmd}; "
-        "exit $rc"
-    )
-
     cmd = [
         "docker", "run", "--rm", "-i",
-        "-e", f"HOST_UID={get_host_uid()}",
-        "-e", f"HOST_GID={get_host_gid()}",
+        "--user", get_host_user_spec(),
         "-v", f"{esp_project_dir.resolve()}:/project",
         "-w", "/project",
         "--entrypoint", "/bin/bash",
@@ -247,6 +170,9 @@ def build_idf_command(
 
     if port:
         cmd.extend(["--device", f"{port}:{port}"])
+        serial_gid = get_serial_device_gid(port)
+        if serial_gid:
+            cmd.extend(["--group-add", serial_gid])
 
     cmd.extend([IDF_DOCKER_IMAGE, "-lc", shell_cmd])
     return cmd
@@ -275,11 +201,13 @@ def run_idf_and_log(
 
 
 def can_map_docker_device(port: str, image_name: str) -> tuple[bool, str]:
-    """Valida que Docker puede mapear el dispositivo serie indicado."""
+    serial_gid = get_serial_device_gid(port)
     probe = subprocess.run(
         [
             "docker", "run", "--rm",
+            "--user", get_host_user_spec(),
             "--device", f"{port}:{port}",
+            *(["--group-add", serial_gid] if serial_gid else []),
             "--entrypoint", "/bin/bash",
             image_name,
             "-lc", f"test -e {shlex.quote(port)}",
@@ -303,8 +231,8 @@ def run_host_esptool_flash(port: str, esp_project_dir: Path, flash_log: Path) ->
     if not flash_args.exists():
         return False
 
-    flash_baud = os.environ.get("F07_FLASH_BAUD", str(DEFAULT_FLASH_BAUD))
-    print(f"[F07] Intentando flash en host con esptool a {flash_baud} baud")
+    flash_baud = os.environ.get("F08_FLASH_BAUD", str(DEFAULT_FLASH_BAUD))
+    print(f"[F08] Intentando flash en host con esptool a {flash_baud} baud")
     rc, _ = run_and_log_result(
         [
             sys.executable,
@@ -330,36 +258,7 @@ def run_host_esptool_flash(port: str, esp_project_dir: Path, flash_log: Path) ->
     if rc == 0:
         return True
 
-    raise RuntimeError("[F07] Falló el flash con esptool en host")
-
-
-def flash_with_retry(
-    flash_fn,
-    flash_log: Path,
-    attempts: int = FLASH_RETRY_ATTEMPTS,
-):
-    last_error: RuntimeError | None = None
-
-    for attempt in range(1, attempts + 1):
-        try:
-            if flash_fn():
-                if attempt > 1:
-                    print(f"[F07] Flash recuperado en intento {attempt}/{attempts}")
-                return
-        except RuntimeError as exc:
-            last_error = exc
-            if attempt >= attempts or not looks_like_connection_failure(flash_log, str(exc)):
-                raise
-
-            wait_s = min(2.0 * attempt, 5.0)
-            print(
-                f"[F07] Fallo de conexión al flashear. Reintentando "
-                f"({attempt}/{attempts}) en {wait_s:.1f}s..."
-            )
-            time.sleep(wait_s)
-
-    if last_error is not None:
-        raise last_error
+    raise RuntimeError("[F08] Falló el flash con esptool en host")
 
 
 def flash_portable(
@@ -371,55 +270,43 @@ def flash_portable(
     docker_cpus: str | None,
 ):
     if sys.platform == "darwin":
-        print("[F07] Flash en host (macOS)")
-        flash_with_retry(
-            lambda: run_host_esptool_flash(port, esp_project_dir, flash_log),
-            flash_log,
-        )
-        return
+        print("[F08] Flash en host (macOS)")
+        if run_host_esptool_flash(port, esp_project_dir, flash_log):
+            return
 
     docker_ok, docker_err = can_map_docker_device(port, IDF_DOCKER_IMAGE)
 
     if docker_ok:
-        flash_baud = os.environ.get("F07_FLASH_BAUD", str(DEFAULT_FLASH_BAUD))
-        print(f"[F07] Flash vía Docker a {flash_baud} baud")
-        def docker_flash_once():
-            run_idf_and_log(
-                ["-p", port, "-b", flash_baud, "flash"],
-                flash_log,
-                esp_project_dir=esp_project_dir,
-                port=port,
-                docker_memory_limit=docker_memory_limit,
-                docker_memory_swap=docker_memory_swap,
-                docker_cpus=docker_cpus,
-            )
-
-        flash_with_retry(docker_flash_once, flash_log)
+        flash_baud = os.environ.get("F08_FLASH_BAUD", str(DEFAULT_FLASH_BAUD))
+        print(f"[F08] Flash vía Docker a {flash_baud} baud")
+        run_idf_and_log(
+            ["-p", port, "-b", flash_baud, "flash"],
+            flash_log,
+            esp_project_dir=esp_project_dir,
+            port=port,
+            docker_memory_limit=docker_memory_limit,
+            docker_memory_swap=docker_memory_swap,
+            docker_cpus=docker_cpus,
+        )
         return
 
-    print("[F07] Docker no puede mapear el puerto serie; usando host")
+    print("[F08] Docker no puede mapear el puerto serie; usando host")
     if docker_err:
-        print(f"[F07] Detalle Docker: {docker_err}")
+        print(f"[F08] Detalle Docker: {docker_err}")
 
-    flash_with_retry(
-        lambda: run_host_esptool_flash(port, esp_project_dir, flash_log),
-        flash_log,
-    )
-    return
+    if run_host_esptool_flash(port, esp_project_dir, flash_log):
+        return
 
     raise RuntimeError(
-        "[F07] No fue posible flashear de forma portable. "
+        "[F08] No fue posible flashear de forma portable. "
         "No hay passthrough serie en Docker y falló el flash en host con esptool."
     )
 
 
 def resolve_docker_memory_limit() -> str | None:
-    """Devuelve límite de memoria Docker. Prioridad: env var > constante > máximo disponible."""
-    env_value = os.environ.get("F07_DOCKER_MEMORY")
+    env_value = os.environ.get("F08_DOCKER_MEMORY")
     if env_value:
         return env_value
-    if DOCKER_MEMORY_LIMIT is not None:
-        return DOCKER_MEMORY_LIMIT
 
     probe = subprocess.run(
         ["docker", "info", "--format", "{{.MemTotal}}"],
@@ -439,69 +326,14 @@ def resolve_docker_memory_limit() -> str | None:
 
 
 def resolve_docker_memory_swap() -> str | None:
-    return os.environ.get("F07_DOCKER_MEMORY_SWAP")
+    return os.environ.get("F08_DOCKER_MEMORY_SWAP")
 
 
 def resolve_docker_cpus() -> str | None:
-    return os.environ.get("F07_DOCKER_CPUS")
-
-
-def ensure_docker_image_exists(image_name: str):
-    """Valida que la imagen Docker requerida existe localmente."""
-    probe = subprocess.run(
-        ["docker", "image", "inspect", image_name],
-        stdout=subprocess.DEVNULL,
-        stderr=subprocess.DEVNULL,
-        check=False,
-    )
-
-    if probe.returncode == 0:
-        return
-
-    machine = (platform.machine() or "").lower()
-    if machine in ("x86_64", "amd64"):
-        docker_platform = "linux/amd64"
-    elif machine in ("aarch64", "arm64"):
-        docker_platform = "linux/arm64"
-    elif machine in ("armv7l", "armv6l"):
-        docker_platform = "linux/arm/v7"
-    else:
-        docker_platform = "linux/amd64"
-
-    build_script = PROJECT_ROOT / "edge" / "esp32" / "docker" / "build_image.sh"
-    build_cmd = ["bash", str(build_script), "--platform", docker_platform]
-
-    print(
-        "[F07] No existe imagen Docker local. "
-        f"Intentando crear {image_name} con plataforma detectada: {docker_platform}"
-    )
-    build = subprocess.run(
-        build_cmd,
-        cwd=str(PROJECT_ROOT),
-        check=False,
-    )
-
-    if build.returncode == 0:
-        recheck = subprocess.run(
-            ["docker", "image", "inspect", image_name],
-            stdout=subprocess.DEVNULL,
-            stderr=subprocess.DEVNULL,
-            check=False,
-        )
-        if recheck.returncode == 0:
-            return
-
-    raise RuntimeError(
-        "[F07] No existe la imagen Docker requerida: "
-        f"{image_name}.\n"
-        "[F07] Se intentó crear automáticamente y falló.\n"
-        "[F07] Ejecuta manualmente:\n"
-        f"  - bash edge/esp32/docker/build_image.sh --platform {docker_platform}"
-    )
+    return os.environ.get("F08_DOCKER_CPUS")
 
 
 def sanitize_sdkconfig_for_docker(esp_project_dir: Path):
-    """Regenera sdkconfig desde defaults para evitar incompatibilidades en Docker."""
     sdkconfig_path = esp_project_dir / "sdkconfig"
     defaults_path = esp_project_dir / "sdkconfig.defaults"
 
@@ -509,26 +341,90 @@ def sanitize_sdkconfig_for_docker(esp_project_dir: Path):
         return
 
     shutil.copy2(defaults_path, sdkconfig_path)
-    print("[F07] sdkconfig regenerado desde sdkconfig.defaults para build Docker")
-
+    print("[F08] sdkconfig regenerado desde sdkconfig.defaults para build Docker")
 
 
 def sync_generated_sources_for_build(esp_project_dir: Path):
-
     src_dir = esp_project_dir / "build_generated"
 
     if not src_dir.exists():
         raise RuntimeError(
-            "[F07] Falta build_generated. Ejecuta f071_preparebuild."
+            "[F08] Falta build_generated. Ejecuta f082_preparebuild."
         )
 
-    # CMake consume artefactos generados desde ${CMAKE_BINARY_DIR}/build_generated
     dst_dir = esp_project_dir / "build" / "build_generated"
 
     if dst_dir.exists():
         shutil.rmtree(dst_dir)
 
     shutil.copytree(src_dir, dst_dir)
+
+
+# ============================================================
+# EXPORT DE ARTEFACTOS DE BUILD
+# ============================================================
+
+def copy_if_exists(src: Path, dst: Path):
+    if src.exists():
+        dst.parent.mkdir(parents=True, exist_ok=True)
+        shutil.copy2(src, dst)
+        return True
+    return False
+
+
+def export_platform_build_artifacts(variant_dir: Path, project_dir: Path, platform: str):
+    build_dir = project_dir / "build"
+    if not build_dir.exists():
+        return
+
+    bundle_dir = variant_dir / "platform_build_bundle"
+    if bundle_dir.exists():
+        shutil.rmtree(bundle_dir)
+    bundle_dir.mkdir(parents=True, exist_ok=True)
+
+    if platform == "esp32":
+        candidates = [
+            "bootloader/bootloader.bin",
+            "partition_table/partition-table.bin",
+            "flasher_args.json",
+            "flash_args",
+            "project_description.json",
+        ]
+
+        app_bin_candidates = list(build_dir.glob("*.bin"))
+        for app_bin in app_bin_candidates:
+            if app_bin.name not in {"bootloader.bin", "partition-table.bin"}:
+                copy_if_exists(app_bin, bundle_dir / app_bin.name)
+
+        for rel in candidates:
+            src = build_dir / rel
+            if src.exists():
+                dst = bundle_dir / Path(rel).name
+                copy_if_exists(src, dst)
+
+        main_app = None
+        for app_bin in app_bin_candidates:
+            if app_bin.name not in {"bootloader.bin", "partition-table.bin"}:
+                main_app = app_bin
+                break
+
+        if main_app:
+            copy_if_exists(main_app, variant_dir / "application_image.bin")
+
+        copy_if_exists(
+            build_dir / "bootloader" / "bootloader.bin",
+            variant_dir / "bootloader_image.bin",
+        )
+        copy_if_exists(
+            build_dir / "partition_table" / "partition-table.bin",
+            variant_dir / "partition_table_image.bin",
+        )
+
+    else:
+        for item in build_dir.glob("*"):
+            if item.is_file():
+                copy_if_exists(item, bundle_dir / item.name)
+
 
 # ============================================================
 # AUTODETECCIÓN DE PUERTO
@@ -586,20 +482,6 @@ def describe_serial_ports() -> str:
 
 
 
-# ============================================================
-# SERIAL SEND + MONITOR (INTEGRADO)
-# ============================================================
-
-def load_lines_for_serial(path: Path) -> list[str]:
-    text = path.read_text()
-    lines = []
-    for line in text.splitlines():
-        stripped = line.strip()
-        if stripped:
-            lines.append(stripped)
-    return lines
-
-
 def resolve_max_mti_ms(edge_cfg: dict):
     models = edge_cfg.get("models")
     if isinstance(models, list) and models:
@@ -648,14 +530,13 @@ def resolve_project_dir(variant_dir: Path, edge_cfg: dict, platform: str) -> Pat
     if platform_project.exists():
         return platform_project
 
-    # Compatibilidad con variantes antiguas de ESP32
     legacy_esp = variant_dir / "esp32_project"
     if legacy_esp.exists():
         return legacy_esp
 
     raise RuntimeError(
-        f"[F07] No se encuentra proyecto de plataforma para {platform}. "
-        "Ejecuta f071_preparebuild."
+        f"[F08] No se encuentra proyecto de plataforma para {platform}. "
+        "Ejecuta f082_preparebuild."
     )
 
 
@@ -673,7 +554,7 @@ def resolve_runner_dir(variant_dir: Path, edge_cfg: dict, platform: str) -> Path
         return fallback
 
     raise RuntimeError(
-        f"[F07] No se encuentra runner para platform={platform}. "
+        f"[F08] No se encuentra runner para platform={platform}. "
         f"Crea edge/{platform}/runner con build.sh, flash.sh y run.sh."
     )
 
@@ -685,10 +566,9 @@ def run_runner_script(
     cwd: Path,
 ):
     if not script_path.exists():
-        raise RuntimeError(f"[F07] Script runner no encontrado: {script_path}")
+        raise RuntimeError(f"[F08] Script runner no encontrado: {script_path}")
 
     run_and_log(["/bin/bash", str(script_path)], log_path, cwd=cwd, env=env)
-
 
 
 def run_platform_runner_flow(
@@ -718,138 +598,44 @@ def run_platform_runner_flow(
     env = os.environ.copy()
     env.update(
         {
-            "F07_PLATFORM": platform,
-            "F07_VARIANT": variant,
-            "F07_VARIANT_DIR": str(variant_dir.resolve()),
-            "F07_PROJECT_DIR": str(project_dir.resolve()),
-            "F07_EDGE_CONFIG": str(edge_cfg_path.resolve()),
-            "F07_INPUT_DATASET": str(dataset_csv.resolve()),
-            "F07_MODE": str(args.mode),
-            "F07_BAUD": str(args.baud),
-            "F07_TU_MS": str(tu_ms) if tu_ms is not None else "",
-            "F07_RECOMMENDED_DRAIN_SECONDS": str(recommended) if recommended is not None else "",
-            "F07_GEOM_OW": str(geom.get("OW", "")),
-            "F07_GEOM_LT": str(geom.get("LT", "")),
-            "F07_GEOM_PW": str(geom.get("PW", "")),
+            "F08_PLATFORM": platform,
+            "F08_VARIANT": variant,
+            "F08_VARIANT_DIR": str(variant_dir.resolve()),
+            "F08_PROJECT_DIR": str(project_dir.resolve()),
+            "F08_EDGE_CONFIG": str(edge_cfg_path.resolve()),
+            "F08_INPUT_DATASET": str(dataset_csv.resolve()),
+            "F08_MODE": "memory",
+            "F08_BAUD": str(args.baud),
+            "F08_TU_MS": str(tu_ms) if tu_ms is not None else "",
+            "F08_RECOMMENDED_DRAIN_SECONDS": str(recommended) if recommended is not None else "",
+            "F08_GEOM_OW": str(geom.get("OW", "")),
+            "F08_GEOM_LT": str(geom.get("LT", "")),
+            "F08_GEOM_PW": str(geom.get("PW", "")),
         }
     )
 
     if args.port:
-        env["F07_PORT"] = str(args.port)
+        env["F08_PORT"] = str(args.port)
 
     if args.drain_seconds is not None:
-        env["F07_DRAIN_SECONDS"] = str(args.drain_seconds)
+        env["F08_DRAIN_SECONDS"] = str(args.drain_seconds)
 
-    print(f"[F07] Ejecutando runner de plataforma: {platform}")
-    print(f"[F07] Runner dir: {runner_dir}")
+    print(f"[F08] Ejecutando runner de plataforma: {platform}")
+    print(f"[F08] Runner dir: {runner_dir}")
 
     run_runner_script(build_script, build_log, env=env, cwd=project_dir)
 
     if args.build_only:
-        print("\n[F07] Build-only completado con éxito.")
+        export_platform_build_artifacts(variant_dir, project_dir, platform)
+        print("\n[F08] Build-only completado con éxito.")
         return
 
     run_runner_script(flash_script, flash_log, env=env, cwd=project_dir)
     run_runner_script(run_script, monitor_log, env=env, cwd=project_dir)
 
-    print("\n[F07] Flash-run completado con éxito.")
+    export_platform_build_artifacts(variant_dir, project_dir, platform)
 
-
-def serial_send_and_monitor(
-    port: str,
-    baud: int,
-    input_file: Path,
-    log_path: Path,
-    tunit_ms: float | None,
-    post_wait_s: float,
-):
-    period = (tunit_ms or 1000.0) / 1000.0
-
-    lines = load_lines_for_serial(input_file)
-    if not lines:
-        print("[F07-serial] No hay datos para enviar.")
-        return
-
-    print(f"[F07-serial] Puerto: {port}")
-    print(f"[F07-serial] Baud: {baud}")
-    print(f"[F07-serial] Periodo envío: {period:.3f}s")
-    print(f"[F07-serial] Líneas a enviar: {len(lines)}")
-    print(f"[F07-serial] Drenado final: {post_wait_s:.2f}s")
-    print("[F07-serial] Progreso: '*' cada 100 líneas enviadas (10 '*' por línea)")
-
-    ser = serial.Serial(port, baud, timeout=0)
-
-    # Espera arranque tras flash
-    time.sleep(8.0)
-
-    log_path.parent.mkdir(parents=True, exist_ok=True)
-    logf = open(log_path, "w")
-
-    stopped_by_user = False
-    progress_marks = 0
-
-    def emit_progress(sent_lines: int):
-        nonlocal progress_marks
-        target_marks = (sent_lines + 99) // 100
-        while progress_marks < target_marks:
-            sys.stdout.write("*")
-            progress_marks += 1
-            if progress_marks % 10 == 0:
-                sys.stdout.write("\n")
-            sys.stdout.flush()
-
-    try:
-        next_send = time.monotonic()
-
-        def drain_serial_once():
-            pending = getattr(ser, "in_waiting", 0)
-            if pending and pending > 0:
-                data = ser.read(pending)
-                if data:
-                    text = data.decode("utf-8", errors="ignore")
-                    logf.write(text)
-                    logf.flush()
-
-        # ENVIO + LECTURA
-        for index, line in enumerate(lines, start=1):
-
-            # ---- SEND ----
-            ser.write((line + "\n").encode("utf-8"))
-            ser.flush()
-            emit_progress(index)
-
-            next_send += period
-
-            # ---- RECEIVE HASTA SIGUIENTE Tu ----
-            while True:
-                now = time.monotonic()
-                remaining = next_send - now
-                if remaining <= 0:
-                    break
-                drain_serial_once()
-                time.sleep(min(0.01, max(0.0, remaining)))
-
-        # ---- DRENADO FINAL (OW+LT) ----
-        end_time = time.monotonic() + post_wait_s
-        while time.monotonic() < end_time:
-            drain_serial_once()
-            time.sleep(0.05)
-
-    except KeyboardInterrupt:
-        stopped_by_user = True
-        print("\n[F07-serial] Captura interrumpida por usuario (Ctrl+C). Continuando flujo.")
-
-    finally:
-        logf.close()
-        ser.close()
-
-    if progress_marks % 10 != 0:
-        print("")
-
-    if stopped_by_user:
-        print("[F07-serial] Finalizado por usuario.")
-    else:
-        print("\n[F07-serial] Finalizado correctamente.")
+    print("\n[F08] Flash-run completado con éxito.")
 
 
 def serial_monitor_only(
@@ -858,9 +644,9 @@ def serial_monitor_only(
     log_path: Path,
     post_wait_s: float,
 ):
-    print(f"[F07-monitor] Puerto: {port}")
-    print(f"[F07-monitor] Baud: {baud}")
-    print(f"[F07-monitor] Duración: {post_wait_s:.2f}s")
+    print(f"[F08-monitor] Puerto: {port}")
+    print(f"[F08-monitor] Baud: {baud}")
+    print(f"[F08-monitor] Duración: {post_wait_s:.2f}s")
 
     ser = serial.Serial(port, baud, timeout=0)
     time.sleep(2.0)
@@ -885,16 +671,16 @@ def serial_monitor_only(
 
     except KeyboardInterrupt:
         stopped_by_user = True
-        print("\n[F07-monitor] Captura interrumpida por usuario (Ctrl+C). Continuando flujo.")
+        print("\n[F08-monitor] Captura interrumpida por usuario (Ctrl+C). Continuando flujo.")
 
     finally:
         logf.close()
         ser.close()
 
     if stopped_by_user:
-        print("[F07-monitor] Finalizado por usuario.")
+        print("[F08-monitor] Finalizado por usuario.")
     else:
-        print("\n[F07-monitor] Finalizado correctamente.")
+        print("\n[F08-monitor] Finalizado correctamente.")
 
 
 # ============================================================
@@ -904,29 +690,27 @@ def serial_monitor_only(
 def main():
     parser = argparse.ArgumentParser()
     parser.add_argument("--variant", required=True)
-    parser.add_argument("--mode", choices=["serial", "memory"], default="serial")
     parser.add_argument("--port", default=None)
     parser.add_argument("--baud", type=int, default=115200)
     parser.add_argument("--drain-seconds", type=float, default=None)
     parser.add_argument("--build-only", action="store_true")
-    parser.add_argument("--skip-flash", action="store_true", help="Omite el flasheo mediante esptool (requerido para QEMU)")
     parser.add_argument("--no-clean-build", action="store_true")
+    parser.add_argument("--skip-flash", action="store_true", help="Omite el flasheo mediante esptool (requerido para QEMU)")
     args = parser.parse_args()
 
     try:
         variant = args.variant
-        mode = args.mode
 
         variant_dir = get_variant_dir(PHASE, variant)
 
-        edge_cfg_path = variant_dir / "07_edge_run_config.yaml"
+        edge_cfg_path = variant_dir / "08_edge_run_config.yaml"
         if not edge_cfg_path.exists():
-            raise RuntimeError("[F07] 07_edge_run_config.yaml no encontrado.")
+            raise RuntimeError("[F08] 08_edge_run_config.yaml no encontrado.")
 
         edge_cfg = yaml.safe_load(edge_cfg_path.read_text())
         platform = str(edge_cfg.get("platform", "")).strip().lower()
         if not platform:
-            raise RuntimeError("[F07] platform no definido en 07_edge_run_config.yaml")
+            raise RuntimeError("[F08] platform no definido en 08_edge_run_config.yaml")
 
         project_dir = resolve_project_dir(variant_dir, edge_cfg, platform)
 
@@ -941,7 +725,6 @@ def main():
 
         tunit_s = float(tu_ms) / 1000.0 if tu_ms else 1.0
 
-        # ---- Calcular tiempo drenado ----
         if args.drain_seconds is not None:
             post_wait_s = args.drain_seconds
         elif recommended is not None:
@@ -949,55 +732,43 @@ def main():
         else:
             post_wait_s = max(5.0, float((OW or 0) + (LT or 0)) * tunit_s)
 
-        # Asegurar procesamiento completo: tras la ultima muestra enviada,
-        # no se puede cortar antes de OW + MTI (en ms).
         if mti_ms is not None:
             min_post_wait_s = float(OW or 0) * tunit_s + float(mti_ms) / 1000.0
         else:
-            # Compatibilidad con variantes legacy donde MTI estaba en unidades Tu.
             min_post_wait_s = float((OW or 0) + float(legacy_mti or 0)) * tunit_s
 
         if post_wait_s < min_post_wait_s:
             print(
-                f"[F07] Ajustando drain a minimo OW+MTI(ms): {post_wait_s:.2f}s -> {min_post_wait_s:.2f}s"
+                f"[F08] Ajustando drain a minimo OW+MTI(ms): {post_wait_s:.2f}s -> {min_post_wait_s:.2f}s"
             )
             post_wait_s = min_post_wait_s
 
-        print(f"[F07] post_wait_s = {post_wait_s:.2f}s")
+        print(f"[F08] post_wait_s = {post_wait_s:.2f}s")
 
-        # ---- Puerto serie: solo necesario si habrá flash/run ----
         port = args.port
         if not args.build_only:
-            env_port = os.environ.get("F07_PORT")
-            if not port and env_port:
-                port = env_port.strip()
-                if port:
-                    print(f"[F07] Puerto tomado de F07_PORT: {port}")
-
             if not port:
                 detected = auto_detect_port()
 
                 if detected is None:
                     raise RuntimeError(
-                        "[F07] No se detecta ningún puerto serie. "
-                        "Conecta la ESP32 o usa --port/F07_PORT.\n"
-                        f"[F07] Puertos visibles:\n{describe_serial_ports()}"
+                        "[F08] No se detecta ningún puerto serie. "
+                        "Conecta la placa o usa --port."
                     )
 
                 if detected == "MULTIPLE":
                     raise RuntimeError(
-                        "[F07] Múltiples puertos detectados. Especifica --port o F07_PORT.\n"
-                        f"[F07] Puertos visibles:\n{describe_serial_ports()}"
+                        "[F08] Múltiples puertos detectados. Especifica --port."
                     )
 
                 port = detected
-                print(f"[F07] Puerto autodetectado: {port}")
+                print(f"[F08] Puerto autodetectado: {port}")
 
-        build_log = variant_dir / "07_esp_build_log.txt"
-        flash_log = variant_dir / "07_esp_flash_log.txt"
-        monitor_log = variant_dir / "07_esp_monitor_log.txt"
+        build_log = variant_dir / "08_esp_build_log.txt"
+        flash_log = variant_dir / "08_esp_flash_log.txt"
+        monitor_log = variant_dir / "08_esp_monitor_log.txt"
 
-        dataset_csv = variant_dir / "07_input_dataset.csv"
+        dataset_csv = variant_dir / "08_input_dataset.csv"
 
         if platform != "esp32":
             run_platform_runner_flow(
@@ -1017,9 +788,6 @@ def main():
 
         esp_project_dir = project_dir
 
-        # =========================================================
-        # BUILD
-        # =========================================================
         if args.skip_flash:
             print("\n=== BUILD (SALTADO) ===")
             docker_memory_limit = resolve_docker_memory_limit()
@@ -1031,23 +799,22 @@ def main():
                 build_dir = esp_project_dir / "build"
                 if build_dir.exists():
                     shutil.rmtree(build_dir)
-                    print(f"[F07] build limpio: {build_dir}")
+                    print(f"[F08] build limpio: {build_dir}")
 
             sync_generated_sources_for_build(esp_project_dir)
             sanitize_sdkconfig_for_docker(esp_project_dir)
-            ensure_docker_image_exists(IDF_DOCKER_IMAGE)
             docker_memory_limit = resolve_docker_memory_limit()
             docker_memory_swap = resolve_docker_memory_swap()
             docker_cpus = resolve_docker_cpus()
 
             if docker_memory_limit:
-                print(f"[F07] Docker memory limit por defecto: {docker_memory_limit}")
+                print(f"[F08] Docker memory limit por defecto: {docker_memory_limit}")
             if docker_memory_swap:
-                print(f"[F07] Docker memory-swap: {docker_memory_swap}")
+                print(f"[F08] Docker memory-swap: {docker_memory_swap}")
             if docker_cpus:
-                print(f"[F07] Docker cpus: {docker_cpus}")
+                print(f"[F08] Docker cpus: {docker_cpus}")
 
-            build_jobs = os.environ.get("F07_DOCKER_BUILD_JOBS", "1")
+            build_jobs = os.environ.get("F08_DOCKER_BUILD_JOBS", "1")
             run_idf_and_log(
                 ["build"],
                 build_log,
@@ -1058,13 +825,12 @@ def main():
                 docker_cpus=docker_cpus,
             )
 
+        export_platform_build_artifacts(variant_dir, esp_project_dir, platform)
+
         if args.build_only:
-            print("\n[F07] Build-only completado con éxito.")
+            print("\n[F08] Build-only completado con éxito.")
             return
 
-        # =========================================================
-        # FLASH
-        # =========================================================
         if not args.skip_flash:
             print("\n=== FLASH ===")
             flash_portable(
@@ -1078,33 +844,20 @@ def main():
         else:
             print("\n=== FLASH (SALTADO POR --skip-flash) ===")
 
-        # =========================================================
-        # RUN
-        # =========================================================
         print("\n=== RUN ===")
 
-        if mode == "serial":
-            serial_send_and_monitor(
-                port=port,
-                baud=args.baud,
-                input_file=dataset_csv,
-                log_path=monitor_log,
-                tunit_ms=tu_ms,
-                post_wait_s=post_wait_s,
-            )
-        else:
-            serial_monitor_only(
-                port=port,
-                baud=args.baud,
-                log_path=monitor_log,
-                post_wait_s=post_wait_s,
-            )
+        serial_monitor_only(
+            port=port,
+            baud=args.baud,
+            log_path=monitor_log,
+            post_wait_s=post_wait_s,
+        )
 
-        print("\n[F07] Flash-run completado con éxito.")
+        print("\n[F08] Flash-run completado con éxito.")
     except KeyboardInterrupt:
         print(
-            "\n[F07] Ejecución interrumpida por usuario (Ctrl+C). "
-            "Se conservan logs parciales para análisis en F073."
+            "\n[F08] Ejecución interrumpida por usuario (Ctrl+C). "
+            "Se conservan logs parciales para análisis en F084."
         )
         return
 
