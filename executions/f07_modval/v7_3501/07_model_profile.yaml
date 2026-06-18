@@ -1,0 +1,91 @@
+phase: f07_modval
+variant: v7_3501
+parent:
+  phase: f06_quant
+  variant: v6_0001
+model:
+  model_id: battery_overheat-cnn1d-v5_0001__esp32
+  runtime_model_name: battery_overheat-cnn1d-v5_0001
+  prediction_name: battery_overheat
+  platform: esp32
+compatibility:
+  edge_capable: true
+  incompatibility_reason: null
+input_signature:
+  Tu: 10
+  OW: 600
+  LT: 100
+  PW: 100
+  event_type_count: 102
+  input_dtype: int8
+  output_dtype: int8
+  input_shape:
+  - 1
+  - 51
+  output_shape:
+  - 1
+  - 1
+  input_bytes: 51
+  output_bytes: 1
+build:
+  operators:
+  - CAST
+  - CONV_2D
+  - DEQUANTIZE
+  - EXPAND_DIMS
+  - FULLY_CONNECTED
+  - GATHER
+  - LOGISTIC
+  - REDUCE_MAX
+  - RESHAPE
+  decision_threshold: 0.9822037220001221
+  arena_bytes: 89916
+  arena_global_bytes: 104427
+  model_size_bytes: 59944
+limits:
+  MTI_MS: 100
+  ITmax: 100
+  itmax_ms: 100.0
+run:
+  edge_run_completed: true
+  n_inferences: 5788.0
+  ok_rate: 1.0
+  offload_rate: 0.0
+  watchdog_rate: 0.0
+artifacts:
+  edge_run_config: /home/runner/actions-runner/_work/mlops4rtedge/mlops4rtedge/executions/f07_modval/v7_3501/07_edge_run_config.yaml
+  input_dataset_csv: /home/runner/actions-runner/_work/mlops4rtedge/mlops4rtedge/executions/f07_modval/v7_3501/07_input_dataset.csv
+  evaluation_dataset_csv: /home/runner/actions-runner/_work/mlops4rtedge/mlops4rtedge/executions/f07_modval/v7_3501/07_evaluation_dataset.csv
+  model_tflite: /home/runner/actions-runner/_work/mlops4rtedge/mlops4rtedge/executions/f06_quant/v6_0001/06_model_tflite.tflite
+timing:
+  edge_mean_latency_ms: 2.44136800276434
+  edge_max_latency_ms: null
+  edge_jitter_ms: 0.5445221794985129
+  itmax_ms: null
+memory:
+  edge_memory_peak_bytes: null
+  model_memory_bytes: 59944
+  arena_bytes: 89916
+quality:
+  quality_score: 0.0
+  tp: 0.0
+  fp: 0.0
+  tn: 5406.0
+  fn: 381.0
+  confusion_matrix: '[[TN=5406, FP=0], [FN=381, TP=0]]'
+  accuracy: 0.9341627786417833
+  precision: null
+  recall: 0.0
+  f1: null
+  false_negative_rate: 1.0
+  pc_esp_agreement: null
+outcomes:
+  n_attempts: 5788
+  n_ok: 5788
+  n_fail: 0.0
+  n_offload: 0
+  n_wd_late: 0
+  n_wd_early: 0
+  n_inference_incomplete: 0
+  n_urgent: 0
+  n_no_inference: 0
