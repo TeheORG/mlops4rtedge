@@ -1,0 +1,18 @@
+selection_mode: manual
+objective: recall_global
+solver_status: NoCandidates
+reason: no_edge_capable_parents
+candidates_considered: 3
+candidates_feasible_after_filters: 0
+selected_count: 0
+selected_variants: []
+excluded_parents:
+- parent_variant: v7_3101
+  stage: build_candidate
+  reason: '[F08] input_dataset_csv no encontrado para v7_3101: /home/tehe/Work/tfm/dash_ctrl_mlops/app_ctrl_v2/external/mlops4rtedge/repo_local_runner/executions/f07_modval/v7_3101/07_input_dataset.csv'
+- parent_variant: v7_3301
+  stage: build_candidate
+  reason: '[F08] input_dataset_csv no encontrado para v7_3301: /home/runner/actions-runner/_work/mlops4rtedge/mlops4rtedge/executions/f07_modval/v7_3301/07_input_dataset.csv'
+- parent_variant: v7_3501
+  stage: build_candidate
+  reason: '[F08] input_dataset_csv no encontrado para v7_3501: /home/runner/actions-runner/_work/mlops4rtedge/mlops4rtedge/executions/f07_modval/v7_3501/07_input_dataset.csv'
