@@ -1,0 +1,20 @@
+phase: f08_sysval
+variant: v8_3102
+parent: null
+parameters:
+  parent_variant:
+  - v7_3101
+  - v7_3301
+  - v7_3501
+  selection_mode: manual
+  objective: recall_global
+  solver_time_limit_sec: 30
+  time_scale_factor: 1.0
+  MTI_MS: 300
+  platform: esp32
+  virtual: false
+  max_models: 3
+parent_hashes:
+  v7_3101: 9cf2fe5b9d67918be2c5086aef0494ac116938fd7983b452fd5287a090f43248
+  v7_3301: f102828ad789a1552197b77dc7fe641691acc17d09ea69a4db406b5ba4ce35ca
+  v7_3501: 6fe29b6f8795aaeaa524f04d9c8f2aa18960e24eefb59f5587a4f51da8474de0
