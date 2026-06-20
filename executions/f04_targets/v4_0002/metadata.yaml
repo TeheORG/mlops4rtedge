@@ -1,7 +1,7 @@
 created_at: '2026-06-20T09:41:25.980210+00:00'
 params_path: executions/f04_targets/v4_0002/params.yaml
-lifecycle_state: VARIANT_CREATED
-lifecycle_updated_at: '2026-06-20T09:41:26.386838+00:00'
-verified: none
-verified_updated_at: '2026-06-20T09:41:26.251646+00:00'
+lifecycle_state: EXECUTION_FAILED
+lifecycle_updated_at: '2026-06-20T09:41:35.800135+00:00'
+verified: false
+verified_updated_at: '2026-06-20T09:41:38.490220+00:00'
 registred: none
