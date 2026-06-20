@@ -1,0 +1,145 @@
+phase: f05_modeling
+variant: v5_0003
+artifacts:
+  model:
+    path: 05_modeling_model.h5
+    sha256: 1847a066e010dd7274281f6a5f09eec1dbb8113cb3ab82492b8323026eb98e81
+  labeled_dataset:
+    path: 05_modeling_training_dataset.parquet
+    sha256: e4c21764fe9f8b9f8b710861cbc3ddcc311d9b2bc9fb2cfb05607926f0085cd9
+  history:
+    path: 05_modeling_history.json
+    sha256: 781b3b5c6c51a64d640dc09e99a8ed9d38c5b0798d610b100f9f063174285e90
+  split_hash_leakage:
+    path: 05_modeling_split_hash_leakage.json
+    sha256: 19ba3e03989ba5d6295cea62d080dadc4b923073c1407208a6d357903b3ffc1c
+  report:
+    path: 05_modeling_report.html
+    sha256: 545468af9a8b285b7a68dcf09633749a7ceb092205f14e8efb291d07696aed48
+exports:
+  Tu: 10
+  OW: 50
+  LT: 10
+  PW: 10
+  event_type_count: 1530
+  prediction_name: ge_active_power_low_10_coarse_10
+  measure_name: ge_active_power_low_10_coarse_10
+  model_family: cnn1d
+  window_strategy: synchro
+  deduplication_mode: none
+  deduplication_mode_effective: none
+  seed: 42
+  trainable: true
+  possible_split_leakage: false
+  high_split_leakage_warning: false
+  decision_threshold: 0.5
+  threshold_source: fixed
+  threshold_policy: fixed_0_5
+  best_val_recall: 0.0
+  val_precision: 0.0
+  val_recall: 0.0
+  val_f1: 0.0
+  test_precision: 0.0
+  test_recall: 0.0
+  test_f1: 0.0
+  imbalance_strategy: rare_events
+  parent_f04: v4_0003
+  parent_f03: v3_0001
+  parent_f02: v2_0001
+  parent_f01: v1_0000
+metrics:
+  execution_time: 44.252844601999996
+  mejor_modelo_f1:
+    f1: 0.0
+    recall: 0.0
+    precision: 0.0
+  mejor_modelo_precision:
+    f1: 0.0
+    recall: 0.0
+    precision: 0.0
+  mejor_modelo_recall:
+    f1: 0.0
+    recall: 0.0
+    precision: 0.0
+  n_train: 20014
+  n_val: 20000
+  n_test: 20000
+  n_exact_train: 0
+  n_exact_val: 0
+  n_exact_test: 0
+  n_exact_intersection_train_val: 0
+  n_exact_intersection_train_test: 0
+  n_exact_intersection_val_test: 0
+  n_exact_intersection_all_three: 0
+  n_unordered_train: 0
+  n_unordered_val: 0
+  n_unordered_test: 0
+  n_unordered_intersection_train_val: 0
+  n_unordered_intersection_train_test: 0
+  n_unordered_intersection_val_test: 0
+  n_unordered_intersection_all_three: 0
+  n_near_pairs_train_val: 0
+  n_near_pairs_train_test: 0
+  n_near_pairs_val_test: 0
+  n_near_pairs_total: 0
+  max_split_overlap_pct: 0.0
+  positive_ratio_train: 0.0006995103427600679
+  positive_ratio_val: 5.0e-05
+  positive_ratio_test: 5.0e-05
+  val_positive_ratio: 5.0e-05
+  test_positive_ratio: 5.0e-05
+  val_cap_used: true
+  test_cap_used: true
+  val_max_samples: 20000
+  test_max_samples: 20000
+  val_positive_ratio_before: 6.34079221857979e-06
+  val_positive_ratio_after: 5.0e-05
+  test_positive_ratio_before: 6.34079221857979e-06
+  test_positive_ratio_after: 5.0e-05
+  tp: 0
+  tn: 19999
+  fp: 0
+  fn: 1
+  n_samples_before_dedup: 2207923
+  n_samples_after_dedup: 2207923
+  n_removed_by_dedup: 0
+  removed_ratio_by_dedup: 0.0
+  train_n_samples_before_dedup: 2207923
+  train_n_samples_after_dedup: 2207923
+  train_n_removed_by_dedup: 0
+  train_removed_ratio_by_dedup: 0.0
+provenance:
+  generated_at: '2026-06-20T11:49:59.142218+00:00'
+  parent_phase: f04_targets
+  parent_variant: v4_0003
+mlflow_registration:
+  experiment_name: F05_ge_active_power_low_10_coarse_10
+  run_name: ge_active_power_low_10_coarse_10__v5_0003
+  metrics:
+    val_precision: 0.0
+    val_recall: 0.0
+    val_f1: 0.0
+    test_precision: 0.0
+    test_recall: 0.0
+    test_f1: 0.0
+    test_tp: 0
+    test_tn: 19999
+    test_fp: 0
+    test_fn: 1
+  params:
+    batch_size: 128
+    learning_rate: 0.0005
+    n_layers: 2
+    units: 64
+    dropout: 0.0
+    embed_dim: 64
+    filters: 128
+    kernel_size: 3
+    model_family: cnn1d
+    decision_threshold: 0.5
+    threshold_source: fixed
+    threshold_policy: fixed_0_5
+  artifacts:
+  - /__w/mlops4rtedge/mlops4rtedge/executions/f05_modeling/v5_0003/05_modeling_model.h5
+  - /__w/mlops4rtedge/mlops4rtedge/executions/f05_modeling/v5_0003/05_modeling_history.json
+  - /__w/mlops4rtedge/mlops4rtedge/executions/f05_modeling/v5_0003/05_modeling_trials_summary.json
