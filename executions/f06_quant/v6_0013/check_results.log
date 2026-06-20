@@ -1,0 +1,17 @@
+
+===== CHECKING f06_quant (v6_0013) with spec =====
+[INFO] Spec: makefile_check_phases.yml
+[⭕️FAIL] missing required file: 06_calibration_dataset.parquet
+[⭕️FAIL] missing required file: 06_model_float.h5
+[⭕️FAIL] missing required file: 06_model_tflite.tflite
+[⭕️FAIL] missing required file: 06_quant_report.html
+[⭕️FAIL] missing required file: outputs.yaml
+[⭕️FAIL] missing required file: params.yaml
+[⭕️FAIL] missing required file: metadata.yaml
+[SKIP] optional file missing: 06_model_tflite.tflite
+[⭕️FAIL] missing required file: eedu/eedu_manifest.yaml
+
+======####@@@@@@@@@@@@####======
+❌[ERROR] Validation failed with 8 issue(s)
+======####@@@@@@@@@@@@####======
+
