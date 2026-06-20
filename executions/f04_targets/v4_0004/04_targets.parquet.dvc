@@ -1,0 +1,5 @@
+outs:
+- md5: 435af49f949906578eafc3f548efa1a2
+  size: 5446519
+  hash: md5
+  path: 04_targets.parquet
