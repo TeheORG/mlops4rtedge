@@ -1,0 +1,14 @@
+
+===== CHECKING f05_modeling (v5_0009) with spec =====
+[INFO] Spec: makefile_check_phases.yml
+[⭕️FAIL] missing required file: 05_modeling_model.h5
+[⭕️FAIL] missing required file: 05_modeling_report.html
+[⭕️FAIL] missing required file: 05_modeling_parent_dataset.parquet
+[⭕️FAIL] missing required file: 05_modeling_training_dataset.parquet
+[⭕️FAIL] missing required file: outputs.yaml
+[⭕️FAIL] missing required directory pattern: experiments/*
+
+======####@@@@@@@@@@@@####======
+❌[ERROR] Validation failed with 6 issue(s)
+======####@@@@@@@@@@@@####======
+
