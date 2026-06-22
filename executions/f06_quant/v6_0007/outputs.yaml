@@ -1,0 +1,31 @@
+phase: f06_quant
+variant: v6_0007
+artifacts:
+  calibration_dataset:
+    path: 06_calibration_dataset.parquet
+    sha256: e6bf92ef5dd9f42e15a25334def977c1663516189c5c4d70ea6bc093292e0ab0
+  report:
+    path: 06_quant_report.html
+    sha256: 3f57bec1ee8697395aee36e18998083526a85654c133ff85ed2721b2c1fed654
+  model_float:
+    path: 06_model_float.h5
+    sha256: c82cc4a641fc262b1192d22197b17a40cc92a401d0b3d2dd0c24814e11f9676b
+exports:
+  Tu: 10
+  OW: 50
+  LT: 10
+  PW: 10
+  event_type_count: 1530
+  prediction_name: outlet_temperature_low_10_coarse_10
+  runtime_model_name: outlet_temperature_low_10_coarse_10-cnn1d-v5_0007
+  model_family: cnn1d
+  edge_capable: false
+  incompatibility_reason: event_type_count=1530 exceeds uint8 capacity (256)
+metrics:
+  execution_time: 1.3371758239999991
+  tflm_compatible: false
+  operators_detected: 8
+  unsupported_operators: 0
+  n_calibration_samples: 61664
+  single_input_output_int8: false
+  single_input_output_integer: false
