@@ -1,7 +1,7 @@
 created_at: '2026-06-22T10:40:27.289794+00:00'
 params_path: executions/f06_quant/v6_0016/params.yaml
-lifecycle_state: VARIANT_CREATED
-lifecycle_updated_at: '2026-06-22T10:40:27.697609+00:00'
+lifecycle_state: EXECUTION_COMPLETED
+lifecycle_updated_at: '2026-06-22T10:40:44.279807+00:00'
 verified: none
-verified_updated_at: '2026-06-22T10:40:27.561994+00:00'
+verified_updated_at: '2026-06-22T10:40:34.730015+00:00'
 registred: none
