@@ -1,0 +1,28 @@
+
+===== CHECKING f06_quant (v6_0018) with spec =====
+[INFO] Spec: makefile_check_phases.yml
+[OK] exists: 06_calibration_dataset.parquet
+[OK] exists: 06_model_float.h5
+[⭕️FAIL] missing required file: 06_model_tflite.tflite
+[OK] exists: 06_quant_report.html
+[OK] exists: outputs.yaml
+[OK] exists: params.yaml
+[OK] exists: metadata.yaml
+[SKIP] optional file missing: 06_model_tflite.tflite
+[⭕️FAIL] missing required file: eedu/eedu_manifest.yaml
+[OK] size: 06_calibration_dataset.parquet (> 0B)
+[OK] size: 06_model_float.h5 (> 0B)
+[OK] not empty: 06_quant_report.html
+[OK] not empty: outputs.yaml
+[⭕️FAIL] outputs.yaml: missing key 'exports.model_size_bytes'
+[⭕️FAIL] outputs.yaml: missing key 'exports.footprint_estimated_bytes'
+[OK] not empty: params.yaml
+[OK] size: params.yaml (> 0B & < 5KB)
+[OK] content checks: params.yaml
+[OK] not empty: metadata.yaml
+[OK] content checks: metadata.yaml
+
+======####@@@@@@@@@@@@####======
+❌[ERROR] Validation failed with 4 issue(s)
+======####@@@@@@@@@@@@####======
+
