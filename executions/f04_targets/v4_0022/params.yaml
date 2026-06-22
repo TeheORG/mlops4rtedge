@@ -1,0 +1,23 @@
+phase: f04_targets
+variant: v4_0022
+parent: v3_0001
+parameters:
+  parent_variant: v3_0001
+  Tu: 10
+  OW: 50
+  LT: 10
+  PW: 10
+  event_type_count: 1530
+  prediction_name: mg_lv_msb_ac_voltage_low_10_coarse_10
+  target_operator: OR
+  target_event_types:
+  - MG-LV-MSB_AC_Voltage_10_20-to-0_10
+  - MG-LV-MSB_AC_Voltage_20_30-to-0_10
+  - MG-LV-MSB_AC_Voltage_30_40-to-0_10
+  - MG-LV-MSB_AC_Voltage_40_50-to-0_10
+  - MG-LV-MSB_AC_Voltage_50_60-to-0_10
+  - MG-LV-MSB_AC_Voltage_60_70-to-0_10
+  - MG-LV-MSB_AC_Voltage_70_80-to-0_10
+  - MG-LV-MSB_AC_Voltage_80_90-to-0_10
+parent_hashes:
+  v3_0001: 3e5b5e49e39fa4ba017acdaf992c5a5ea23af124370db3c54bd3c2d8ae111b28
