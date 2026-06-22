@@ -1,5 +1,0 @@
-outs:
-- md5: 37e6731ab743eadcf33fb625fbfaa610
-  size: 354331
-  hash: md5
-  path: 06_calibration_dataset.parquet
