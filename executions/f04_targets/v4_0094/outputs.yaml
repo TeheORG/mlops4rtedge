@@ -1,0 +1,50 @@
+phase: f04_targets
+variant: v4_0094
+artifacts:
+  report:
+    path: 04_targets_report.html
+    sha256: d9c3625ba330b6c8a2d96adaf80a05a08e6cda61847f333daae7b5b502010174
+exports:
+  Tu: 10
+  OW: 90
+  LT: 10
+  PW: 10
+  prediction_name: fc_active_power_low_10_coarse_10
+  measure_name: fc_active_power_low_10_coarse_10
+  target_operator: OR
+  target_event_types:
+  - FC_Active_Power_10_20-to-0_10
+  - FC_Active_Power_20_30-to-0_10
+  - FC_Active_Power_30_40-to-0_10
+  - FC_Active_Power_40_50-to-0_10
+  - FC_Active_Power_50_60-to-0_10
+  - FC_Active_Power_60_70-to-0_10
+  - FC_Active_Power_70_80-to-0_10
+  - FC_Active_Power_80_90-to-0_10
+  target_event_count: 8
+  target_compatible: false
+  incompatibility_reason: positive_ratio=0.000179 below minimum 0.001000
+  target_candidate_checks:
+  - measure: FC_Active_Power
+    direction: low
+  event_type_count: 1530
+  window_strategy: synchro
+  parent_f03: v3_0004
+  parent_f02: v2_0001
+  parent_f01: v1_0000
+  n_windows: 3435222
+  n_windows_pos: 616
+  n_windows_neg: 3434606
+  n_positive: 616
+  n_negative: 3434606
+  class_balance_ratio: 0.00017931883296043167
+metrics:
+  execution_time: 5.588438144999998
+  n_windows: 3435222
+  n_positive: 616
+  n_negative: 3434606
+  positive_ratio: 0.00017931883296043167
+  target_compatible: false
+  incompatibility_reason: positive_ratio=0.000179 below minimum 0.001000
+provenance:
+  generated_at: '2026-06-22T15:47:53.817683+00:00'
