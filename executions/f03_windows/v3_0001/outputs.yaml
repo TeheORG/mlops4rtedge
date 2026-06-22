@@ -1,0 +1,38 @@
+phase: f03_windows
+variant: v3_0001
+artifacts:
+  dataset:
+    path: 03_windows.parquet
+    sha256: 161641c74433d48e44e8610bfe84fac9f404b162ac1ee195c1132d0148428929
+  catalog:
+    path: 03_events_catalog.json
+    sha256: 3e8831a7e43f9851bd287cccc2d507c337339af734f73ce914ba3257012b863b
+  report:
+    path: 03_windows_report.html
+    sha256: 607c001c64a2d92420ed91f042a9dd8c8de8c53202327d7e92b89776be59b020
+exports:
+  Tu: 10
+  OW: 50
+  LT: 10
+  PW: 10
+  Ratio_PW_OW: 0.2
+  event_type_count: 1530
+  window_strategy: synchro
+  nan_mode: discard
+  parent_f02: v2_0001
+  parent_f01: v1_0000
+  n_windows: 3154177
+  n_unique_ow_hash: 642053
+  n_unique_pw_hash: 251641
+  dup_ratio_ow: 0.7964435730778583
+  dup_ratio_pw: 0.9202197593857289
+  seq_len_mean_ow: 11.0948098347049
+  seq_len_mean_pw: 2.2189718585862495
+  seq_len_std_ow: 10.875157806568158
+  seq_len_std_pw: 2.820978056917111
+metrics:
+  execution_time: 22.21760328900001
+  n_events_in: 3887242
+  n_windows_out: 3154177
+provenance:
+  generated_at: '2026-06-22T15:15:38.971739+00:00'
