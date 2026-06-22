@@ -1,0 +1,45 @@
+phase: f05_modeling
+variant: v5_0016
+artifacts:
+  labeled_dataset:
+    path: 05_modeling_training_dataset.parquet
+    sha256: 50d76a8c19fbe654b164ef720fa5d83c2f2ff43d5d65ea1a3d7ebac3c2578152
+  report:
+    path: 05_modeling_report.html
+    sha256: ccb61f623f14b7d8bb8410f9609c16ee52531b211afdd864bb8323ee4da13899
+exports:
+  Tu: 10
+  OW: 50
+  LT: 10
+  PW: 10
+  event_type_count: 340
+  event_id_dtype: int16
+  event_id_np_dtype: int16
+  event_id_tf_dtype: int16
+  event_ids_are_categorical: true
+  requires_cast_to_int32: true
+  prediction_name: mg_lv_msb_ac_voltage_low_20_fine_4
+  model_family: cnn1d
+  trainable: false
+  incompatibility_reason: 'Dataset monoclase: solo contiene la clase 0 con 2548477
+    muestra(s)'
+metrics:
+  execution_time: 1.4753465659999847
+  mejor_modelo_f1: null
+  mejor_modelo_precision: null
+  mejor_modelo_recall: null
+  n_train: 0
+  n_val: 0
+  n_test: 0
+  positive_ratio_train: 0.0
+  tp: 0
+  tn: 0
+  fp: 0
+  fn: 0
+  n_samples_total: 2548477
+  positive_samples: 0
+  negative_samples: 2548477
+provenance:
+  generated_at: '2026-06-22T10:37:43.044456+00:00'
+  parent_phase: f04_targets
+  parent_variant: v4_0016
