@@ -1,0 +1,67 @@
+phase: f04_targets
+variant: v4_0019
+artifacts:
+  dataset:
+    path: 04_targets.parquet
+    sha256: c884c861aeabd172a5487757ab25df31c2cd69253fead940287520a09d817a34
+  report:
+    path: 04_targets_report.html
+    sha256: a089fa5ceee8550ac3595e91a5fbe239629b35fc57c9fa8f373a3f686ae24d2e
+exports:
+  Tu: 10
+  OW: 50
+  LT: 10
+  PW: 10
+  prediction_name: mg_lv_msb_ac_voltage_high_90_coarse_10
+  measure_name: mg_lv_msb_ac_voltage_high_90_coarse_10
+  target_operator: OR
+  target_event_types:
+  - MG-LV-MSB_AC_Voltage_0_10-to-90_100
+  - MG-LV-MSB_AC_Voltage_10_20-to-90_100
+  - MG-LV-MSB_AC_Voltage_20_30-to-90_100
+  - MG-LV-MSB_AC_Voltage_30_40-to-90_100
+  - MG-LV-MSB_AC_Voltage_40_50-to-90_100
+  - MG-LV-MSB_AC_Voltage_50_60-to-90_100
+  - MG-LV-MSB_AC_Voltage_60_70-to-90_100
+  - MG-LV-MSB_AC_Voltage_70_80-to-90_100
+  - MG-LV-MSB_AC_Voltage_80_90-to-90_100
+  target_event_count: 9
+  target_compatible: true
+  incompatibility_reason: null
+  target_candidate_checks:
+  - measure: MG-LV-MSB_AC_Voltage
+    direction: high
+  event_type_count: 1530
+  window_strategy: synchro
+  parent_f03: v3_0001
+  parent_f02: v2_0001
+  parent_f01: v1_0000
+  n_windows: 3154177
+  n_windows_pos: 121189
+  n_windows_neg: 3032988
+  n_positive: 121189
+  n_negative: 3032988
+  class_balance_ratio: 0.038421749952523274
+  deduplication_stats:
+    total_sequences: 3154177
+    unique_ow_sequences: 642053
+    num_duplicate_sequences: 2512124
+    duplicate_ratio: 0.7964435730778583
+    ambiguous_sequences: 6774
+    ambiguous_samples: 1384462
+    ambiguous_ratio: 0.4389297113002853
+    avg_label_consistency_per_ow: 0.997088699505059
+  unique_ratio: 0.20355642692214165
+  dup_ratio_ow_parent: 0.7964435730778583
+  dup_ratio_pw_parent: 0.9202197593857289
+  seq_len_mean_ow_parent: 11.0948098347049
+metrics:
+  execution_time: 5.318224358000009
+  n_windows: 3154177
+  n_positive: 121189
+  n_negative: 3032988
+  positive_ratio: 0.038421749952523274
+  target_compatible: true
+  incompatibility_reason: null
+provenance:
+  generated_at: '2026-06-22T15:29:48.248734+00:00'
