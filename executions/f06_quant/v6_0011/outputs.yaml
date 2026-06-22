@@ -1,0 +1,31 @@
+phase: f06_quant
+variant: v6_0011
+artifacts:
+  calibration_dataset:
+    path: 06_calibration_dataset.parquet
+    sha256: fb7ac7423c11c9a8a4d2685dda4660685b017020ee437daa233bdf131167df8a
+  report:
+    path: 06_quant_report.html
+    sha256: 958c8e69e4ed22208acee06ba502a7c4890a7877928f01e3066059d511f3fe4f
+  model_float:
+    path: 06_model_float.h5
+    sha256: bed56fcadcf3546ca59941cb9c71f6d5ba3f76735ec69009cb79831634386c20
+exports:
+  Tu: 10
+  OW: 50
+  LT: 10
+  PW: 10
+  event_type_count: 1530
+  prediction_name: pvpcs_active_power_low_10_coarse_10
+  runtime_model_name: pvpcs_active_power_low_10_coarse_10-cnn1d-v5_0011
+  model_family: cnn1d
+  edge_capable: false
+  incompatibility_reason: event_type_count=1530 exceeds uint8 capacity (256)
+metrics:
+  execution_time: 1.3049085260000197
+  tflm_compatible: false
+  operators_detected: 8
+  unsupported_operators: 0
+  n_calibration_samples: 68687
+  single_input_output_int8: false
+  single_input_output_integer: false
