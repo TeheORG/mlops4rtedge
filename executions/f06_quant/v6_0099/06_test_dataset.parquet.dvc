@@ -1,0 +1,5 @@
+outs:
+- md5: 0ffeae0af9606e3ebd27d1c6ed0280b8
+  size: 170111
+  hash: md5
+  path: 06_test_dataset.parquet
