@@ -33,22 +33,27 @@ def normalize_events_for_fingerprint(window) -> List[int]:
     return [int(v) for v in values]
 
 
-def fnv1a_32(events: List[int]) -> int:
+def fnv1a_32(events: List[int], event_dtype: str = "uint8") -> int:
     """
     FNV-1a 32-bit compatible con events_mgr_fingerprint (firmware).
     """
+    dtype = str(event_dtype or "uint8").lower()
     h = FNV_OFFSET_BASIS
     for e in events:
-        h ^= int(e) & 0xFF
+        value = int(e)
+        h ^= value & 0xFF
         h = (h * FNV_PRIME) & 0xFFFFFFFF
+        if dtype == "int16":
+            h ^= (value >> 8) & 0xFF
+            h = (h * FNV_PRIME) & 0xFFFFFFFF
     return h
 
 
-def window_fingerprint(window) -> int:
+def window_fingerprint(window, event_dtype: str = "uint8") -> int:
     """
     Calcula fingerprint FNV-1a 32-bit de una ventana.
     """
-    return fnv1a_32(normalize_events_for_fingerprint(window))
+    return fnv1a_32(normalize_events_for_fingerprint(window), event_dtype=event_dtype)
 
 
 def parse_events_cell(value, empty_as_zero: bool = True) -> List[int]:

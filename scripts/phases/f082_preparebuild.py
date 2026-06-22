@@ -364,7 +364,7 @@ def main():
     input_bytes = int(common_sig["input_bytes"])
     output_bytes = int(common_sig["output_bytes"])
 
-    if input_dtype not in {"int8", "uint8"}:
+    if input_dtype not in {"int8", "uint8", "int16"}:
         raise RuntimeError(f"[F08] Modelo incompatible: input_dtype={input_dtype}")
 
     if output_dtype != "int8":
@@ -428,7 +428,7 @@ def main():
     generate_tflm_resolver(operators, resolver_path, "F08")
 
     runtime_cfg = build_gen / "config.h"
-    generate_runtime_config(runtime_cfg, OW, global_mti_ms, tu_ms)
+    generate_runtime_config(runtime_cfg, OW, global_mti_ms, tu_ms, input_dtype)
 
     unique_windows_rel = datasets.get("unique_windows_csv")
     if not unique_windows_rel:

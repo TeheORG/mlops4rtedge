@@ -41,25 +41,52 @@ static void destroy_interpreter() {
 }
 
 static bool is_supported_input_type(TfLiteType type) {
-  return type == kTfLiteInt8 || type == kTfLiteUInt8;
+  return type == kTfLiteInt8 || type == kTfLiteUInt8 || type == kTfLiteInt16;
+}
+
+static size_t tensor_element_size(TfLiteType type) {
+  switch (type) {
+    case kTfLiteInt8:
+    case kTfLiteUInt8:
+      return 1;
+    case kTfLiteInt16:
+      return 2;
+    default:
+      return 0;
+  }
 }
 
 static int clear_and_copy_input_tensor(TfLiteTensor *in,
                                        const event_t *input_data,
                                        size_t input_len) {
   if (!in || !input_data) return -1;
-  if (input_len > (size_t)in->bytes) return -2;
+
+  const size_t elem_size = tensor_element_size(in->type);
+  if (elem_size == 0) return -3;
+  const size_t tensor_elements = (size_t)in->bytes / elem_size;
+  if (input_len > tensor_elements) return -2;
 
   if (in->type == kTfLiteInt8) {
     memset(in->data.int8, 0, in->bytes);
-    // Copia byte a byte para preservar el valor uint8 original de event_t.
-    memcpy(in->data.int8, input_data, input_len * sizeof(event_t));
+    for (size_t i = 0; i < input_len; ++i) {
+      in->data.int8[i] = (int8_t)input_data[i];
+    }
     return 0;
   }
 
   if (in->type == kTfLiteUInt8) {
     memset(in->data.uint8, 0, in->bytes);
-    memcpy(in->data.uint8, input_data, input_len * sizeof(event_t));
+    for (size_t i = 0; i < input_len; ++i) {
+      in->data.uint8[i] = (uint8_t)input_data[i];
+    }
+    return 0;
+  }
+
+  if (in->type == kTfLiteInt16) {
+    memset(in->data.i16, 0, in->bytes);
+    for (size_t i = 0; i < input_len; ++i) {
+      in->data.i16[i] = (int16_t)input_data[i];
+    }
     return 0;
   }
 
@@ -296,7 +323,8 @@ int tflite_runner_run(const model_t *model,
 
   // El input del scheduler debe encajar exactamente en el tensor.
   // Si no encaja, el error debe haberse detectado antes en el pipeline.
-  if (input_len > (size_t)in->bytes) {
+  const size_t elem_size = tensor_element_size(in->type);
+  if (elem_size == 0 || input_len > ((size_t)in->bytes / elem_size)) {
     destroy_interpreter();
     return -12;
   }

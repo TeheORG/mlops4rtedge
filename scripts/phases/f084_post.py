@@ -157,8 +157,12 @@ def _extract_runtime_predictions(df: pd.DataFrame) -> pd.DataFrame:
     return pred
 
 
-def _build_fp_from_events(series: pd.Series) -> pd.Series:
-    return series.apply(lambda cell: int(_fnv1a_32(_parse_ow_events_cell(cell))))
+def _build_fp_from_events(series: pd.Series, event_dtype: str = "uint8") -> pd.Series:
+    return series.apply(
+        lambda cell: int(
+            _fnv1a_32(_parse_ow_events_cell(cell), event_dtype=event_dtype)
+        )
+    )
 
 
 def _evaluate_single_model(runtime_preds: pd.DataFrame, model_cfg: dict) -> dict:
@@ -197,7 +201,10 @@ def _evaluate_single_model(runtime_preds: pd.DataFrame, model_cfg: dict) -> dict
         raise RuntimeError(f"[F084] El dataset de evaluación de {runtime_model_name} no contiene label")
 
     df_eval = df_eval.copy()
-    df_eval["fingerprint"] = _build_fp_from_events(df_eval["OW_events"])
+    df_eval["fingerprint"] = _build_fp_from_events(
+        df_eval["OW_events"],
+        event_dtype=str(model_cfg.get("input_dtype") or "uint8"),
+    )
     df_eval["label"] = pd.to_numeric(df_eval["label"], errors="coerce")
     df_eval = df_eval.dropna(subset=["label"]).copy()
     df_eval["label"] = df_eval["label"].astype(int)

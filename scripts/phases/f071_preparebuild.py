@@ -11,6 +11,7 @@ import shutil
 from pathlib import Path
 
 import yaml
+import numpy as np
 
 from scripts.core.artifacts import PROJECT_ROOT, get_variant_dir
 from scripts.core.edge_prepare_common import (
@@ -240,7 +241,7 @@ def main():
     arena_global = int(float(arena_bytes) * 1.15) + 1024
     model_size = exports.get("model_size_bytes")
 
-    if input_dtype not in {"int8", "uint8"}:
+    if input_dtype not in {"int8", "uint8", "int16"}:
         raise RuntimeError(f"Modelo incompatible: input_dtype={input_dtype}")
 
     if output_dtype != "int8":
@@ -272,9 +273,10 @@ def main():
             "Regenera F03->F06 con el pipeline actualizado antes de preparar F07."
         )
     event_type_count = int(event_type_count)
-    if event_type_count > 256:
+    max_supported = int(np.iinfo(np.int16).max)
+    if event_type_count > max_supported:
         raise RuntimeError(
-            f"event_type_count={event_type_count} exceeds uint8 capacity (256)."
+            f"event_type_count={event_type_count} exceeds supported capacity ({max_supported})."
         )
 
     Tu = exports["Tu"]
@@ -382,6 +384,7 @@ def main():
         OW,
         global_mti_ms,
         tu_ms,
+        input_dtype,
     )
 
     csv_variant = variant_dir / "07_input_dataset.csv"

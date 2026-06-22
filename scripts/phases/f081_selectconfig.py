@@ -135,11 +135,15 @@ def normalize_window(window):
     return [window]
 
 
-def compute_window_key(window) -> str:
-    return str(int(_fnv1a_32(_parse_ow_events_cell(window))))
+def compute_window_key(window, event_dtype: str = "uint8") -> str:
+    return str(int(_fnv1a_32(_parse_ow_events_cell(window), event_dtype=event_dtype)))
 
 
-def build_unique_windows_from_dataset(dataset_path: Path, max_rows: int | None = None) -> tuple[pd.DataFrame, pd.DataFrame]:
+def build_unique_windows_from_dataset(
+    dataset_path: Path,
+    max_rows: int | None = None,
+    event_dtype: str = "uint8",
+) -> tuple[pd.DataFrame, pd.DataFrame]:
     if not dataset_path.exists():
         raise RuntimeError(f"[F08] Dataset no encontrado: {dataset_path}")
 
@@ -156,7 +160,9 @@ def build_unique_windows_from_dataset(dataset_path: Path, max_rows: int | None =
     else:
         df = df.copy()
 
-    df["window_key"] = df["OW_events"].apply(compute_window_key)
+    df["window_key"] = df["OW_events"].apply(
+        lambda window: compute_window_key(window, event_dtype=event_dtype)
+    )
 
     df_unique = (
         df[["window_key", "OW_events"]]
@@ -170,6 +176,7 @@ def build_unique_windows_from_dataset(dataset_path: Path, max_rows: int | None =
 def build_unique_windows_from_datasets(
     dataset_paths: list[Path],
     max_rows: int | None = None,
+    event_dtype: str = "uint8",
 ) -> tuple[pd.DataFrame, pd.DataFrame]:
     if not dataset_paths:
         raise RuntimeError("[F08] No hay datasets de evaluación para construir ventanas únicas")
@@ -196,7 +203,9 @@ def build_unique_windows_from_datasets(
             df = df.head(remaining)
 
         df = df.copy()
-        df["window_key"] = df["OW_events"].apply(compute_window_key)
+        df["window_key"] = df["OW_events"].apply(
+            lambda window: compute_window_key(window, event_dtype=event_dtype)
+        )
 
         rows_loaded += int(len(df))
         frames.append(df)
@@ -301,6 +310,8 @@ def _signature_incompatibility_reason(base: dict, candidate: dict, expected_plat
         "event_type_count",
         "input_dtype",
         "output_dtype",
+        "input_shape",
+        "input_bytes",
         "output_shape",
         "output_bytes",
     ]
@@ -1751,7 +1762,11 @@ def main():
         source_eval_datasets.append(eval_path)
 
     base_eval_dataset = source_eval_datasets[0]
-    df_unique, df_full = build_unique_windows_from_datasets(source_eval_datasets, max_rows=max_rows)
+    df_unique, df_full = build_unique_windows_from_datasets(
+        source_eval_datasets,
+        max_rows=max_rows,
+        event_dtype=str(common_sig.get("input_dtype") or "uint8"),
+    )
     unique_windows_count = int(len(df_unique))
     full_rows_count = int(len(df_full))
     duplicate_windows_removed = int(full_rows_count - unique_windows_count)

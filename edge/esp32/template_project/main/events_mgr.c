@@ -118,8 +118,16 @@ uint32_t events_mgr_fingerprint(const event_t *events, size_t n)
 {
     uint32_t h = FNV_OFFSET_BASIS;
     for (size_t i = 0; i < n; ++i) {
+#if EVENT_FINGERPRINT_BYTES == 2
+        uint16_t v = (uint16_t)events[i];
+        h ^= (uint32_t)(v & 0xFFu);
+        h *= FNV_PRIME;
+        h ^= (uint32_t)((v >> 8) & 0xFFu);
+        h *= FNV_PRIME;
+#else
         h ^= (uint32_t)(uint8_t)events[i];
         h *= FNV_PRIME;
+#endif
     }
     return h;
 }

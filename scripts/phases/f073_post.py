@@ -290,7 +290,11 @@ def _write_fp_index_template(df: pd.DataFrame, out_path: Path):
     return out_path
 
 
-def _build_fp_index_from_dataset(root: Path, model_name_map: dict) -> "pd.DataFrame | None":
+def _build_fp_index_from_dataset(
+    root: Path,
+    model_name_map: dict,
+    event_dtype: str = "uint8",
+) -> "pd.DataFrame | None":
     """
     Automatically build fp_index from 07_input_dataset.csv using the same FNV-1a 32-bit
     hash as the firmware (events_mgr_fingerprint in events_mgr.c).
@@ -316,7 +320,7 @@ def _build_fp_index_from_dataset(root: Path, model_name_map: dict) -> "pd.DataFr
         return None
 
     df["_events"] = df["OW_events"].apply(_parse_ow_events_cell)
-    df["_fp"]     = df["_events"].apply(_fnv1a_32)
+    df["_fp"]     = df["_events"].apply(lambda events: _fnv1a_32(events, event_dtype=event_dtype))
     df["_label"]  = pd.to_numeric(df["label"], errors="coerce").fillna(0).astype(int)
 
     fp_rows = []
@@ -882,7 +886,11 @@ def run_analysis(variant, parent_variant=None, fp_index=None):
 
     # Priority 2 — auto-build from dataset
     if fp_index_df is None:
-        fp_index_df = _build_fp_index_from_dataset(root, model_name_map)
+        fp_index_df = _build_fp_index_from_dataset(
+            root,
+            model_name_map,
+            event_dtype=str(parent_exports.get("input_dtype") or "uint8"),
+        )
 
     # Priority 3 — file discovery (fp_index.csv / 07_fp_index.csv in variant or parent dir)
     if fp_index_df is None:

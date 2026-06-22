@@ -3,6 +3,7 @@ import shutil
 from pathlib import Path
 
 import pandas as pd
+import numpy as np
 from scripts.core.phase_io import load_phase_outputs, load_variant_params, load_yaml_file
 
 
@@ -183,10 +184,19 @@ def generate_tflm_resolver(operators, out_path: Path, phase_tag: str):
     out_path.write_text("\n".join(lines))
 
 
-def generate_runtime_config(path: Path, ow, mti_ms, tu_ms):
+def generate_runtime_config(path: Path, ow, mti_ms, tu_ms, input_dtype: str = "uint8"):
     tunit_ms = int(round(tu_ms))
     ow_ms = ow * tunit_ms
     mti_ms_int = int(round(float(mti_ms)))
+
+    # Map model input dtype to C event type used on-device
+    if input_dtype == "int16":
+        c_event_type = "int16_t"
+        event_fingerprint_bytes = 2
+    else:
+        # default for uint8/int8 uses unsigned 8-bit storage on device
+        c_event_type = "uint8_t"
+        event_fingerprint_bytes = 1
 
     code = f"""
 #ifndef CONFIG_H
@@ -202,7 +212,8 @@ def generate_runtime_config(path: Path, ow, mti_ms, tu_ms):
 #define MTI_MS {mti_ms_int}
 #define MIT_MS MTI_MS
 
-typedef uint8_t event_t;
+typedef {c_event_type} event_t;
+#define EVENT_FINGERPRINT_BYTES {event_fingerprint_bytes}
 
 #endif
 """
@@ -301,9 +312,11 @@ def generate_memory_events_header(
 ):
     if event_type_count < 1:
         raise RuntimeError("event_type_count must be >= 1")
-    if event_type_count > 256:
+    # Support input dtypes up to int16 (signed 16-bit). uint16 intentionally unsupported.
+    max_supported = int(np.iinfo(np.int16).max)
+    if event_type_count > max_supported:
         raise RuntimeError(
-            f"event_type_count={event_type_count} exceeds uint8 capacity (256)."
+            f"event_type_count={event_type_count} exceeds supported capacity ({max_supported})."
         )
 
     max_event_id = event_type_count
