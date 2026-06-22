@@ -1553,6 +1553,7 @@ def main():
     report_path.write_text(report_html, encoding="utf-8")
 
     execution_time = float(time.perf_counter() - start_time)
+    target_candidates = stats["target_candidates"]
 
     # --------------------------------------------------------
     # Construir outputs.yaml
@@ -1584,7 +1585,7 @@ def main():
             "n_events": int(len(df_events)),
             "n_types": int(len(event_to_id)),
             "n_types_observed": int(stats["global"]["n_event_types_observed"]),
-            "target_candidates": stats.get("target_candidates", {}),
+            "target_candidates": target_candidates,
             "parent_f01": parent_variant,
         },
         "metrics": build_outputs_metrics(
