@@ -1,0 +1,31 @@
+phase: f06_quant
+variant: v6_0013
+artifacts:
+  calibration_dataset:
+    path: 06_calibration_dataset.parquet
+    sha256: 840e93097f74b0ac8429330a01301f0166e9ae3543a2902cb204b0aaf3595bf4
+  report:
+    path: 06_quant_report.html
+    sha256: 176bf9147a9ffb06291c610d2ada2064e07a55200eb1e47bc485ff9f68dbddbf
+  model_float:
+    path: 06_model_float.h5
+    sha256: c2a6f04723333dfe96ca81c0eb6e311a40a28f834ac736b53ecd1ad8d77d82f2
+exports:
+  Tu: 10
+  OW: 50
+  LT: 10
+  PW: 10
+  event_type_count: 1530
+  prediction_name: mg_lv_msb_ac_voltage_high_90_coarse_10
+  runtime_model_name: mg_lv_msb_ac_voltage_high_90_coarse_10-cnn1d-v5_0013
+  model_family: cnn1d
+  edge_capable: false
+  incompatibility_reason: event_type_count=1530 exceeds uint8 capacity (256)
+metrics:
+  execution_time: 1.9444836950000024
+  tflm_compatible: false
+  operators_detected: 8
+  unsupported_operators: 0
+  n_calibration_samples: 144833
+  single_input_output_int8: false
+  single_input_output_integer: false
