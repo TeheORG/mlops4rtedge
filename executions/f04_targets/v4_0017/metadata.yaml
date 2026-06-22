@@ -2,6 +2,6 @@ created_at: '2026-06-22T10:34:53.151414+00:00'
 params_path: executions/f04_targets/v4_0017/params.yaml
 lifecycle_state: EXECUTION_COMPLETED
 lifecycle_updated_at: '2026-06-22T10:35:20.344898+00:00'
-verified: none
-verified_updated_at: '2026-06-22T10:35:05.923793+00:00'
+verified: true
+verified_updated_at: '2026-06-22T10:35:30.548815+00:00'
 registred: none
