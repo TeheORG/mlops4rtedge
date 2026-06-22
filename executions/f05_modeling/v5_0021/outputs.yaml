@@ -195,3 +195,7 @@ mlflow_registration:
   - /__w/mlops4rtedge/mlops4rtedge/executions/f05_modeling/v5_0021/05_modeling_model.h5
   - /__w/mlops4rtedge/mlops4rtedge/executions/f05_modeling/v5_0021/05_modeling_history.json
   - /__w/mlops4rtedge/mlops4rtedge/executions/f05_modeling/v5_0021/05_modeling_trials_summary.json
+mlflow:
+  run_id: 58a2ac5c5a1648d6b4c3bf7cf91910d5
+  experiment_id: '15'
+  experiment_name: F05_mg_lv_msb_ac_voltage_high_80_fine_4
