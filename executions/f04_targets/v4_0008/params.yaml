@@ -1,0 +1,18 @@
+phase: f04_targets
+variant: v4_0008
+parent: v3_0002
+parameters:
+  parent_variant: v3_0002
+  Tu: 10
+  OW: 50
+  LT: 10
+  PW: 10
+  event_type_count: 340
+  prediction_name: outlet_temperature_low_20_fine_4
+  target_operator: OR
+  target_event_types:
+  - Outlet_Temperature_20_40-to-0_20
+  - Outlet_Temperature_40_60-to-0_20
+  - Outlet_Temperature_60_80-to-0_20
+parent_hashes:
+  v3_0002: 467a38cb11989bf6426d3982a5a04f7fd97cef6f2f144f40924be40659197182
