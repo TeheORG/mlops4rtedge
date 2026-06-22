@@ -1,0 +1,31 @@
+phase: f06_quant
+variant: v6_0018
+artifacts:
+  calibration_dataset:
+    path: 06_calibration_dataset.parquet
+    sha256: ae8a38e203c9d8a80a7ba705a6b18df6093c32231b0d1d0ee7d07bb63000414c
+  report:
+    path: 06_quant_report.html
+    sha256: 72e86e31c23bfe652d6ed4fbb889820502d551c686fbcec8e5366aadd3374929
+  model_float:
+    path: 06_model_float.h5
+    sha256: d18a00f54461bcdc82ffe905dc80f07b9cce3fd186aab6de823da901ce929963
+exports:
+  Tu: 10
+  OW: 50
+  LT: 10
+  PW: 10
+  event_type_count: 340
+  prediction_name: inlet_temperature_of_chilled_water_high_80_fine_4
+  runtime_model_name: inlet_temperature_of_chilled_water_high_80_fine_4-cnn1d-v5_0018
+  model_family: cnn1d
+  edge_capable: false
+  incompatibility_reason: event_type_count=340 exceeds uint8 capacity (256)
+metrics:
+  execution_time: 1.449119273000008
+  tflm_compatible: false
+  operators_detected: 8
+  unsupported_operators: 0
+  n_calibration_samples: 66647
+  single_input_output_int8: false
+  single_input_output_integer: false
