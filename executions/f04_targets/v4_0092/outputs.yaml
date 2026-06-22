@@ -1,0 +1,47 @@
+phase: f04_targets
+variant: v4_0092
+artifacts:
+  report:
+    path: 04_targets_report.html
+    sha256: 56d4a13b03ee377855db62dc80315754575dbc8b86760a456eb3924755343324
+exports:
+  Tu: 10
+  OW: 90
+  LT: 10
+  PW: 10
+  prediction_name: fc_active_power_high_90_coarse_5
+  measure_name: fc_active_power_high_90_coarse_5
+  target_operator: OR
+  target_event_types:
+  - FC_Active_Power_0_10-to-90_100
+  - FC_Active_Power_10_25-to-90_100
+  - FC_Active_Power_25_50-to-90_100
+  - FC_Active_Power_50_75-to-90_100
+  - FC_Active_Power_75_90-to-90_100
+  target_event_count: 5
+  target_compatible: false
+  incompatibility_reason: positive_ratio=0.000471 below minimum 0.001000
+  target_candidate_checks:
+  - measure: FC_Active_Power
+    direction: high
+  event_type_count: 510
+  window_strategy: synchro
+  parent_f03: v3_0005
+  parent_f02: v2_0002
+  parent_f01: v1_0000
+  n_windows: 1946056
+  n_windows_pos: 917
+  n_windows_neg: 1945139
+  n_positive: 917
+  n_negative: 1945139
+  class_balance_ratio: 0.0004712094615982274
+metrics:
+  execution_time: 3.1416978769999986
+  n_windows: 1946056
+  n_positive: 917
+  n_negative: 1945139
+  positive_ratio: 0.0004712094615982274
+  target_compatible: false
+  incompatibility_reason: positive_ratio=0.000471 below minimum 0.001000
+provenance:
+  generated_at: '2026-06-22T15:47:33.351535+00:00'
