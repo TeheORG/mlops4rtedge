@@ -1,0 +1,67 @@
+phase: f04_targets
+variant: v4_0013
+artifacts:
+  dataset:
+    path: 04_targets.parquet
+    sha256: 102228fbfdbf2245b7a3cebd16e14691171f74bcd0e1699f51247e1b77795e39
+  report:
+    path: 04_targets_report.html
+    sha256: 5f29d1a74855cb9ab766b03e79619dbff5f3b289f2dc51c4764200f92ebe5577
+exports:
+  Tu: 10
+  OW: 50
+  LT: 10
+  PW: 10
+  prediction_name: pvpcs_active_power_high_90_coarse_10
+  measure_name: pvpcs_active_power_high_90_coarse_10
+  target_operator: OR
+  target_event_types:
+  - PVPCS_Active_Power_0_10-to-90_100
+  - PVPCS_Active_Power_10_20-to-90_100
+  - PVPCS_Active_Power_20_30-to-90_100
+  - PVPCS_Active_Power_30_40-to-90_100
+  - PVPCS_Active_Power_40_50-to-90_100
+  - PVPCS_Active_Power_50_60-to-90_100
+  - PVPCS_Active_Power_60_70-to-90_100
+  - PVPCS_Active_Power_70_80-to-90_100
+  - PVPCS_Active_Power_80_90-to-90_100
+  target_event_count: 9
+  target_compatible: true
+  incompatibility_reason: null
+  target_candidate_checks:
+  - measure: PVPCS_Active_Power
+    direction: high
+  event_type_count: 1530
+  window_strategy: synchro
+  parent_f03: v3_0001
+  parent_f02: v2_0001
+  parent_f01: v1_0000
+  n_windows: 3154177
+  n_windows_pos: 18925
+  n_windows_neg: 3135252
+  n_positive: 18925
+  n_negative: 3135252
+  class_balance_ratio: 0.005999980343525427
+  deduplication_stats:
+    total_sequences: 3154177
+    unique_ow_sequences: 642053
+    num_duplicate_sequences: 2512124
+    duplicate_ratio: 0.7964435730778583
+    ambiguous_sequences: 983
+    ambiguous_samples: 726303
+    ambiguous_ratio: 0.23026703954787572
+    avg_label_consistency_per_ow: 0.9995247453702883
+  unique_ratio: 0.20355642692214165
+  dup_ratio_ow_parent: 0.7964435730778583
+  dup_ratio_pw_parent: 0.9202197593857289
+  seq_len_mean_ow_parent: 11.0948098347049
+metrics:
+  execution_time: 4.107604281999997
+  n_windows: 3154177
+  n_positive: 18925
+  n_negative: 3135252
+  positive_ratio: 0.005999980343525427
+  target_compatible: true
+  incompatibility_reason: null
+provenance:
+  generated_at: '2026-06-22T15:28:37.850901+00:00'
