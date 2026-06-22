@@ -1,0 +1,31 @@
+phase: f06_quant
+variant: v6_0001
+artifacts:
+  calibration_dataset:
+    path: 06_calibration_dataset.parquet
+    sha256: b41ce16749e3a8f0a22097a50a6f424d4a0bb5c37901e204f5e4edbf3d9867ed
+  report:
+    path: 06_quant_report.html
+    sha256: 3404de3aa02cf1d3f246223a9902d5c785178516e01ad0f92ff9a27655b69118
+  model_float:
+    path: 06_model_float.h5
+    sha256: eb3509752ff8fb8420fc0ce6363d69821ffb8fe1d1621df7e6845e75443ef081
+exports:
+  Tu: 10
+  OW: 50
+  LT: 10
+  PW: 10
+  event_type_count: 1530
+  prediction_name: ge_active_power_high_90_coarse_10
+  runtime_model_name: ge_active_power_high_90_coarse_10-cnn1d-v5_0001
+  model_family: cnn1d
+  edge_capable: false
+  incompatibility_reason: event_type_count=1530 exceeds uint8 capacity (256)
+metrics:
+  execution_time: 1.3244027260000166
+  tflm_compatible: false
+  operators_detected: 8
+  unsupported_operators: 0
+  n_calibration_samples: 60007
+  single_input_output_int8: false
+  single_input_output_integer: false
