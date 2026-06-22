@@ -1,0 +1,67 @@
+phase: f04_targets
+variant: v4_0067
+artifacts:
+  dataset:
+    path: 04_targets.parquet
+    sha256: 299516e3c6e4beee1ec28ab14197cef0d1892439a6e93885e6fa61a37c4948a4
+  report:
+    path: 04_targets_report.html
+    sha256: cb0163940bec7a00e698c504e1ffc67005c3ef531176db9aefaf2aa34841f5d4
+exports:
+  Tu: 10
+  OW: 90
+  LT: 10
+  PW: 10
+  prediction_name: pvpcs_active_power_high_90_coarse_10
+  measure_name: pvpcs_active_power_high_90_coarse_10
+  target_operator: OR
+  target_event_types:
+  - PVPCS_Active_Power_0_10-to-90_100
+  - PVPCS_Active_Power_10_20-to-90_100
+  - PVPCS_Active_Power_20_30-to-90_100
+  - PVPCS_Active_Power_30_40-to-90_100
+  - PVPCS_Active_Power_40_50-to-90_100
+  - PVPCS_Active_Power_50_60-to-90_100
+  - PVPCS_Active_Power_60_70-to-90_100
+  - PVPCS_Active_Power_70_80-to-90_100
+  - PVPCS_Active_Power_80_90-to-90_100
+  target_event_count: 9
+  target_compatible: true
+  incompatibility_reason: null
+  target_candidate_checks:
+  - measure: PVPCS_Active_Power
+    direction: high
+  event_type_count: 1530
+  window_strategy: synchro
+  parent_f03: v3_0004
+  parent_f02: v2_0001
+  parent_f01: v1_0000
+  n_windows: 3435222
+  n_windows_pos: 18925
+  n_windows_neg: 3416297
+  n_positive: 18925
+  n_negative: 3416297
+  class_balance_ratio: 0.005509105379506768
+  deduplication_stats:
+    total_sequences: 3435222
+    unique_ow_sequences: 783792
+    num_duplicate_sequences: 2651430
+    duplicate_ratio: 0.7718365799939567
+    ambiguous_sequences: 933
+    ambiguous_samples: 389047
+    ambiguous_ratio: 0.11325236040057965
+    avg_label_consistency_per_ow: 0.9995932697266362
+  unique_ratio: 0.22816342000604328
+  dup_ratio_ow_parent: 0.7718365799939567
+  dup_ratio_pw_parent: 0.9267468012256559
+  seq_len_mean_ow_parent: 18.336757566177674
+metrics:
+  execution_time: 5.677214880000008
+  n_windows: 3435222
+  n_positive: 18925
+  n_negative: 3416297
+  positive_ratio: 0.005509105379506768
+  target_compatible: true
+  incompatibility_reason: null
+provenance:
+  generated_at: '2026-06-22T15:42:09.659108+00:00'
