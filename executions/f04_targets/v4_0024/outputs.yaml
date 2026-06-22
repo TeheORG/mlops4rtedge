@@ -1,0 +1,51 @@
+phase: f04_targets
+variant: v4_0024
+artifacts:
+  report:
+    path: 04_targets_report.html
+    sha256: c8d5d00005e539e2c96c5faf343b7c32b8fddd342cbb23954055e92eaae3af42
+exports:
+  Tu: 10
+  OW: 50
+  LT: 10
+  PW: 10
+  event_type_count: 340
+  prediction_name: mg_lv_msb_ac_voltage_low_20_fine_4
+  measure_name: mg_lv_msb_ac_voltage_low_20_fine_4
+  target_operator: OR
+  target_event_types:
+  - MG-LV-MSB_AC_Voltage_20_40-to-0_20
+  - MG-LV-MSB_AC_Voltage_40_60-to-0_20
+  - MG-LV-MSB_AC_Voltage_60_80-to-0_20
+  target_event_count: 3
+  n_windows: 0
+  n_windows_pos: 0
+  n_windows_neg: 0
+  n_positive: 0
+  n_negative: 0
+  target_compatible: false
+  incompatibility_reason: 'F04 target incompatible segun target_candidates de F02.
+    parent_f02=v2_0003. MG-LV-MSB_AC_Voltage.low: candidate=false (does not pass low
+    target candidate rules)'
+  target_candidate_checks:
+  - measure: MG-LV-MSB_AC_Voltage
+    direction: low
+  target_candidate_failures:
+  - measure: MG-LV-MSB_AC_Voltage
+    direction: low
+    reason: does not pass low target candidate rules
+  parent_f03: v3_0003
+  parent_f02: v2_0003
+  parent_f01: v1_0000
+metrics:
+  execution_time: 0.017599621999991655
+  n_windows: 0
+  n_positive: 0
+  n_negative: 0
+  positive_ratio: 0.0
+  target_compatible: false
+  incompatibility_reason: 'F04 target incompatible segun target_candidates de F02.
+    parent_f02=v2_0003. MG-LV-MSB_AC_Voltage.low: candidate=false (does not pass low
+    target candidate rules)'
+provenance:
+  generated_at: '2026-06-22T15:31:01.005487+00:00'
