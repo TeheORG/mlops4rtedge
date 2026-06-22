@@ -1,0 +1,77 @@
+[
+  {
+    "trial_id": 0,
+    "hyperparameters": {
+      "batch_size": 128,
+      "learning_rate": 0.0005,
+      "n_layers": 2,
+      "units": 64,
+      "dropout": 0.0,
+      "embed_dim": 64,
+      "filters": 128,
+      "kernel_size": 3
+    },
+    "decision_threshold": 0.9204040765762329,
+    "threshold_source": "validation",
+    "threshold_policy": "optimal_f2",
+    "threshold_metric": "f2",
+    "threshold_warning": null,
+    "val_precision": 0.26135389888603255,
+    "val_recall": 0.7721518987341772,
+    "val_f1": 0.3905249679897567,
+    "val_pr_auc": 0.29008942240619495,
+    "epochs": 5,
+    "batch_size": 128,
+    "requested_batch_size": 128
+  },
+  {
+    "trial_id": 1,
+    "hyperparameters": {
+      "batch_size": 256,
+      "learning_rate": 0.001,
+      "n_layers": 1,
+      "units": 128,
+      "dropout": 0.2,
+      "embed_dim": 64,
+      "filters": 128,
+      "kernel_size": 5
+    },
+    "decision_threshold": 0.9413281083106995,
+    "threshold_source": "validation",
+    "threshold_policy": "optimal_f2",
+    "threshold_metric": "f2",
+    "threshold_warning": null,
+    "val_precision": 0.28300094966761635,
+    "val_recall": 0.7544303797468355,
+    "val_f1": 0.4116022099447514,
+    "val_pr_auc": 0.28606817269231793,
+    "epochs": 5,
+    "batch_size": 256,
+    "requested_batch_size": 256
+  },
+  {
+    "trial_id": 2,
+    "hyperparameters": {
+      "batch_size": 256,
+      "learning_rate": 0.0005,
+      "n_layers": 2,
+      "units": 64,
+      "dropout": 0.2,
+      "embed_dim": 64,
+      "filters": 64,
+      "kernel_size": 5
+    },
+    "decision_threshold": 0.8984643220901489,
+    "threshold_source": "validation",
+    "threshold_policy": "optimal_f2",
+    "threshold_metric": "f2",
+    "threshold_warning": null,
+    "val_precision": 0.26561125769569044,
+    "val_recall": 0.7645569620253164,
+    "val_f1": 0.39425587467362927,
+    "val_pr_auc": 0.29430334098928745,
+    "epochs": 5,
+    "batch_size": 256,
+    "requested_batch_size": 256
+  }
+]
