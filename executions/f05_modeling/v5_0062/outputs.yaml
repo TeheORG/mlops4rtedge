@@ -195,3 +195,7 @@ mlflow_registration:
   - /__w/mlops4rtedge/mlops4rtedge/executions/f05_modeling/v5_0062/05_modeling_model.h5
   - /__w/mlops4rtedge/mlops4rtedge/executions/f05_modeling/v5_0062/05_modeling_history.json
   - /__w/mlops4rtedge/mlops4rtedge/executions/f05_modeling/v5_0062/05_modeling_trials_summary.json
+mlflow:
+  run_id: 482d7232897a484d93ff5314897ac491
+  experiment_id: '20'
+  experiment_name: F05_outlet_temperature_high_90_coarse_5
