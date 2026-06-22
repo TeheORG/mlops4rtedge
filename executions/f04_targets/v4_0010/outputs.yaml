@@ -1,0 +1,50 @@
+phase: f04_targets
+variant: v4_0010
+artifacts:
+  report:
+    path: 04_targets_report.html
+    sha256: ba88a07aa5a3a4745bf57b6b5072fb04edd51bb98c50687fb9c354adc7e21011
+exports:
+  Tu: 10
+  OW: 50
+  LT: 10
+  PW: 10
+  prediction_name: outlet_temperature_low_10_coarse_10
+  measure_name: outlet_temperature_low_10_coarse_10
+  target_operator: OR
+  target_event_types:
+  - Outlet_Temperature_10_20-to-0_10
+  - Outlet_Temperature_20_30-to-0_10
+  - Outlet_Temperature_30_40-to-0_10
+  - Outlet_Temperature_40_50-to-0_10
+  - Outlet_Temperature_50_60-to-0_10
+  - Outlet_Temperature_60_70-to-0_10
+  - Outlet_Temperature_70_80-to-0_10
+  - Outlet_Temperature_80_90-to-0_10
+  target_event_count: 8
+  target_compatible: false
+  incompatibility_reason: positive_ratio=0.000754 below minimum 0.001000
+  target_candidate_checks:
+  - measure: Outlet_Temperature
+    direction: low
+  event_type_count: 1530
+  window_strategy: synchro
+  parent_f03: v3_0001
+  parent_f02: v2_0001
+  parent_f01: v1_0000
+  n_windows: 3154177
+  n_windows_pos: 2378
+  n_windows_neg: 3151799
+  n_positive: 2378
+  n_negative: 3151799
+  class_balance_ratio: 0.0007539209118575147
+metrics:
+  execution_time: 5.139794435000013
+  n_windows: 3154177
+  n_positive: 2378
+  n_negative: 3151799
+  positive_ratio: 0.0007539209118575147
+  target_compatible: false
+  incompatibility_reason: positive_ratio=0.000754 below minimum 0.001000
+provenance:
+  generated_at: '2026-06-22T15:27:58.510261+00:00'
