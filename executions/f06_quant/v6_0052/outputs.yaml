@@ -1,0 +1,91 @@
+phase: f06_quant
+variant: v6_0052
+artifacts:
+  calibration_dataset:
+    path: 06_calibration_dataset.parquet
+    sha256: 006739c0cc1c018c84c5ce7355786ad1853528e10df1a3803263a920bd1d720b
+  report:
+    path: 06_quant_report.html
+    sha256: 8ce784981b1807008d5c5a972d20a798b04bb0b22d6c04425a824b64a2f0698d
+  test_dataset:
+    path: 06_test_dataset.parquet
+    sha256: ed897bc75e68d87d4572699659bf60893c14e469989d3012e0ea31c64ff71705
+  model_float:
+    path: 06_model_float.h5
+    sha256: fce83b1aca12307f598fe410265db2586fc409cac36e1739edab19860769ebfc
+  model_tflite:
+    path: 06_model_tflite.tflite
+    sha256: ce13b22547ee40c5e24c07d5492fcbcb723282cca3f3fd106e13746cd4bab512
+  eedu_manifest:
+    path: eedu/eedu_manifest.yaml
+    sha256: 1f28f49c6f1ef2b5a2510c69cabb694dcc2158a1789673ae3a11525511320e7d
+exports:
+  Tu: 10
+  OW: 50
+  LT: 10
+  PW: 10
+  event_type_count: 1530
+  prediction_name: island_mode_mccb_active_power_low_10_coarse_10
+  runtime_model_name: island_mode_mccb_active_power_low_10_coarse_10-cnn1d-v5_0052
+  model_family: cnn1d
+  edge_capable: true
+  event_id_dtype: int16
+  event_id_np_dtype: int16
+  event_id_tf_dtype: int16
+  event_ids_are_categorical: true
+  requires_cast_to_int32: true
+  decision_threshold: 0.5474101305007935
+  tflite_eval_threshold: 0.4921155273914337
+  tflite_test_precision: 0.20224719101123595
+  tflite_test_recall: 0.8181818181818182
+  tflite_test_f1: 0.32432432432432434
+  tflite_test_pr_auc: 0.3061855333023281
+  tflite_test_fp: 71
+  tflite_test_fn: 4
+  model_size_bytes: 144144
+  arena_estimated_bytes: 216216
+  footprint_estimated_bytes: 360360
+  operators:
+  - CAST
+  - CONV_2D
+  - EXPAND_DIMS
+  - FULLY_CONNECTED
+  - GATHER
+  - LOGISTIC
+  - REDUCE_MAX
+  - RESHAPE
+  input_dtype: int16
+  output_dtype: int8
+  input_shape:
+  - 1
+  - 36
+  output_shape:
+  - 1
+  - 1
+  input_elements: 36
+  output_elements: 1
+  input_bytes: 72
+  output_bytes: 1
+metrics:
+  execution_time: 5.305624293000008
+  tflm_compatible: true
+  operators_detected: 8
+  unsupported_operators: 0
+  n_calibration_samples: 62452
+  single_input_output_int8: false
+  single_input_output_integer: true
+  event_type_count: 1530
+  event_id_dtype: int16
+  event_id_np_dtype: int16
+  event_id_tf_dtype: int16
+  event_ids_are_categorical: true
+  requires_cast_to_int32: true
+  tflite_eval_threshold: 0.4921155273914337
+  tflite_test_precision: 0.20224719101123595
+  tflite_test_recall: 0.8181818181818182
+  tflite_test_f1: 0.32432432432432434
+  tflite_test_pr_auc: 0.3061855333023281
+  tflite_test_tp: 18
+  tflite_test_tn: 19907
+  tflite_test_fp: 71
+  tflite_test_fn: 4
