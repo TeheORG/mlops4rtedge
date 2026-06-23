@@ -1,0 +1,41 @@
+
+===== CHECKING f07_modval (v7_0003) with spec =====
+[INFO] Spec: makefile_check_phases.yml
+[OK] exists: outputs.yaml
+[OK] exists: params.yaml
+[OK] exists: metadata.yaml
+[OK] exists: 07_edge_run_config.yaml
+[OK] exists: 07_model_profile.yaml
+[OK] exists: 07_esp_build_log.txt
+[OK] exists: 07_esp_flash_log.txt
+[OK] exists: 07_evaluation_dataset.csv
+[OK] exists: 07_input_dataset.csv
+[OK] exists: esp32_project (1 match(es))
+[OK] exists: metrics_models.csv
+[OK] exists: metrics_memory.csv
+[OK] exists: metrics_system_timing.csv
+[OK] exists: 07_esp_monitor_log.txt
+[OK] not empty: outputs.yaml
+[OK] content checks: outputs.yaml
+[OK] not empty: params.yaml
+[OK] size: params.yaml (> 0B & < 8KB)
+[OK] content checks: params.yaml
+[OK] not empty: metadata.yaml
+[OK] content checks: metadata.yaml
+[OK] not empty: 07_edge_run_config.yaml
+[OK] content checks: 07_edge_run_config.yaml
+[OK] not empty: 07_model_profile.yaml
+[OK] not empty: 07_esp_build_log.txt
+[OK] not empty: 07_esp_flash_log.txt
+[OK] not empty: 07_evaluation_dataset.csv
+[OK] not empty: 07_input_dataset.csv
+[OK] not empty: metrics_models.csv
+[OK] not empty: metrics_memory.csv
+[OK] not empty: metrics_system_timing.csv
+[OK] not empty: 07_esp_monitor_log.txt
+[OK] exists: esp32_project/CMakeLists.txt
+
+======####@@@@@@@@@@@@####======
+✅[SUCCESS] Validation passed
+======####@@@@@@@@@@@@####======
+
