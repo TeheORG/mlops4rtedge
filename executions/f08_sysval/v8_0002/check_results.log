@@ -1,0 +1,50 @@
+
+===== CHECKING f08_sysval (v8_0002) with spec =====
+[INFO] Spec: makefile_check_phases.yml
+[OK] exists: outputs.yaml
+[OK] exists: params.yaml
+[OK] exists: metadata.yaml
+[OK] exists: 08_selected_configuration.yaml
+[SKIP] optional file missing: 08_edge_run_config.yaml
+[OK] exists: 08_selection_report.yaml
+[OK] exists: 08_candidate_summary.csv
+[OK] exists: 08_unique_windows.csv
+[OK] exists: 08_system_profile.yaml
+[OK] exists: 08_edge_predictions.csv
+[OK] exists: 08_edge_runtime_metrics_raw.json
+[SKIP] optional file missing: 08_model_execution_plan.yaml
+[OK] exists: 08_report.html
+[SKIP] optional file missing: 08_esp_build_log.txt
+[SKIP] optional file missing: 08_esp_flash_log.txt
+[SKIP] optional file missing: 08_esp_monitor_log.txt
+[OK] exists: metrics_models.csv
+[OK] exists: metrics_memory.csv
+[OK] exists: metrics_system_timing.csv
+[OK] exists: metrics_outcomes.csv
+[OK] exists: metrics_system_summary.yaml
+[OK] not empty: outputs.yaml
+[OK] content checks: outputs.yaml
+[OK] not empty: params.yaml
+[OK] size: params.yaml (> 0B & < 8KB)
+[OK] content checks: params.yaml
+[OK] not empty: metadata.yaml
+[OK] content checks: metadata.yaml
+[OK] not empty: 08_selected_configuration.yaml
+[OK] content checks: 08_selected_configuration.yaml
+[OK] not empty: 08_selection_report.yaml
+[OK] not empty: 08_candidate_summary.csv
+[OK] not empty: 08_unique_windows.csv
+[OK] not empty: 08_system_profile.yaml
+[OK] not empty: 08_edge_predictions.csv
+[OK] not empty: 08_edge_runtime_metrics_raw.json
+[OK] not empty: 08_report.html
+[OK] not empty: metrics_models.csv
+[OK] not empty: metrics_memory.csv
+[OK] not empty: metrics_system_timing.csv
+[OK] not empty: metrics_outcomes.csv
+[OK] not empty: metrics_system_summary.yaml
+
+======####@@@@@@@@@@@@####======
+✅[SUCCESS] Validation passed
+======####@@@@@@@@@@@@####======
+
