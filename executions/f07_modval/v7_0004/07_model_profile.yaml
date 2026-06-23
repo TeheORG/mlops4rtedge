@@ -1,0 +1,90 @@
+phase: f07_modval
+variant: v7_0004
+parent:
+  phase: f06_quant
+  variant: v6_0003
+model:
+  model_id: ge_active_power_high_80_fine_4-cnn1d-v5_0003__esp32
+  runtime_model_name: ge_active_power_high_80_fine_4-cnn1d-v5_0003
+  prediction_name: ge_active_power_high_80_fine_4
+  platform: esp32
+compatibility:
+  edge_capable: true
+  incompatibility_reason: null
+input_signature:
+  Tu: 10
+  OW: 50
+  LT: 10
+  PW: 10
+  event_type_count: 340
+  input_dtype: int16
+  output_dtype: int8
+  input_shape:
+  - 1
+  - 43
+  output_shape:
+  - 1
+  - 1
+  input_bytes: 86
+  output_bytes: 1
+build:
+  operators:
+  - CAST
+  - CONV_2D
+  - EXPAND_DIMS
+  - FULLY_CONNECTED
+  - GATHER
+  - LOGISTIC
+  - REDUCE_MAX
+  - RESHAPE
+  decision_threshold: 0.805267333984375
+  arena_bytes: 131940
+  arena_global_bytes: 152755
+  model_size_bytes: 87960
+limits:
+  MTI_MS: 100
+  ITmax: 100
+  itmax_ms: 100.0
+run:
+  edge_run_completed: true
+  n_inferences: 6167.0
+  ok_rate: 1.0
+  offload_rate: 0.0
+  watchdog_rate: 0.0
+artifacts:
+  edge_run_config: /home/runner/actions-runner/_work/mlops4rtedge/mlops4rtedge/executions/f07_modval/v7_0004/07_edge_run_config.yaml
+  input_dataset_csv: /home/runner/actions-runner/_work/mlops4rtedge/mlops4rtedge/executions/f07_modval/v7_0004/07_input_dataset.csv
+  evaluation_dataset_csv: /home/runner/actions-runner/_work/mlops4rtedge/mlops4rtedge/executions/f07_modval/v7_0004/07_evaluation_dataset.csv
+  model_tflite: /home/runner/actions-runner/_work/mlops4rtedge/mlops4rtedge/executions/f06_quant/v6_0003/06_model_tflite.tflite
+timing:
+  edge_mean_latency_ms: 3.802920382682017
+  edge_max_latency_ms: null
+  edge_jitter_ms: 1.0953366350463103
+  itmax_ms: null
+memory:
+  edge_memory_peak_bytes: null
+  model_memory_bytes: 87960
+  arena_bytes: 131940
+quality:
+  quality_score: 0.9465768447438508
+  tp: 3021.0
+  fp: 24.0
+  tn: 2804.0
+  fn: 317.0
+  confusion_matrix: '[[TN=2804, FP=24], [FN=317, TP=3021]]'
+  accuracy: 0.9446967239701589
+  precision: 0.9921182266009853
+  recall: 0.9050329538645896
+  f1: 0.9465768447438508
+  false_negative_rate: 0.09496704613541043
+  pc_esp_agreement: null
+outcomes:
+  n_attempts: 6167
+  n_ok: 6167
+  n_fail: 0.0
+  n_offload: 0
+  n_wd_late: 0
+  n_wd_early: 0
+  n_inference_incomplete: 0
+  n_urgent: 0
+  n_no_inference: 0

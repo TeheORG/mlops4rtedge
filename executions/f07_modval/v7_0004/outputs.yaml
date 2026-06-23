@@ -1,0 +1,65 @@
+generated_at: '2026-06-23T09:10:38.434131'
+phase: f07_modval
+parent:
+  phase: f06_quant
+  variant: v6_0003
+artifacts:
+- executions/f07_modval/v7_0004/07_model_profile.yaml
+- executions/f07_modval/v7_0004/metrics_models.csv
+- executions/f07_modval/v7_0004/metrics_memory.csv
+- executions/f07_modval/v7_0004/metrics_system_timing.csv
+exports:
+  edge_capable: true
+  incompatibility_reason: null
+  model_id: ge_active_power_high_80_fine_4-cnn1d-v5_0003__esp32
+  runtime_model_name: ge_active_power_high_80_fine_4-cnn1d-v5_0003
+  prediction_name: ge_active_power_high_80_fine_4
+  platform: esp32
+  Tu: 10
+  OW: 50
+  LT: 10
+  PW: 10
+  event_type_count: 340
+  operators:
+  - CAST
+  - CONV_2D
+  - EXPAND_DIMS
+  - FULLY_CONNECTED
+  - GATHER
+  - LOGISTIC
+  - REDUCE_MAX
+  - RESHAPE
+  decision_threshold: 0.805267333984375
+  arena_bytes: 131940
+  model_memory_bytes: 87960
+  itmax_ms: null
+  ITmax: 100
+  MTI_MS: 100
+  edge_run_completed: true
+  model_stats:
+    quality_score: 0.9465768447438508
+    n_inferences: 6167.0
+    ok_rate: 1.0
+    offload_rate: 0.0
+    watchdog_rate: 0.0
+    n_attempts: 6167
+    n_ok: 6167
+    n_fail: 0.0
+    timing:
+      edge_mean_latency_ms: 3.802920382682017
+      edge_max_latency_ms: null
+      edge_jitter_ms: 1.0953366350463103
+    memory:
+      edge_memory_peak_bytes: null
+    quality:
+      tp: 3021.0
+      fp: 24.0
+      tn: 2804.0
+      fn: 317.0
+      accuracy: 0.9446967239701589
+      precision: 0.9921182266009853
+      recall: 0.9050329538645896
+      f1: 0.9465768447438508
+      false_negative_rate: 0.09496704613541043
+      pc_esp_agreement: null
+  phase_status_reason: completed
