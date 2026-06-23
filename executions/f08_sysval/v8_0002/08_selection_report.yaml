@@ -1,0 +1,12 @@
+selection_mode: manual
+objective: max_global_recall
+solver_status: NoCandidates
+reason: no_edge_capable_parents
+candidates_considered: 1
+candidates_feasible_after_filters: 0
+selected_count: 0
+selected_variants: []
+excluded_parents:
+- parent_variant: v7_0003
+  stage: build_candidate
+  reason: '[F08] input_dataset_csv no encontrado para v7_0003: /home/runner/actions-runner/_work/mlops4rtedge/mlops4rtedge/executions/f07_modval/v7_0003/07_input_dataset.csv'
