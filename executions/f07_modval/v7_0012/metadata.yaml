@@ -1,8 +1,8 @@
 created_at: '2026-06-23T07:59:39.071746+00:00'
 params_path: executions/f07_modval/v7_0012/params.yaml
-lifecycle_state: VARIANT_CREATED
-lifecycle_updated_at: '2026-06-23T07:59:39.136437+00:00'
-verified: none
-verified_updated_at: '2026-06-23T07:59:39.115052+00:00'
+lifecycle_state: EXECUTION_FAILED
+lifecycle_updated_at: '2026-06-23T08:04:24.649909+00:00'
+verified: false
+verified_updated_at: '2026-06-23T08:04:24.783700+00:00'
 registred: none
 runner: ESP32-v4-virtual
