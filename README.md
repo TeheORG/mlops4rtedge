@@ -199,6 +199,13 @@ make check2 VARIANT=v201
 make register2 VARIANT=v201
 ```
 
+F02 target-candidate thresholds are traceable variant parameters. They are
+stored in `params.yaml` and echoed in `outputs.yaml`:
+
+```bash
+make variant2 VARIANT=v201 PARENT=v001 STRATEGY=transitions BANDS='[10, 90]' NAN_MODE=discard EXTRA_FLAGS="target_candidate_min_unique_types=3 target_candidate_min_ratio=0.001"
+```
+
 ### F03: Build windows dataset
 
 ```bash
@@ -216,6 +223,17 @@ make script4 VARIANT=v401
 make check4 VARIANT=v401
 make register4 VARIANT=v401
 ```
+
+F04 also exposes the minimum positive-label ratio as a variant parameter:
+
+```bash
+make variant4 VARIANT=v401 PARENT=v301 NAME=battery_overheat OPERATOR=OR EVENTS='["Battery_Active_Power_0_10-to-90_100,Battery_Active_Power_10_90-to-90_100"]' EXTRA_FLAGS="min_positive_ratio_for_target_compatibility=0.001"
+```
+
+If `positive_ratio` is below that value, F04 writes report and `outputs.yaml`
+with `compatible: false`, `target_compatible: false`,
+`incompatibility_reason`, and `compatibility_checks`, without publishing
+`04_targets.parquet`.
 
 ### F05: Train models
 
