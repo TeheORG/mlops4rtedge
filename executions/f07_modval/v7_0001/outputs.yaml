@@ -1,0 +1,62 @@
+generated_at: '2026-06-23T08:02:17.402818'
+phase: f07_modval
+parent:
+  phase: f06_quant
+  variant: v6_0057
+artifacts:
+- executions/f07_modval/v7_0001/07_model_profile.yaml
+exports:
+  edge_capable: true
+  incompatibility_reason: null
+  model_id: ge_active_power_high_80_fine_4-cnn1d-v5_0057__esp32
+  runtime_model_name: ge_active_power_high_80_fine_4-cnn1d-v5_0057
+  prediction_name: ge_active_power_high_80_fine_4
+  platform: esp32
+  Tu: 10
+  OW: 90
+  LT: 10
+  PW: 10
+  event_type_count: 340
+  operators:
+  - CAST
+  - CONV_2D
+  - EXPAND_DIMS
+  - FULLY_CONNECTED
+  - GATHER
+  - LOGISTIC
+  - REDUCE_MAX
+  - RESHAPE
+  decision_threshold: 0.7095725536346436
+  arena_bytes: 87000
+  model_memory_bytes: null
+  itmax_ms: 100.0
+  ITmax: 100
+  MTI_MS: 100
+  edge_run_completed: false
+  model_stats:
+    quality_score: null
+    n_inferences: null
+    ok_rate: null
+    offload_rate: null
+    watchdog_rate: null
+    n_attempts: null
+    n_ok: null
+    n_fail: null
+    timing:
+      edge_mean_latency_ms: null
+      edge_max_latency_ms: null
+      edge_jitter_ms: null
+    memory:
+      edge_memory_peak_bytes: null
+    quality:
+      tp: null
+      fp: null
+      tn: null
+      fn: null
+      accuracy: null
+      precision: null
+      recall: null
+      f1: null
+      false_negative_rate: null
+      pc_esp_agreement: null
+  phase_status_reason: monitor_log_missing
