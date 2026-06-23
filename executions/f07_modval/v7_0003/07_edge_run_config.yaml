@@ -1,0 +1,49 @@
+phase: f07_modval
+variant: v7_0003
+platform: esp32
+virtualized: false
+execution:
+  project_dir: esp32_project
+  runner_dir: null
+time_scale_factor: 0.01
+geometry:
+  Tu_dataset: 10
+  Tu_edge_ms: 100.0
+  OW: 50
+  LT: 10
+  PW: 10
+events:
+  event_type_count: 340
+drain:
+  tu_ms: 100.0
+  recommended_drain_seconds: 6.0
+memory:
+  arena_per_model: 131940
+  arena_global: 152755
+models:
+- id: 0
+  name: ge_active_power_high_80_fine_4-cnn1d-v5_0003
+  threshold: 0.805267333984375
+  itmax: 100
+  mti_ms: 100
+  arena_required: 131940
+  model_size_bytes: 87960
+  input_bytes: 86
+  output_bytes: 1
+prediction:
+  name: ge_active_power_high_80_fine_4-cnn1d-v5_0003
+  threshold: 0.805267333984375
+operators:
+- CAST
+- CONV_2D
+- EXPAND_DIMS
+- FULLY_CONNECTED
+- GATHER
+- LOGISTIC
+- REDUCE_MAX
+- RESHAPE
+limits:
+  MTI_MS: 100
+  ITmax: 100
+dataset:
+  max_rows: 10000
