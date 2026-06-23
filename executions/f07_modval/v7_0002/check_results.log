@@ -1,0 +1,34 @@
+
+===== CHECKING f07_modval (v7_0002) with spec =====
+[INFO] Spec: makefile_check_phases.yml
+[⭕️FAIL] missing required file: outputs.yaml
+[OK] exists: params.yaml
+[OK] exists: metadata.yaml
+[OK] exists: 07_edge_run_config.yaml
+[OK] exists: 07_model_profile.yaml
+[OK] exists: 07_esp_build_log.txt
+[SKIP] optional file missing: 07_esp_flash_log.txt
+[OK] exists: 07_evaluation_dataset.csv
+[OK] exists: 07_input_dataset.csv
+[OK] exists: esp32_project (1 match(es))
+[SKIP] optional file missing: metrics_models.csv
+[SKIP] optional file missing: metrics_memory.csv
+[SKIP] optional file missing: metrics_system_timing.csv
+[SKIP] optional file missing: 07_esp_monitor_log.txt
+[OK] not empty: params.yaml
+[OK] size: params.yaml (> 0B & < 8KB)
+[OK] content checks: params.yaml
+[OK] not empty: metadata.yaml
+[OK] content checks: metadata.yaml
+[OK] not empty: 07_edge_run_config.yaml
+[OK] content checks: 07_edge_run_config.yaml
+[OK] not empty: 07_model_profile.yaml
+[OK] not empty: 07_esp_build_log.txt
+[OK] not empty: 07_evaluation_dataset.csv
+[OK] not empty: 07_input_dataset.csv
+[OK] exists: esp32_project/CMakeLists.txt
+
+======####@@@@@@@@@@@@####======
+❌[ERROR] Validation failed with 1 issue(s)
+======####@@@@@@@@@@@@####======
+
