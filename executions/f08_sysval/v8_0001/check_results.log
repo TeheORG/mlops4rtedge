@@ -1,0 +1,29 @@
+
+===== CHECKING f08_sysval (v8_0001) with spec =====
+[INFO] Spec: makefile_check_phases.yml
+[⭕️FAIL] missing required file: outputs.yaml
+[⭕️FAIL] missing required file: params.yaml
+[⭕️FAIL] missing required file: metadata.yaml
+[SKIP] optional file missing: 08_selected_configuration.yaml
+[SKIP] optional file missing: 08_edge_run_config.yaml
+[SKIP] optional file missing: 08_selection_report.yaml
+[SKIP] optional file missing: 08_candidate_summary.csv
+[SKIP] optional file missing: 08_unique_windows.csv
+[SKIP] optional file missing: 08_system_profile.yaml
+[SKIP] optional file missing: 08_edge_predictions.csv
+[SKIP] optional file missing: 08_edge_runtime_metrics_raw.json
+[SKIP] optional file missing: 08_model_execution_plan.yaml
+[SKIP] optional file missing: 08_report.html
+[SKIP] optional file missing: 08_esp_build_log.txt
+[SKIP] optional file missing: 08_esp_flash_log.txt
+[SKIP] optional file missing: 08_esp_monitor_log.txt
+[SKIP] optional file missing: metrics_models.csv
+[SKIP] optional file missing: metrics_memory.csv
+[SKIP] optional file missing: metrics_system_timing.csv
+[SKIP] optional file missing: metrics_outcomes.csv
+[SKIP] optional file missing: metrics_system_summary.yaml
+
+======####@@@@@@@@@@@@####======
+❌[ERROR] Validation failed with 3 issue(s)
+======####@@@@@@@@@@@@####======
+
