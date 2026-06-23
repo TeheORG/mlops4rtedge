@@ -1,0 +1,18 @@
+phase: f07_modval
+variant: v7_0012
+parent: v6_0003
+parameters:
+  parent_variant: v6_0003
+  time_scale_factor: 0.01
+  Tu: 10
+  OW: 50
+  LT: 10
+  PW: 10
+  prediction_name: ge_active_power_high_80_fine_4
+  decision_threshold: 0.805267333984375
+  event_type_count: 340
+  MTI_MS: 100
+  platform: esp32
+  virtual: true
+parent_hashes:
+  v6_0003: 25ad77ee5fe7c7cccbef2df1c4e6b86a7188738e3baeb3589f9cad1cb38f1d3f
