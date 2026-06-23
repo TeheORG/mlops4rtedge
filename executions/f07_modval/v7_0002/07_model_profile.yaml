@@ -1,0 +1,54 @@
+phase: f07_modval
+variant: v7_0002
+parent:
+  phase: f06_quant
+  variant: v6_0057
+model:
+  model_id: ge_active_power_high_80_fine_4-cnn1d-v5_0057__esp32
+  runtime_model_name: ge_active_power_high_80_fine_4-cnn1d-v5_0057
+  prediction_name: ge_active_power_high_80_fine_4
+  platform: esp32
+compatibility:
+  edge_capable: true
+  incompatibility_reason: null
+input_signature:
+  Tu: 10
+  OW: 90
+  LT: 10
+  PW: 10
+  event_type_count: 340
+  input_dtype: int16
+  output_dtype: int8
+  input_shape:
+  - 1
+  - 76
+  output_shape:
+  - 1
+  - 1
+  input_bytes: 152
+  output_bytes: 1
+build:
+  operators:
+  - CAST
+  - CONV_2D
+  - EXPAND_DIMS
+  - FULLY_CONNECTED
+  - GATHER
+  - LOGISTIC
+  - REDUCE_MAX
+  - RESHAPE
+  decision_threshold: 0.7095725536346436
+  arena_bytes: 87000
+  arena_global_bytes: 101073
+  model_size_bytes: 58000
+limits:
+  MTI_MS: 100
+  ITmax: 100
+  itmax_ms: 100.0
+run:
+  edge_run_completed: false
+artifacts:
+  edge_run_config: /home/runner/actions-runner/_work/mlops4rtedge/mlops4rtedge/executions/f07_modval/v7_0002/07_edge_run_config.yaml
+  input_dataset_csv: /home/runner/actions-runner/_work/mlops4rtedge/mlops4rtedge/executions/f07_modval/v7_0002/07_input_dataset.csv
+  evaluation_dataset_csv: /home/runner/actions-runner/_work/mlops4rtedge/mlops4rtedge/executions/f07_modval/v7_0002/07_evaluation_dataset.csv
+  model_tflite: /home/runner/actions-runner/_work/mlops4rtedge/mlops4rtedge/executions/f06_quant/v6_0057/06_model_tflite.tflite
