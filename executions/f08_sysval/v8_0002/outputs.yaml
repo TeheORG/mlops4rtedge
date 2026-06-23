@@ -1,0 +1,93 @@
+generated_at: '2026-06-23T10:36:55.627970'
+phase: f08_sysval
+parent:
+  phase: f07_modval
+  variants: []
+artifacts:
+- executions/f08_sysval/v8_0002/08_selected_configuration.yaml
+- executions/f08_sysval/v8_0002/08_selection_report.yaml
+- executions/f08_sysval/v8_0002/08_candidate_summary.csv
+- executions/f08_sysval/v8_0002/08_unique_windows.csv
+- executions/f08_sysval/v8_0002/08_system_profile.yaml
+- executions/f08_sysval/v8_0002/08_edge_run_config.yaml
+- executions/f08_sysval/v8_0002/08_input_dataset.csv
+- executions/f08_sysval/v8_0002/08_model_execution_plan.yaml
+- executions/f08_sysval/v8_0002/08_edge_predictions.csv
+- executions/f08_sysval/v8_0002/08_edge_runtime_metrics_raw.json
+- executions/f08_sysval/v8_0002/metrics_models.csv
+- executions/f08_sysval/v8_0002/metrics_memory.csv
+- executions/f08_sysval/v8_0002/metrics_system_timing.csv
+- executions/f08_sysval/v8_0002/metrics_outcomes.csv
+- executions/f08_sysval/v8_0002/metrics_system_summary.yaml
+- executions/f08_sysval/v8_0002/08_report.html
+- executions/f08_sysval/v8_0002/08_esp_build_log.txt
+- executions/f08_sysval/v8_0002/08_esp_flash_log.txt
+- executions/f08_sysval/v8_0002/08_esp_monitor_log.txt
+exports:
+  selection_mode: manual
+  objective: max_global_recall
+  solver_status: NoCandidates
+  solver_iterations: null
+  solver_objective_value: null
+  solver_lambda_last: null
+  solver_gap_last: null
+  parent_variants: []
+  requested_parent_variants:
+  - v7_0003
+  selected_variants: []
+  excluded_parents:
+  - parent_variant: v7_0003
+    stage: build_candidate
+    reason: '[F08] input_dataset_csv no encontrado para v7_0003: /home/runner/actions-runner/_work/mlops4rtedge/mlops4rtedge/executions/f07_modval/v7_0003/07_input_dataset.csv'
+  platform: esp32
+  Tu: null
+  OW: null
+  LT: null
+  PW: null
+  event_type_count: null
+  model_ids: []
+  runtime_model_names: []
+  MTI_MS: 200
+  total_models_requested: 1
+  total_models_declared: 0
+  total_models_selected: 0
+  total_model_size_bytes: 0
+  required_arena_bytes: 0
+  operators_union: []
+  compatible_input_signature: false
+  configuration_edge_capable: false
+  selection_completed: true
+  phase_status: skipped_inviable
+  phase_status_reason: no_edge_capable_parents
+  esp_run_completed: false
+  edge_run_completed: false
+  selection_global_precision: null
+  selection_global_recall: null
+  selection_sum_effective_time_ms: 0.0
+  selection_max_exec_time_ms: 0.0
+  max_exec_time_ms: 0.0
+  system_viable: false
+  unique_windows_count: 0
+  duplicate_windows_removed: 0
+  exec_time_policy: effective_time_ms = ceil(itmax_ms + 5.0)
+metrics:
+  execution_time: null
+  n_inferences: null
+  unique_windows_count: 0
+  evaluated_rows_total: 0
+  models_evaluated: 0
+  throughput_inf_per_sec: null
+  edge_mean_latency_ms: null
+  edge_max_latency_ms: null
+  edge_jitter_ms: null
+  esp_mean_latency_ms: null
+  esp_max_latency_ms: null
+  esp_jitter_ms: null
+  ok_rate: null
+  offload_rate: null
+  watchdog_rate: null
+  system_quality_score: null
+  mean_model_quality_score: null
+  edge_memory_peak_bytes: null
+  esp_memory_peak_bytes: null
+  pc_esp_agreement: null
