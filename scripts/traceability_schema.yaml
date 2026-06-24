@@ -1199,6 +1199,12 @@ phases:
         required: false
         inherited: false
         check: ">=1"
+
+      esp_flash_size_mb:
+        type: integer
+        required: false
+        inherited: false
+        check: ">=2"
         
       # -------------------------------------------------
       # Plataforma edge obligatoria (carpeta bajo edge/)

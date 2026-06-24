@@ -15,10 +15,13 @@
 # -- Configuración -------------------------------------------------------------
 VARIANT          ?=
 RUNNER_DIR       := $(dir $(abspath $(lastword $(MAKEFILE_LIST))))
+PROJECT_ROOT     := $(abspath $(RUNNER_DIR)../..)
 PYTHON           ?= python3
 SOCAT_PORT       ?= 4000
 VIRTUAL_PORT     ?= /tmp/ttyVUSB0
 QEMU_INSTALL_DIR ?= /opt/qemu-esp32
+DOCKER_IMAGE     ?= mlops4rtedge-esp32-virtual:latest
+DOCKER_PLATFORM  ?= linux/amd64
 
 # qemu-system-xtensa: usa /opt/qemu-esp32 si existe, si no el del PATH
 QEMU_BIN := $(shell \
@@ -29,7 +32,7 @@ QEMU_BIN := $(shell \
 	fi)
 
 # Directorio del proyecto ESP32 generado por f071 para la variante
-ESP_PROJECT_DIR ?= $(RUNNER_DIR)executions/f07_modval/$(VARIANT)/esp32_project
+ESP_PROJECT_DIR ?= $(PROJECT_ROOT)/executions/f07_modval/$(VARIANT)/esp32_project
 
 # PIDs de los procesos en background
 PID_DIR    := /tmp/esp32-virt
@@ -43,7 +46,8 @@ STATE_FILE := $(RUNNER_DIR).install-state
         install-qemu-esp32 install-qemu-esp32-build-deps \
         _install-qemu-esp32-prebuilt _install-qemu-esp32-source \
         snapshot uninstall \
-        verify start start-socat start-qemu stop build run post
+        verify start start-socat start-qemu stop build run post \
+        docker-build docker-run
 
 # ==============================================================================
 # HELP
@@ -513,3 +517,25 @@ post:
 	@[ -n "$(VARIANT)" ] || { echo "ERROR: VARIANT requerido. Ej: make VARIANT=mi_variante post"; exit 1; }
 	@echo "=== Analisis post-ejecucion (variante: $(VARIANT)) ==="
 	cd "$(RUNNER_DIR)" && $(PYTHON) -m scripts.f073_post --variant $(VARIANT)
+
+# ==============================================================================
+# DOCKER RUNNER - recomendado para Windows
+# ==============================================================================
+docker-build:
+	docker build --platform $(DOCKER_PLATFORM) \
+		-f "$(RUNNER_DIR)Dockerfile" \
+		-t $(DOCKER_IMAGE) \
+		"$(PROJECT_ROOT)"
+
+docker-run:
+	@[ -n "$(VARIANT)" ] || { echo "ERROR: VARIANT requerido. Ej: make VARIANT=mi_variante docker-run"; exit 1; }
+	docker run --rm -it \
+		--platform $(DOCKER_PLATFORM) \
+		-v "$(PROJECT_ROOT):/workspace" \
+		-w /workspace \
+		--tmpfs /tmp:exec,size=512m \
+		-e F07_IDF_RUNNER=native \
+		$(DOCKER_IMAGE) \
+		make script7-virtualESP32 VARIANT=$(VARIANT) \
+			PYTHON=//opt/esp32-virt-venv/bin/python3 \
+			PYTHON_LOCAL=//opt/esp32-virt-venv/bin/python3

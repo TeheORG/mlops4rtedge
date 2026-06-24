@@ -632,6 +632,9 @@ def write_outputs_yaml(
     memory_row=None,
     system_row=None,
     phase_status_reason: str | None = None,
+    edge_capable_override: bool | None = None,
+    incompatibility_reason_override: str | None = None,
+    extra_exports: dict | None = None,
 ):
 
     if artifacts is None:
@@ -643,8 +646,16 @@ def write_outputs_yaml(
         ]
 
     exports = dict(
-        edge_capable=bool(parent_exports.get("edge_capable", False)),
-        incompatibility_reason=parent_exports.get("incompatibility_reason"),
+        edge_capable=(
+            bool(edge_capable_override)
+            if edge_capable_override is not None
+            else bool(parent_exports.get("edge_capable", False))
+        ),
+        incompatibility_reason=(
+            incompatibility_reason_override
+            if incompatibility_reason_override is not None
+            else parent_exports.get("incompatibility_reason")
+        ),
     )
 
     if model_profile:
@@ -724,6 +735,9 @@ def write_outputs_yaml(
         else:
             resolved_reason = "edge_run_not_completed"
     exports["phase_status_reason"] = resolved_reason
+    exports["reason"] = resolved_reason
+    if extra_exports:
+        exports.update(extra_exports)
 
     outputs = dict(
         generated_at=datetime.utcnow().isoformat(),
@@ -795,6 +809,10 @@ def run_analysis(variant, parent_variant=None, fp_index=None):
         if model_profile is None:
             model_profile = {}
 
+        build_status_path = root / "07_build_status.yaml"
+        build_status = _load_yaml_if_exists(build_status_path) or {}
+        status_reason = build_status.get("phase_status_reason") or "monitor_log_missing"
+
         run_block = model_profile.get("run", {}) or {}
         run_block.update(
             {
@@ -807,10 +825,34 @@ def run_analysis(variant, parent_variant=None, fp_index=None):
         )
         model_profile["run"] = run_block
 
+        if status_reason == "firmware_too_large_for_partition":
+            compat_block = model_profile.get("compatibility", {}) or {}
+            compat_block.update(
+                {
+                    "edge_capable": False,
+                    "incompatibility_reason": "firmware_too_large_for_partition",
+                }
+            )
+            model_profile["compatibility"] = compat_block
+
+            build_block = model_profile.get("build", {}) or {}
+            for key in [
+                "firmware_bin_size_bytes",
+                "app_partition_size_bytes",
+                "app_partition_overflow_bytes",
+                "configured_flash_size",
+                "partition_name",
+            ]:
+                if key in build_status:
+                    build_block[key] = build_status[key]
+            model_profile["build"] = build_block
+
         if profile_path.exists():
             profile_path.write_text(yaml.safe_dump(model_profile, sort_keys=False))
 
         artifacts = [str(profile_path)] if profile_path.exists() else []
+        if build_status_path.exists():
+            artifacts.append(str(build_status_path))
         for artifact_name in [
             "metrics_models.csv",
             "metrics_memory.csv",
@@ -830,7 +872,24 @@ def run_analysis(variant, parent_variant=None, fp_index=None):
             models_row=None,
             memory_row=None,
             system_row=None,
-            phase_status_reason="monitor_log_missing",
+            phase_status_reason=status_reason,
+            edge_capable_override=False if status_reason == "firmware_too_large_for_partition" else None,
+            incompatibility_reason_override=(
+                "firmware_too_large_for_partition"
+                if status_reason == "firmware_too_large_for_partition"
+                else None
+            ),
+            extra_exports={
+                k: build_status[k]
+                for k in [
+                    "firmware_bin_size_bytes",
+                    "app_partition_size_bytes",
+                    "app_partition_overflow_bytes",
+                    "configured_flash_size",
+                    "partition_name",
+                ]
+                if k in build_status
+            },
         )
         print("[F073] Partial outputs exported (no monitor log available).")
         return
