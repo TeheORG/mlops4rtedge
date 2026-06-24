@@ -271,7 +271,7 @@ def run_idf_and_log(
         docker_memory_swap=docker_memory_swap,
         docker_cpus=docker_cpus,
     )
-    run_and_log(cmd, log_path, cwd=None)
+    run_and_log(cmd, log_path, cwd=None, echo_output=True)
 
 
 def can_map_docker_device(port: str, image_name: str) -> tuple[bool, str]:
