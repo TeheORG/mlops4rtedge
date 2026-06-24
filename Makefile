@@ -1,4 +1,8 @@
-SHELL := /bin/bash
+ifeq ($(OS),Windows_NT)
+  SHELL := C:/Program\ Files/Git/bin/bash.exe
+else
+  SHELL := /bin/bash
+endif
 
 ifeq ($(OS),Windows_NT)
   PYTHON_LOCAL ?= python
@@ -7,8 +11,14 @@ else
 endif
 
 
-ifeq ($(shell command -v $(PYTHON_LOCAL) 2>/dev/null),)
-  $(error python3.11 not found. Please install it before running make setup)
+ifeq ($(OS),Windows_NT)
+  PYTHON_LOCAL_FOUND := $(shell powershell.exe -NoProfile -Command "if (Get-Command $(PYTHON_LOCAL) -ErrorAction SilentlyContinue) { 'yes' }")
+else
+  PYTHON_LOCAL_FOUND := $(shell command -v $(PYTHON_LOCAL) 2>/dev/null)
+endif
+
+ifeq ($(PYTHON_LOCAL_FOUND),)
+  $(error $(PYTHON_LOCAL) not found. Please install it before running make setup)
 endif
 
 $(info [INFO] Using local Python interpreter: $(PYTHON_LOCAL))
@@ -193,7 +203,7 @@ ifeq ($(OS),Windows_NT)
   # MSYS path conversion and keep a valid container workdir.
   DOCKER_HOST_PWD := $(shell pwd -W 2>/dev/null)
   ifeq ($(strip $(DOCKER_HOST_PWD)),)
-    DOCKER_HOST_PWD := $(PWD)
+    DOCKER_HOST_PWD := $(CURDIR)
   endif
   DOCKER_WORKSPACE_PATH := //workspace
   DOCKER_PROJECT_PATH := //project
@@ -208,7 +218,7 @@ else
     DVC := dvc
     JUPYTER := jupyter
   endif
-  DOCKER_HOST_PWD := $(PWD)
+  DOCKER_HOST_PWD := $(CURDIR)
   DOCKER_WORKSPACE_PATH := /workspace
   DOCKER_PROJECT_PATH := /project
 endif
@@ -1403,6 +1413,8 @@ VARIANTS_DIR7  = executions/$(PHASE7)
 ESP32_VIRT_DIR := $(abspath scripts/esp32_virtual)
 VIRTUAL_PORT   ?= /tmp/ttyVUSB0
 SOCAT_PORT     ?= 4000
+ESP32_VIRT_DOCKER_IMAGE    ?= mlops4rtedge-esp32-virtual:latest
+ESP32_VIRT_DOCKER_PLATFORM ?= linux/amd64
 
 ############################################
 # Create variant
@@ -1439,6 +1451,10 @@ endif
 
 ifneq ($(MAX_ROWS),)
 	@$(eval EXTRA_FLAGS += max_rows=$(MAX_ROWS))
+endif
+
+ifneq ($(ESP_FLASH_MB),)
+	@$(eval EXTRA_FLAGS += esp_flash_size_mb=$(ESP_FLASH_MB))
 endif
 
 	@$(MAKE) variant-generic \
@@ -1494,6 +1510,31 @@ esp32-virt-install:
 esp32-virt-stop:
 	@$(MAKE) -C $(ESP32_VIRT_DIR) stop PYTHON="$(PYTHON_ABS)"
 
+esp32-virt-docker-build:
+	@docker build --platform $(ESP32_VIRT_DOCKER_PLATFORM) \
+		-f "$(ESP32_VIRT_DIR)/Dockerfile" \
+		-t $(ESP32_VIRT_DOCKER_IMAGE) \
+		"$(DOCKER_HOST_PWD)"
+
+esp32-virt-docker-ensure:
+	@docker image inspect $(ESP32_VIRT_DOCKER_IMAGE) >/dev/null 2>&1 || \
+		$(MAKE) --no-print-directory esp32-virt-docker-build
+
+esp32-virt-docker-run: esp32-virt-docker-ensure
+	@[ -n "$(VARIANT)" ] || { echo "[ERROR] VARIANT requerido."; exit 1; }
+	@docker run --rm -i \
+		--platform $(ESP32_VIRT_DOCKER_PLATFORM) \
+		-v "$(DOCKER_HOST_PWD):$(DOCKER_WORKSPACE_PATH)" \
+		-w $(DOCKER_WORKSPACE_PATH) \
+		--tmpfs /tmp:exec,size=512m \
+		-e F07_IDF_RUNNER=native \
+		$(ESP32_VIRT_DOCKER_IMAGE) \
+		make script7-virtualESP32 VARIANT=$(VARIANT) \
+			PYTHON=//opt/esp32-virt-venv/bin/python3 \
+			PYTHON_LOCAL=//opt/esp32-virt-venv/bin/python3 \
+			$(if $(BAUD),BAUD=$(BAUD),) \
+			$(if $(DRAIN_SECONDS),DRAIN_SECONDS=$(DRAIN_SECONDS),)
+
 esp32-socat-start:
 	@$(MAKE) -C $(ESP32_VIRT_DIR) start-socat \
 		VIRTUAL_PORT=$(VIRTUAL_PORT) \
@@ -1522,6 +1563,22 @@ esp32-flash-run-virtual:
 # Full execution (robust)
 ############################################
 script7:
+	@VARIANT_NORM="$$($(PYTHON) -c "import sys; from scripts.core.params_manager import normalize_variant_id_for_phase as n; print(n(sys.argv[2], sys.argv[1]))" "$(PHASE7)" "$(VARIANT)")"; \
+	VIRTUALIZED="$$($(PYTHON) -c "import sys, yaml; from pathlib import Path; phase, variant = sys.argv[1:3]; p=Path('executions')/phase/variant/'params.yaml'; d=(yaml.safe_load(p.read_text()) or {}) if p.exists() else {}; print('true' if d.get('parameters', {}).get('virtual', False) else 'false')" "$(PHASE7)" "$$VARIANT_NORM")"; \
+	if [ "$$VIRTUALIZED" = "true" ] && [ "$${F07_IDF_RUNNER:-}" != "native" ]; then \
+		echo "[INFO] Execution mode: virtual"; \
+		echo "[INFO] Virtual ESP32 selected -> running F07 inside Docker runner"; \
+		$(MAKE) --no-print-directory esp32-virt-docker-run VARIANT=$$VARIANT_NORM \
+			$(if $(BAUD),BAUD=$(BAUD),) \
+			$(if $(DRAIN_SECONDS),DRAIN_SECONDS=$(DRAIN_SECONDS),); \
+	else \
+		$(MAKE) --no-print-directory script7-native VARIANT=$$VARIANT_NORM \
+			$(if $(PORT),PORT=$(PORT),) \
+			$(if $(BAUD),BAUD=$(BAUD),) \
+			$(if $(DRAIN_SECONDS),DRAIN_SECONDS=$(DRAIN_SECONDS),); \
+	fi
+
+script7-native:
 	@VARIANT_NORM="$$($(NORMALIZE_VARIANT_FOR_PHASE) $(PHASE7) $(VARIANT))"; \
 	$(UPDATE_VARIANT_VERIFIED) $(PHASE7) $$VARIANT_NORM none >/dev/null 2>&1 || true; \
 	$(UPDATE_VARIANT_STATE) $(PHASE7) $$VARIANT_NORM $(LIFECYCLE_STATE_EXECUTION_RUNNING) >/dev/null 2>&1 || true; \
@@ -1537,11 +1594,25 @@ script7:
 	else \
 		VIRTUALIZED="$$($(PYTHON) -c 'import sys, yaml; from pathlib import Path; phase, variant = sys.argv[1:3]; p=Path("executions")/phase/variant/"params.yaml"; d=(yaml.safe_load(p.read_text()) or {}) if p.exists() else {}; print("true" if d.get("parameters", {}).get("virtual", False) else "false")' "$(PHASE7)" "$$VARIANT_NORM")"; \
 		echo "[INFO] Execution mode: $$([ "$$VIRTUALIZED" = "true" ] && echo virtual || echo physical)"; \
+		if [ "$$VIRTUALIZED" = "true" ] && [ "$${F07_IDF_RUNNER:-}" != "native" ]; then \
+			echo "[INFO] Virtual ESP32 selected -> running F07 inside Docker runner"; \
+			$(MAKE) --no-print-directory esp32-virt-docker-run VARIANT=$(VARIANT) \
+				$(if $(BAUD),BAUD=$(BAUD),) \
+				$(if $(DRAIN_SECONDS),DRAIN_SECONDS=$(DRAIN_SECONDS),); \
+			exit $$?; \
+		fi; \
 		$(PYTHON) -m $(SCRIPT7_PREP) --variant $$VARIANT_NORM $$([ "$$VIRTUALIZED" = "true" ] && printf -- "--virtual") || { $(UPDATE_VARIANT_STATE) $(PHASE7) $$VARIANT_NORM $(LIFECYCLE_STATE_EXECUTION_FAILED) >/dev/null 2>&1 || true; echo "==> Regenerating lineage dashboard"; $(MAKE) --no-print-directory generate_lineage || true; exit 1; }; \
 		if [ "$$VIRTUALIZED" = "true" ]; then \
 			$(MAKE) --no-print-directory esp32-socat-start || { $(UPDATE_VARIANT_STATE) $(PHASE7) $$VARIANT_NORM $(LIFECYCLE_STATE_EXECUTION_FAILED) >/dev/null 2>&1 || true; $(MAKE) --no-print-directory generate_lineage || true; exit 1; }; \
 			test -e $(VIRTUAL_PORT) || { echo "[ERROR] No existe $(VIRTUAL_PORT). Revisa /tmp/esp32-virt/socat.log"; $(UPDATE_VARIANT_STATE) $(PHASE7) $$VARIANT_NORM $(LIFECYCLE_STATE_EXECUTION_FAILED) >/dev/null 2>&1 || true; $(MAKE) --no-print-directory generate_lineage || true; exit 1; }; \
-			$(MAKE) --no-print-directory script7-build-only VARIANT=$(VARIANT) || { $(UPDATE_VARIANT_STATE) $(PHASE7) $$VARIANT_NORM $(LIFECYCLE_STATE_EXECUTION_FAILED) >/dev/null 2>&1 || true; $(MAKE) --no-print-directory generate_lineage || true; $(MAKE) -C $(ESP32_VIRT_DIR) stop || true; exit 1; }; \
+			set +e; $(MAKE) --no-print-directory script7-build-only VARIANT=$(VARIANT); build_rc=$$?; set -e; \
+			if [ $$build_rc -ne 0 ]; then \
+				$(PYTHON) -m $(SCRIPT7_POST) --variant $$VARIANT_NORM || true; \
+				$(UPDATE_VARIANT_STATE) $(PHASE7) $$VARIANT_NORM $(LIFECYCLE_STATE_EXECUTION_FAILED) >/dev/null 2>&1 || true; \
+				$(MAKE) --no-print-directory generate_lineage || true; \
+				$(MAKE) -C $(ESP32_VIRT_DIR) stop || true; \
+				exit $$build_rc; \
+			fi; \
 			$(MAKE) --no-print-directory esp32-qemu-start PHASE=$(PHASE7) VARIANT=$(VARIANT) || { $(UPDATE_VARIANT_STATE) $(PHASE7) $$VARIANT_NORM $(LIFECYCLE_STATE_EXECUTION_FAILED) >/dev/null 2>&1 || true; $(MAKE) --no-print-directory generate_lineage || true; $(MAKE) -C $(ESP32_VIRT_DIR) stop || true; exit 1; }; \
 			set +e; \
 			$(MAKE) --no-print-directory esp32-flash-run-virtual PHASE=$(PHASE7) FLASH_MODULE=$(SCRIPT7_RUN) VARIANT=$(VARIANT) \
@@ -1669,9 +1740,11 @@ help7:
 	@echo ""
 	@echo " Full execution (virtual ESP32 — socat+QEMU, sin hardware):"
 	@echo "   Create the variant with VIRTUAL=true, then run:"
+	@echo "   make script7 VARIANT=v701                     # preferred: runs virtual ESP32 inside Docker"
+	@echo "   make esp32-virt-docker-build                  # optional: prebuilds the Docker runner image"
+	@echo "   Legacy/native helper commands:"
 	@echo "   make esp32-virt-verify                        # comprueba que el entorno está listo"
 	@echo "   make esp32-virt-install                       # instala socat+QEMU si faltan"
-	@echo "   make script7 VARIANT=v701                     # arranca socat+QEMU automáticamente"
 	@echo "   make script7-virtualESP32 VARIANT=v701        # alias que exige virtual=true"
 	@echo "   make esp32-virt-stop                          # para socat+QEMU"
 	@echo ""
@@ -2007,9 +2080,10 @@ help: help-setup help1 help2 help3 help4 help5 help6 help7 help8
 	nb-run-generic script-run-generic \
 	variant-generic check-variant-format \
 	register-generic remove-generic check-results-generic export-generic \
-	script1 script2 script3 script4 script5 script6 script7 script7-virtualESP32 script8 \
+	script1 script2 script3 script4 script5 script6 script7 script7-native script7-virtualESP32 script8 \
 	script7-prepare-build script7-build-only script7-flash-run script7-post \
 	esp32-virt-verify esp32-virt-install esp32-virt-stop \
+	esp32-virt-docker-build esp32-virt-docker-ensure esp32-virt-docker-run \
 	esp32-socat-start esp32-qemu-start esp32-flash-run-virtual \
 	script8-virtualESP32 \
 	variant1 variant2 variant3 variant4 variant5 variant6 variant7 variant8 \

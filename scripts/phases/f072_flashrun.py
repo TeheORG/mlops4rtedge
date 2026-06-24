@@ -13,6 +13,7 @@ import shutil
 import os
 import shlex
 import platform
+import re
 from pathlib import Path
 
 import serial
@@ -35,6 +36,10 @@ DOCKER_MEMORY_LIMIT: str | None = None
 # ============================================================
 # UTILIDADES
 # ============================================================
+
+def use_native_idf() -> bool:
+    """Usa idf.py del entorno actual en vez del contenedor Docker de build."""
+    return os.environ.get("F07_IDF_RUNNER", "").strip().lower() == "native"
 
 def run_and_log(
     cmd,
@@ -136,6 +141,41 @@ def _tail_text(path: Path, max_lines: int = 80) -> str:
     return "\n".join(lines[-max_lines:])
 
 
+def detect_partition_too_small(log_path: Path) -> dict | None:
+    text = log_path.read_text(errors="replace") if log_path.exists() else ""
+    if "app partition is too small" not in text:
+        return None
+
+    size_match = re.search(r"binary\s+\S+\.bin\s+size\s+0x([0-9a-fA-F]+)", text)
+    part_match = re.search(
+        r"Part '([^']+)'.*?size\s+0x([0-9a-fA-F]+)\s+\(overflow\s+0x([0-9a-fA-F]+)\)",
+        text,
+        re.DOTALL,
+    )
+
+    status = {
+        "build_completed": False,
+        "edge_capable": False,
+        "phase_status_reason": "firmware_too_large_for_partition",
+        "incompatibility_reason": "firmware_too_large_for_partition",
+        "build_log": str(log_path),
+    }
+
+    if size_match:
+        status["firmware_bin_size_bytes"] = int(size_match.group(1), 16)
+
+    if part_match:
+        status["partition_name"] = part_match.group(1)
+        status["app_partition_size_bytes"] = int(part_match.group(2), 16)
+        status["app_partition_overflow_bytes"] = int(part_match.group(3), 16)
+
+    return status
+
+
+def write_build_status(path: Path, status: dict):
+    path.write_text(yaml.safe_dump(status, sort_keys=False))
+
+
 def looks_like_connection_failure(log_path: Path, extra_text: str = "") -> bool:
     text = f"{_tail_text(log_path)}\n{extra_text}".lower()
     patterns = (
@@ -205,6 +245,13 @@ def build_idf_command(
         level = shlex.quote(str(cmake_parallel_level))
         parallel_prefix = f"export CMAKE_BUILD_PARALLEL_LEVEL={level} && "
 
+    if use_native_idf():
+        idf_cmd = (
+            "source /opt/esp/idf/export.sh >/dev/null && "
+            f"{parallel_prefix}idf.py {quoted_args}"
+        )
+        return ["/bin/bash", "-lc", idf_cmd]
+
     fix_owner_cmd = (
         'chown -R "$HOST_UID:$HOST_GID" '
         '/project/build '
@@ -271,7 +318,7 @@ def run_idf_and_log(
         docker_memory_swap=docker_memory_swap,
         docker_cpus=docker_cpus,
     )
-    run_and_log(cmd, log_path, cwd=None)
+    run_and_log(cmd, log_path, cwd=esp_project_dir if use_native_idf() else None)
 
 
 def can_map_docker_device(port: str, image_name: str) -> tuple[bool, str]:
@@ -414,6 +461,9 @@ def flash_portable(
 
 
 def resolve_docker_memory_limit() -> str | None:
+    if use_native_idf():
+        return None
+
     """Devuelve límite de memoria Docker. Prioridad: env var > constante > máximo disponible."""
     env_value = os.environ.get("F07_DOCKER_MEMORY")
     if env_value:
@@ -421,12 +471,15 @@ def resolve_docker_memory_limit() -> str | None:
     if DOCKER_MEMORY_LIMIT is not None:
         return DOCKER_MEMORY_LIMIT
 
-    probe = subprocess.run(
-        ["docker", "info", "--format", "{{.MemTotal}}"],
-        capture_output=True,
-        text=True,
-        check=False,
-    )
+    try:
+        probe = subprocess.run(
+            ["docker", "info", "--format", "{{.MemTotal}}"],
+            capture_output=True,
+            text=True,
+            check=False,
+        )
+    except (FileNotFoundError, PermissionError):
+        return None
 
     if probe.returncode != 0:
         return None
@@ -439,15 +492,22 @@ def resolve_docker_memory_limit() -> str | None:
 
 
 def resolve_docker_memory_swap() -> str | None:
+    if use_native_idf():
+        return None
     return os.environ.get("F07_DOCKER_MEMORY_SWAP")
 
 
 def resolve_docker_cpus() -> str | None:
+    if use_native_idf():
+        return None
     return os.environ.get("F07_DOCKER_CPUS")
 
 
 def ensure_docker_image_exists(image_name: str):
     """Valida que la imagen Docker requerida existe localmente."""
+    if use_native_idf():
+        return
+
     probe = subprocess.run(
         ["docker", "image", "inspect", image_name],
         stdout=subprocess.DEVNULL,
@@ -1048,15 +1108,31 @@ def main():
                 print(f"[F07] Docker cpus: {docker_cpus}")
 
             build_jobs = os.environ.get("F07_DOCKER_BUILD_JOBS", "1")
-            run_idf_and_log(
-                ["build"],
-                build_log,
-                esp_project_dir=esp_project_dir,
-                cmake_parallel_level=build_jobs,
-                docker_memory_limit=docker_memory_limit,
-                docker_memory_swap=docker_memory_swap,
-                docker_cpus=docker_cpus,
-            )
+            try:
+                run_idf_and_log(
+                    ["build"],
+                    build_log,
+                    esp_project_dir=esp_project_dir,
+                    cmake_parallel_level=build_jobs,
+                    docker_memory_limit=docker_memory_limit,
+                    docker_memory_swap=docker_memory_swap,
+                    docker_cpus=docker_cpus,
+                )
+            except RuntimeError:
+                status = detect_partition_too_small(build_log)
+                if status is not None:
+                    flasher_args = esp_project_dir / "build" / "flasher_args.json"
+                    if flasher_args.exists():
+                        try:
+                            flash_cfg = yaml.safe_load(flasher_args.read_text()) or {}
+                            status["configured_flash_size"] = (
+                                flash_cfg.get("flash_settings", {}) or {}
+                            ).get("flash_size")
+                        except Exception:
+                            pass
+                    write_build_status(variant_dir / "07_build_status.yaml", status)
+                    print("[F07] Build no desplegable: firmware_too_large_for_partition")
+                raise
 
         if args.build_only:
             print("\n[F07] Build-only completado con éxito.")

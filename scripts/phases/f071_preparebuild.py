@@ -36,6 +36,7 @@ PHASE = "f07_modval"
 PARENT_PHASE = "f06_quant"
 
 EDGE_DIR = PROJECT_ROOT / "edge"
+ESP_FLASH_SIZES_MB = {2, 4, 8, 16, 32, 64, 128}
 
 
 # ============================================================
@@ -78,6 +79,58 @@ def build_model_manifest_single(
             "tflite_path": str(tflite_path),
         }
     ]
+
+
+def configure_esp32_flash_layout(project_dir: Path, flash_size_mb: int | None):
+    if flash_size_mb is None:
+        return None
+
+    flash_size_mb = int(flash_size_mb)
+    if flash_size_mb not in ESP_FLASH_SIZES_MB:
+        supported = ", ".join(str(v) for v in sorted(ESP_FLASH_SIZES_MB))
+        raise RuntimeError(f"esp_flash_size_mb={flash_size_mb} no soportado. Valores: {supported}")
+
+    app_offset = 0x10000
+    flash_bytes = flash_size_mb * 1024 * 1024
+    app_size = flash_bytes - app_offset
+    if app_size <= 0:
+        raise RuntimeError("esp_flash_size_mb demasiado pequeno para una app ESP32")
+
+    partitions_path = project_dir / "partitions.csv"
+    partitions_path.write_text(
+        "\n".join(
+            [
+                "# Name,   Type, SubType, Offset,  Size,     Flags",
+                "nvs,      data, nvs,     0x9000,  0x6000,",
+                "phy_init, data, phy,     0xf000,  0x1000,",
+                f"factory,  app,  factory, 0x{app_offset:x}, 0x{app_size:x},",
+                "",
+            ]
+        )
+    )
+
+    defaults_path = project_dir / "sdkconfig.defaults"
+    defaults_text = defaults_path.read_text() if defaults_path.exists() else ""
+    flash_config = "\n".join(
+        [
+            "",
+            f"CONFIG_ESPTOOLPY_FLASHSIZE_{flash_size_mb}MB=y",
+            f'CONFIG_ESPTOOLPY_FLASHSIZE="{flash_size_mb}MB"',
+            "CONFIG_PARTITION_TABLE_CUSTOM=y",
+            'CONFIG_PARTITION_TABLE_CUSTOM_FILENAME="partitions.csv"',
+            'CONFIG_PARTITION_TABLE_FILENAME="partitions.csv"',
+            "",
+        ]
+    )
+    if "CONFIG_PARTITION_TABLE_CUSTOM=y" not in defaults_text:
+        defaults_path.write_text(defaults_text.rstrip() + flash_config)
+
+    return {
+        "flash_size_mb": flash_size_mb,
+        "app_offset": app_offset,
+        "app_partition_size_bytes": app_size,
+        "partition_table": str(partitions_path),
+    }
 
 
 def write_initial_model_profile(
@@ -205,6 +258,7 @@ def main():
     legacy_mti = params.get("MTI")
     ITmax = params.get("ITmax")
     max_rows = params.get("max_rows")
+    esp_flash_size_mb = params.get("esp_flash_size_mb")
 
     platform = resolve_platform(params, "F07")
     template_project_dir = resolve_template_project_dir(EDGE_DIR, platform, "F07")
@@ -325,6 +379,10 @@ def main():
         edge_project_dir,
         dirs_exist_ok=True,
     )
+
+    storage_cfg = None
+    if platform == "esp32":
+        storage_cfg = configure_esp32_flash_layout(edge_project_dir, esp_flash_size_mb)
 
     runner_dir_name = None
     if runner_dir is not None:
@@ -459,6 +517,8 @@ def main():
             "arena_per_model": arena_bytes,
             "arena_global": arena_global
         },
+
+        "storage": storage_cfg,
 
         "models": [
             {
