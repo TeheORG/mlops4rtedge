@@ -14,8 +14,6 @@ import os
 import shlex
 import platform
 import re
-import hashlib
-import json
 from pathlib import Path
 
 import serial
@@ -177,78 +175,6 @@ def detect_partition_too_small(log_path: Path) -> dict | None:
 
 def write_build_status(path: Path, status: dict):
     path.write_text(yaml.safe_dump(status, sort_keys=False))
-
-
-def iter_build_input_files(esp_project_dir: Path, variant_dir: Path):
-    candidates = [
-        esp_project_dir / "CMakeLists.txt",
-        esp_project_dir / "sdkconfig.defaults",
-        esp_project_dir / "partitions.csv",
-        variant_dir / "07_edge_run_config.yaml",
-        variant_dir / "07_input_dataset.csv",
-    ]
-    for path in candidates:
-        if path.exists() and path.is_file():
-            yield path
-
-    for dirname in ["main", "build_generated", "data"]:
-        root = esp_project_dir / dirname
-        if not root.exists():
-            continue
-        for path in sorted(p for p in root.rglob("*") if p.is_file()):
-            yield path
-
-
-def compute_build_inputs_fingerprint(esp_project_dir: Path, variant_dir: Path) -> str:
-    digest = hashlib.sha256()
-    for path in iter_build_input_files(esp_project_dir, variant_dir):
-        rel = path.relative_to(esp_project_dir) if path.is_relative_to(esp_project_dir) else path.name
-        digest.update(str(rel).replace("\\", "/").encode("utf-8"))
-        digest.update(b"\0")
-        digest.update(path.read_bytes())
-        digest.update(b"\0")
-    return digest.hexdigest()
-
-
-def build_outputs_exist(esp_project_dir: Path) -> bool:
-    build_dir = esp_project_dir / "build"
-    flasher_args = build_dir / "flasher_args.json"
-    if not flasher_args.exists():
-        return False
-
-    app_bins = [
-        path for path in build_dir.glob("*.bin")
-        if path.name not in {"bootloader.bin", "partition-table.bin"}
-    ]
-    if not app_bins:
-        return False
-
-    try:
-        json.loads(flasher_args.read_text())
-    except Exception:
-        return False
-
-    return True
-
-
-def can_reuse_build(esp_project_dir: Path, variant_dir: Path) -> bool:
-    if os.environ.get("F07_FORCE_REBUILD", "").strip().lower() in {"1", "true", "yes"}:
-        return False
-
-    stamp_path = esp_project_dir / "build" / BUILD_INPUTS_STAMP
-    if not stamp_path.exists() or not build_outputs_exist(esp_project_dir):
-        return False
-
-    current = compute_build_inputs_fingerprint(esp_project_dir, variant_dir)
-    previous = stamp_path.read_text().strip()
-    return bool(previous) and previous == current
-
-
-def write_build_stamp(esp_project_dir: Path, variant_dir: Path):
-    build_dir = esp_project_dir / "build"
-    build_dir.mkdir(parents=True, exist_ok=True)
-    stamp_path = build_dir / BUILD_INPUTS_STAMP
-    stamp_path.write_text(compute_build_inputs_fingerprint(esp_project_dir, variant_dir))
 
 
 def looks_like_connection_failure(log_path: Path, extra_text: str = "") -> bool:
@@ -1212,33 +1138,32 @@ def main():
                 if docker_cpus:
                     print(f"[F07] Docker cpus: {docker_cpus}")
 
-                build_jobs = os.environ.get("F07_DOCKER_BUILD_JOBS", "1")
-                try:
-                    run_idf_and_log(
-                        ["build"],
-                        build_log,
-                        esp_project_dir=esp_project_dir,
-                        cmake_parallel_level=build_jobs,
-                        docker_memory_limit=docker_memory_limit,
-                        docker_memory_swap=docker_memory_swap,
-                        docker_cpus=docker_cpus,
-                    )
-                    write_build_stamp(esp_project_dir, variant_dir)
-                except RuntimeError:
-                    status = detect_partition_too_small(build_log)
-                    if status is not None:
-                        flasher_args = esp_project_dir / "build" / "flasher_args.json"
-                        if flasher_args.exists():
-                            try:
-                                flash_cfg = yaml.safe_load(flasher_args.read_text()) or {}
-                                status["configured_flash_size"] = (
-                                    flash_cfg.get("flash_settings", {}) or {}
-                                ).get("flash_size")
-                            except Exception:
-                                pass
-                        write_build_status(variant_dir / "07_build_status.yaml", status)
-                        print("[F07] Build no desplegable: firmware_too_large_for_partition")
-                    raise
+            build_jobs = os.environ.get("F07_DOCKER_BUILD_JOBS", "1")
+            try:
+                run_idf_and_log(
+                    ["build"],
+                    build_log,
+                    esp_project_dir=esp_project_dir,
+                    cmake_parallel_level=build_jobs,
+                    docker_memory_limit=docker_memory_limit,
+                    docker_memory_swap=docker_memory_swap,
+                    docker_cpus=docker_cpus,
+                )
+            except RuntimeError:
+                status = detect_partition_too_small(build_log)
+                if status is not None:
+                    flasher_args = esp_project_dir / "build" / "flasher_args.json"
+                    if flasher_args.exists():
+                        try:
+                            flash_cfg = yaml.safe_load(flasher_args.read_text()) or {}
+                            status["configured_flash_size"] = (
+                                flash_cfg.get("flash_settings", {}) or {}
+                            ).get("flash_size")
+                        except Exception:
+                            pass
+                    write_build_status(variant_dir / "07_build_status.yaml", status)
+                    print("[F07] Build no desplegable: firmware_too_large_for_partition")
+                raise
 
         if args.build_only:
             print("\n[F07] Build-only completado con éxito.")

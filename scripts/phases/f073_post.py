@@ -1047,9 +1047,7 @@ def run_analysis(variant, parent_variant=None, fp_index=None):
 
         build_status_path = root / "07_build_status.yaml"
         build_status = _load_yaml_if_exists(build_status_path) or {}
-        status_reason = build_status.get("phase_status_reason") or "monitor_missing"
-        if status_reason == "monitor_missing" and _detect_serial_open_failed(root):
-            status_reason = "serial_open_failed"
+        status_reason = build_status.get("phase_status_reason") or "monitor_log_missing"
 
         run_block = model_profile.get("run", {}) or {}
         run_block.update(
