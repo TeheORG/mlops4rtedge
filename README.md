@@ -275,6 +275,8 @@ When the variant has `parameters.virtual: true`, `make script7` automatically de
 
 Use `MAX_LINES=<n>` on `make variant7` to limit how many rows from `07_input_dataset.csv` are sent over serial during F07. By default, F07 sends all available lines. `MAX_ROWS=<n>` limits the generated dataset itself; `MAX_LINES=<n>` only limits the serial replay.
 
+F07 preserves the ESP-IDF `build/` directory between repeated runs of the same variant. After one successful build, `script7` reuses the compiled binaries when the generated firmware inputs have not changed. Set `F07_FORCE_REBUILD=true` to force a rebuild.
+
 You can also run F07 step by step:
 
 ```bash

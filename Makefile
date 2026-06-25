@@ -1587,21 +1587,6 @@ script7:
 
 script7-native:
 	@VARIANT_NORM="$$($(NORMALIZE_VARIANT_FOR_PHASE) $(PHASE7) $(VARIANT))"; \
-	VIRTUALIZED="$$($(PYTHON) -c 'import sys, yaml; from pathlib import Path; phase, variant = sys.argv[1:3]; p=Path("executions")/phase/variant/"params.yaml"; d=(yaml.safe_load(p.read_text()) or {}) if p.exists() else {}; print("true" if d.get("parameters", {}).get("virtual", False) else "false")' "$(PHASE7)" "$$VARIANT_NORM")"; \
-	EXTRA_MAKE_ARGS=""; \
-	if [ -n "$(PORT)" ]; then EXTRA_MAKE_ARGS="$$EXTRA_MAKE_ARGS PORT=$(PORT)"; fi; \
-	if [ -n "$(BAUD)" ]; then EXTRA_MAKE_ARGS="$$EXTRA_MAKE_ARGS BAUD=$(BAUD)"; fi; \
-	if [ -n "$(DRAIN_SECONDS)" ]; then EXTRA_MAKE_ARGS="$$EXTRA_MAKE_ARGS DRAIN_SECONDS=$(DRAIN_SECONDS)"; fi; \
-	if [ "$$VIRTUALIZED" = "true" ] && [ "$${F07_IDF_RUNNER:-}" != "native" ]; then \
-		echo "[INFO] Execution mode: virtual"; \
-		echo "[INFO] Virtual ESP32 selected -> running F07 inside Docker runner"; \
-		$(MAKE) --no-print-directory esp32-virt-docker-run VARIANT=$$VARIANT_NORM $$EXTRA_MAKE_ARGS; \
-	else \
-		$(MAKE) --no-print-directory script7-native VARIANT=$$VARIANT_NORM $$EXTRA_MAKE_ARGS; \
-	fi
-
-script7-native:
-	@VARIANT_NORM="$$($(NORMALIZE_VARIANT_FOR_PHASE) $(PHASE7) $(VARIANT))"; \
 	LOCK_DIR="executions/$(PHASE7)/$$VARIANT_NORM/.script7.lock"; \
 	if ! mkdir "$$LOCK_DIR" 2>/dev/null; then \
 		echo "[ERROR] F07 $$VARIANT_NORM ya esta en ejecucion ($$LOCK_DIR)."; \
@@ -1609,8 +1594,8 @@ script7-native:
 		exit 1; \
 	fi; \
 	trap 'rmdir "$$LOCK_DIR" 2>/dev/null || true' EXIT; \
-	$(MAKE) --no-print-directory script7-mark-verified VARIANT=$$VARIANT_NORM VERIFIED=none; \
-	$(MAKE) --no-print-directory script7-mark-state VARIANT=$$VARIANT_NORM STATE=$(LIFECYCLE_STATE_EXECUTION_RUNNING); \
+	$(UPDATE_VARIANT_VERIFIED) $(PHASE7) $$VARIANT_NORM none >/dev/null 2>&1 || true; \
+	$(UPDATE_VARIANT_STATE) $(PHASE7) $$VARIANT_NORM $(LIFECYCLE_STATE_EXECUTION_RUNNING) >/dev/null 2>&1 || true; \
 	echo "==> Regenerating lineage dashboard"; \
 	$(MAKE) --no-print-directory generate_lineage || true; \
 	EDGE_CAPABLE="$$($(PYTHON) -c 'import yaml, sys; from pathlib import Path; v=sys.argv[1]; p=Path("executions")/"f07_modval"/v/"params.yaml"; d=(yaml.safe_load(p.read_text()) or {}) if p.exists() else {}; parent=d.get("parent"); o=(Path("executions")/"f06_quant"/str(parent)/"outputs.yaml") if parent else None; e=((yaml.safe_load(o.read_text()) or {}).get("exports", {})) if (o and o.exists()) else {}; print("true" if bool(e.get("edge_capable", False)) else "false")' "$$VARIANT_NORM")"; \
