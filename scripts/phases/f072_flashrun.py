@@ -822,10 +822,18 @@ def serial_send_and_monitor(
     log_path: Path,
     tunit_ms: float | None,
     post_wait_s: float,
+    max_lines: int | None = None,
 ):
     period = (tunit_ms or 1000.0) / 1000.0
 
     lines = load_lines_for_serial(input_file)
+    total_lines = len(lines)
+    if max_lines is not None:
+        max_lines = int(max_lines)
+        if max_lines < 1:
+            raise RuntimeError("[F07-serial] serial.max_lines debe ser >= 1")
+        if total_lines > max_lines:
+            lines = lines[:max_lines]
     if not lines:
         print("[F07-serial] No hay datos para enviar.")
         return
@@ -834,6 +842,9 @@ def serial_send_and_monitor(
     print(f"[F07-serial] Baud: {baud}")
     print(f"[F07-serial] Periodo envío: {period:.3f}s")
     print(f"[F07-serial] Líneas a enviar: {len(lines)}")
+    if max_lines is not None and total_lines > len(lines):
+        print(f"[F07-serial] Limite max_lines: {max_lines}")
+        print(f"[F07-serial] Lineas disponibles: {total_lines}")
     print(f"[F07-serial] Drenado final: {post_wait_s:.2f}s")
     print("[F07-serial] Progreso: '*' cada 100 líneas enviadas (10 '*' por línea)")
 
@@ -992,12 +1003,18 @@ def main():
 
         geom = edge_cfg.get("geometry", {})
         drain_cfg = edge_cfg.get("drain", {})
+        serial_cfg = edge_cfg.get("serial", {})
 
         OW = geom.get("OW", 0)
         LT = geom.get("LT", 0)
         mti_ms, legacy_mti = resolve_max_mti_ms(edge_cfg)
         tu_ms = resolve_tu_ms(edge_cfg)
         recommended = drain_cfg.get("recommended_drain_seconds") if isinstance(drain_cfg, dict) else None
+        serial_max_lines = (
+            serial_cfg.get("max_lines")
+            if isinstance(serial_cfg, dict)
+            else None
+        )
 
         tunit_s = float(tu_ms) / 1000.0 if tu_ms else 1.0
 
@@ -1167,6 +1184,7 @@ def main():
                 log_path=monitor_log,
                 tunit_ms=tu_ms,
                 post_wait_s=post_wait_s,
+                max_lines=serial_max_lines,
             )
         else:
             serial_monitor_only(

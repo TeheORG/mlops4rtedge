@@ -7,6 +7,7 @@ F07 — MODEL VALIDATION (EDGE) — PREPARE BUILD
 # NOTE: con 2MB flash / 1MB app partition, max_rows seguro ≈ 10000 (~56 bytes/fila
 # compilada). Default max_rows en params.yaml de 5000 → ~584KB binario.
 import argparse
+import hashlib
 import shutil
 from pathlib import Path
 
@@ -131,6 +132,22 @@ def configure_esp32_flash_layout(project_dir: Path, flash_size_mb: int | None):
         "app_partition_size_bytes": app_size,
         "partition_table": str(partitions_path),
     }
+
+
+def verify_parent_artifact(path: Path, artifact_meta: dict, label: str):
+    if not path.exists():
+        raise RuntimeError(f"{label} missing: {path}")
+
+    expected_sha256 = (artifact_meta or {}).get("sha256")
+    if expected_sha256:
+        actual_sha256 = hashlib.sha256(path.read_bytes()).hexdigest()
+        if actual_sha256 != expected_sha256:
+            raise RuntimeError(
+                f"{label} artifact mismatch: expected_sha256={expected_sha256}, "
+                f"actual_sha256={actual_sha256}, path={path}. "
+                "Restore the F06 DVC artifact or rerun F06 so outputs.yaml and "
+                "the artifact files describe the same variant."
+            )
 
 
 def write_initial_model_profile(
@@ -258,6 +275,7 @@ def main():
     legacy_mti = params.get("MTI")
     ITmax = params.get("ITmax")
     max_rows = params.get("max_rows")
+    serial_max_lines = params.get("serial_max_lines")
     esp_flash_size_mb = params.get("esp_flash_size_mb")
 
     platform = resolve_platform(params, "F07")
@@ -366,6 +384,11 @@ def main():
     if ITmax is None:
         ITmax = int(round(float(mti_ms)))
 
+    if serial_max_lines is not None:
+        serial_max_lines = int(serial_max_lines)
+        if serial_max_lines < 1:
+            raise RuntimeError("serial_max_lines must be >= 1 when provided")
+
     tu_ms = compute_tu_ms(Tu, time_scale)
 
     variant_dir = get_variant_dir(PHASE, variant)
@@ -400,11 +423,29 @@ def main():
     tflite_path = f06_dir / artifacts["model_tflite"]["path"]
     calib_path = f06_dir / artifacts["calibration_dataset"]["path"]
 
-    if not tflite_path.exists():
-        raise RuntimeError("TFLite model missing")
+    verify_parent_artifact(
+        tflite_path,
+        artifacts.get("model_tflite", {}),
+        "F06 model_tflite",
+    )
+    verify_parent_artifact(
+        calib_path,
+        artifacts.get("calibration_dataset", {}),
+        "F06 calibration_dataset",
+    )
 
-    if tflite_path.stat().st_size != model_size:
-        raise RuntimeError("Model size mismatch")    
+    actual_model_size = tflite_path.stat().st_size
+    if actual_model_size != model_size:
+        actual_sha256 = hashlib.sha256(tflite_path.read_bytes()).hexdigest()
+        expected_sha256 = (artifacts.get("model_tflite", {}) or {}).get("sha256")
+        raise RuntimeError(
+            "Model size mismatch: "
+            f"expected {model_size} bytes from F06 outputs.yaml, "
+            f"found {actual_model_size} bytes at {tflite_path}. "
+            f"expected_sha256={expected_sha256}, actual_sha256={actual_sha256}. "
+            "Restore the F06 DVC artifact or rerun F06 so outputs.yaml and "
+            "06_model_tflite.tflite describe the same model."
+        )
 
     models_data_path = build_gen / "models_data.c"
 
@@ -511,6 +552,10 @@ def main():
         "drain": {
             "tu_ms": float(tu_ms),
             "recommended_drain_seconds": float(recommended_drain_seconds)
+        },
+
+        "serial": {
+            "max_lines": int(serial_max_lines) if serial_max_lines is not None else None
         },
 
         "memory": {
