@@ -1200,6 +1200,12 @@ phases:
         inherited: false
         check: ">=1"
 
+      serial_max_lines:
+        type: integer
+        required: false
+        inherited: false
+        check: ">=1"
+
       esp_flash_size_mb:
         type: integer
         required: false

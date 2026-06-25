@@ -1454,6 +1454,10 @@ ifneq ($(MAX_ROWS),)
 	@$(eval EXTRA_FLAGS += max_rows=$(MAX_ROWS))
 endif
 
+ifneq ($(MAX_LINES),)
+	@$(eval EXTRA_FLAGS += serial_max_lines=$(MAX_LINES))
+endif
+
 ifneq ($(ESP_FLASH_MB),)
 	@$(eval EXTRA_FLAGS += esp_flash_size_mb=$(ESP_FLASH_MB))
 endif

@@ -133,6 +133,22 @@ def configure_esp32_flash_layout(project_dir: Path, flash_size_mb: int | None):
     }
 
 
+def verify_parent_artifact(path: Path, artifact_meta: dict, label: str):
+    if not path.exists():
+        raise RuntimeError(f"{label} missing: {path}")
+
+    expected_sha256 = (artifact_meta or {}).get("sha256")
+    if expected_sha256:
+        actual_sha256 = hashlib.sha256(path.read_bytes()).hexdigest()
+        if actual_sha256 != expected_sha256:
+            raise RuntimeError(
+                f"{label} artifact mismatch: expected_sha256={expected_sha256}, "
+                f"actual_sha256={actual_sha256}, path={path}. "
+                "Restore the F06 DVC artifact or rerun F06 so outputs.yaml and "
+                "the artifact files describe the same variant."
+            )
+
+
 def write_initial_model_profile(
     out_path: Path,
     *,
@@ -258,6 +274,7 @@ def main():
     legacy_mti = params.get("MTI")
     ITmax = params.get("ITmax")
     max_rows = params.get("max_rows")
+    serial_max_lines = params.get("serial_max_lines")
     esp_flash_size_mb = params.get("esp_flash_size_mb")
 
     platform = resolve_platform(params, "F07")
