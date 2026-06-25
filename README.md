@@ -247,13 +247,15 @@ Set `F56_GPU=true` to switch F06 to the GPU image and pass `--gpus all` to `dock
 
 ```bash
 # make variant7 VARIANT=v701 PARENT=v601 PLATFORM=esp32 MTI_MS=100000
-make variant7 VARIANT=v701 PARENT=v601 PLATFORM=esp32 MTI_MS=100 TIME_SCALE=0.01 VIRTUAL=true
+make variant7 VARIANT=v701 PARENT=v601 PLATFORM=esp32 MTI_MS=100 TIME_SCALE=0.01 VIRTUAL=true MAX_ROWS=10000
 make script7 VARIANT=v701
 make check7 VARIANT=v701
 make register7 VARIANT=v701
 ```
 
 When the variant has `parameters.virtual: true`, `make script7` automatically delegates the ESP32 virtual run to the Docker runner (`scripts/esp32_virtual/Dockerfile`). This keeps the same command on Windows, Linux, and macOS: the host only needs Docker, while ESP-IDF, QEMU, `socat`, and the Python dependencies live inside the container.
+
+Use `MAX_LINES=<n>` on `make variant7` to limit how many rows from `07_input_dataset.csv` are sent over serial during F07. By default, F07 sends all available lines. `MAX_ROWS=<n>` limits the generated dataset itself; `MAX_LINES=<n>` only limits the serial replay.
 
 You can also run F07 step by step:
 

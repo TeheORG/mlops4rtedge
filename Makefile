@@ -1391,6 +1391,7 @@ help6:
 #        [ITMAX=...]
 #		 [TIME_SCALE=0.01] \
 #        [MAX_ROWS=200]
+#        [MAX_LINES=1000]
 #
 #   make script7-prepare-build VARIANT=v701
 #   make script7-build-only   VARIANT=v701
@@ -1451,6 +1452,10 @@ endif
 
 ifneq ($(MAX_ROWS),)
 	@$(eval EXTRA_FLAGS += max_rows=$(MAX_ROWS))
+endif
+
+ifneq ($(MAX_LINES),)
+	@$(eval EXTRA_FLAGS += serial_max_lines=$(MAX_LINES))
 endif
 
 ifneq ($(ESP_FLASH_MB),)
@@ -1728,6 +1733,7 @@ help7:
 	@echo "     TIME_SCALE=<float>   (default: 0.01)"
 	@echo "     ITMAX=<integer>      (default: MTI_MS)"
 	@echo "     MAX_ROWS=<integer>   (default: full dataset in 07_input_dataset.csv)"
+	@echo "     MAX_LINES=<integer>  (default: send all lines from 07_input_dataset.csv)"
 	@echo "     VIRTUAL=true|false   (default: false; stored in params.yaml)"
 	@echo ""
 	@echo " Execution (step-by-step):"
