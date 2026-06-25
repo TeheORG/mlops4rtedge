@@ -20,7 +20,6 @@ from scripts.core.edge_prepare_common import (
     compute_tu_ms,
     copy_or_convert_dataset_to_csv,
     copy_dataset_to_csv,
-    ensure_clean_dir,
     generate_memory_events_header,
     generate_runtime_config,
     generate_tflm_resolver,
@@ -38,6 +37,7 @@ PARENT_PHASE = "f06_quant"
 
 EDGE_DIR = PROJECT_ROOT / "edge"
 ESP_FLASH_SIZES_MB = {2, 4, 8, 16, 32, 64, 128}
+PRESERVED_PROJECT_DIRS = ("build", "managed_components")
 
 
 # ============================================================
@@ -148,6 +148,36 @@ def verify_parent_artifact(path: Path, artifact_meta: dict, label: str):
                 "Restore the F06 DVC artifact or rerun F06 so outputs.yaml and "
                 "the artifact files describe the same variant."
             )
+
+
+def refresh_project_dir(template_project_dir: Path, edge_project_dir: Path):
+    preserved_root = edge_project_dir.parent / ".f07_preparebuild_preserved"
+    if preserved_root.exists():
+        shutil.rmtree(preserved_root)
+    preserved_root.mkdir(parents=True, exist_ok=True)
+
+    preserved_names = []
+    if edge_project_dir.exists():
+        for name in PRESERVED_PROJECT_DIRS:
+            src = edge_project_dir / name
+            if src.exists():
+                shutil.move(str(src), str(preserved_root / name))
+                preserved_names.append(name)
+        shutil.rmtree(edge_project_dir)
+
+    shutil.copytree(
+        template_project_dir,
+        edge_project_dir,
+        dirs_exist_ok=True,
+    )
+
+    for name in preserved_names:
+        dst = edge_project_dir / name
+        if dst.exists():
+            shutil.rmtree(dst)
+        shutil.move(str(preserved_root / name), str(dst))
+
+    shutil.rmtree(preserved_root, ignore_errors=True)
 
 
 def write_initial_model_profile(
@@ -395,13 +425,7 @@ def main():
     project_dir_name = f"{platform}_project"
     edge_project_dir = variant_dir / project_dir_name
 
-    ensure_clean_dir(edge_project_dir)
-
-    shutil.copytree(
-        template_project_dir,
-        edge_project_dir,
-        dirs_exist_ok=True,
-    )
+    refresh_project_dir(template_project_dir, edge_project_dir)
 
     storage_cfg = None
     if platform == "esp32":
@@ -411,7 +435,9 @@ def main():
     if runner_dir is not None:
         runner_dir_name = f"{platform}_runner"
         runner_dst = variant_dir / runner_dir_name
-        ensure_clean_dir(runner_dst)
+        if runner_dst.exists():
+            shutil.rmtree(runner_dst)
+        runner_dst.mkdir(parents=True, exist_ok=True)
         shutil.copytree(
             runner_dir,
             runner_dst,

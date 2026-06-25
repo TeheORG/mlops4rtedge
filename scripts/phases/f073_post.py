@@ -496,6 +496,17 @@ def _first_row_dict(df: pd.DataFrame) -> dict:
     return {k: _safe_scalar(v) for k, v in row.items()}
 
 
+def _detect_runtime_crash(log_path: Path) -> str | None:
+    text = log_path.read_text(errors="ignore") if log_path.exists() else ""
+    markers = [
+        "Guru Meditation Error",
+        "panic'ed",
+        "Backtrace:",
+        "SW_CPU_RESET",
+    ]
+    return "edge_runtime_crash" if any(marker in text for marker in markers) else None
+
+
 def _resolve_single_model_row(models_df: pd.DataFrame) -> dict:
     if models_df is None or models_df.empty:
         return {}
@@ -536,6 +547,7 @@ def _update_model_profile(
     memory_row: dict,
     system_row: dict,
     time_scale_factor: float = 1.0,
+    phase_status_reason: str | None = None,
 ):
     profile_path = root / "07_model_profile.yaml"
     profile = _load_yaml_if_exists(profile_path)
@@ -547,7 +559,8 @@ def _update_model_profile(
     run_block = profile.get("run", {}) or {}
     run_block.update(
         {
-            "edge_run_completed": True,
+            "edge_run_completed": phase_status_reason != "edge_runtime_crash",
+            "phase_status_reason": phase_status_reason,
             "n_inferences": models_row.get("n_inferences"),
             "ok_rate": models_row.get("ok_rate"),
             "offload_rate": models_row.get("offload_rate"),
@@ -898,6 +911,10 @@ def run_analysis(variant, parent_variant=None, fp_index=None):
 
     print(f"[F073] Parsing log {log_path}")
 
+    runtime_crash_reason = _detect_runtime_crash(log_path)
+    if runtime_crash_reason:
+        print(f"[F073] Runtime crash detected: {runtime_crash_reason}")
+
     df = parse_log_enriched(log_path)
     df = _apply_model_name_map(df, model_name_map)
 
@@ -1018,6 +1035,7 @@ def run_analysis(variant, parent_variant=None, fp_index=None):
         memory_row=memory_row,
         system_row=system_row,
         time_scale_factor=_time_scale_factor,
+        phase_status_reason=runtime_crash_reason,
     )
 
     artifacts = [
@@ -1043,6 +1061,7 @@ def run_analysis(variant, parent_variant=None, fp_index=None):
         models_row=models_row,
         memory_row=memory_row,
         system_row=system_row,
+        phase_status_reason=runtime_crash_reason,
     )
 
     print("")
