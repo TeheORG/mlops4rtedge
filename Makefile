@@ -1585,6 +1585,13 @@ script7:
 
 script7-native:
 	@VARIANT_NORM="$$($(NORMALIZE_VARIANT_FOR_PHASE) $(PHASE7) $(VARIANT))"; \
+	LOCK_DIR="executions/$(PHASE7)/$$VARIANT_NORM/.script7.lock"; \
+	if ! mkdir "$$LOCK_DIR" 2>/dev/null; then \
+		echo "[ERROR] F07 $$VARIANT_NORM ya esta en ejecucion ($$LOCK_DIR)."; \
+		echo "        Si no hay ningun proceso activo, elimina ese directorio de lock manualmente."; \
+		exit 1; \
+	fi; \
+	trap 'rmdir "$$LOCK_DIR" 2>/dev/null || true' EXIT; \
 	$(UPDATE_VARIANT_VERIFIED) $(PHASE7) $$VARIANT_NORM none >/dev/null 2>&1 || true; \
 	$(UPDATE_VARIANT_STATE) $(PHASE7) $$VARIANT_NORM $(LIFECYCLE_STATE_EXECUTION_RUNNING) >/dev/null 2>&1 || true; \
 	echo "==> Regenerating lineage dashboard"; \
