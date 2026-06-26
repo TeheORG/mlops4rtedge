@@ -6,6 +6,7 @@ import pandas as pd
 from pathlib import Path
 from datetime import datetime
 import argparse
+import math
 
 from scripts.runtime_analysis.parse import parse_log_enriched
 from scripts.runtime_analysis.metrics_models import compute_model_metrics
@@ -18,10 +19,206 @@ from scripts.runtime_analysis.window_fingerprint import (
 )
 
 
+MIN_OK_RATE_FOR_VALID_EDGE_RUN = 0.95
+MAX_FAIL_RATE_FOR_VALID_EDGE_RUN = 0.05
+MAX_WATCHDOG_RATE_FOR_VALID_EDGE_RUN = 0.05
+MAX_LATENCY_FACTOR_FOR_VALID_EDGE_RUN = 10.0
+MIN_ATTEMPTS_FOR_VALID_EDGE_RUN = 1
+
+
 def _rate(num, den):
     if den is None or den == 0:
         return None
     return float(num) / float(den)
+
+
+def _as_float(value):
+    if value is None:
+        return None
+    try:
+        if pd.isna(value):
+            return None
+    except Exception:
+        pass
+    try:
+        v = float(value)
+    except Exception:
+        return None
+    return v if math.isfinite(v) else None
+
+
+def _as_int(value):
+    v = _as_float(value)
+    return int(v) if v is not None else None
+
+
+def _dominant_failure_diagnosis(counts: dict, n_attempts: int) -> dict:
+    failure_counts = {k: int(v or 0) for k, v in counts.items()}
+    dominant_kind = None
+    dominant_count = 0
+
+    for kind, count in failure_counts.items():
+        if count > dominant_count:
+            dominant_kind = kind
+            dominant_count = count
+
+    if dominant_count <= 0:
+        return {}
+
+    dominant_rate = _rate(dominant_count, n_attempts)
+    likely_causes = []
+
+    if dominant_kind in {"urgent_fallback", "watchdog_deadline"}:
+        likely_causes.extend(
+            [
+                "deadline_expired_before_or_during_inference",
+                "effective_time_budget_too_small_for_runtime",
+                "review_time_scale_factor_MTI_MS_ITmax_and_serial_period",
+                "check_scheduler_backlog_or_stale_monitor_log_if_same_model_sometimes_passes",
+            ]
+        )
+    elif dominant_kind == "inference_incomplete":
+        likely_causes.extend(
+            [
+                "inference_started_but_did_not_emit_end_event",
+                "possible_runtime_crash_reset_or_worker_task_interruption",
+            ]
+        )
+    elif dominant_kind == "no_inference":
+        likely_causes.extend(
+            [
+                "model_attempt_started_without_prediction_result",
+                "check_event_sequence_and_monitor_log_completeness",
+            ]
+        )
+    elif dominant_kind == "offload":
+        likely_causes.append("firmware_reported_offload_result")
+
+    return {
+        "dominant_failure_kind": dominant_kind,
+        "dominant_failure_count": dominant_count,
+        "dominant_failure_rate": dominant_rate,
+        "likely_causes": likely_causes,
+        "failure_counts": failure_counts,
+    }
+
+
+def classify_edge_run(
+    models_row: dict | None,
+    *,
+    monitor_present: bool = True,
+    serial_open_failed: bool = False,
+    runtime_crash: bool = False,
+) -> dict:
+    models_row = models_row or {}
+
+    if not monitor_present:
+        return {"phase_status_reason": "monitor_missing", "edge_run_completed": False}
+    if serial_open_failed:
+        return {"phase_status_reason": "serial_open_failed", "edge_run_completed": False}
+    if runtime_crash:
+        return {"phase_status_reason": "firmware_runtime_failed", "edge_run_completed": False}
+
+    n_attempts = _as_int(models_row.get("n_attempts")) or 0
+    n_ok = _as_int(models_row.get("n_ok")) or 0
+    n_fail = _as_int(models_row.get("n_fail")) or 0
+    n_wd_late = _as_int(models_row.get("n_wd_late")) or 0
+    n_wd_early = _as_int(models_row.get("n_wd_early")) or 0
+    n_inference_incomplete = _as_int(models_row.get("n_inference_incomplete")) or 0
+    n_offload = _as_int(models_row.get("n_offload")) or 0
+    n_urgent = _as_int(models_row.get("n_urgent")) or 0
+    n_no_inference = _as_int(models_row.get("n_no_inference")) or 0
+    ok_rate = _as_float(models_row.get("ok_rate"))
+    fail_rate = _as_float(models_row.get("fail_rate"))
+    wd_late_rate = _as_float(models_row.get("wd_late_rate")) or 0.0
+    wd_early_rate = _as_float(models_row.get("wd_early_rate")) or 0.0
+    watchdog_rate = wd_late_rate + wd_early_rate
+    infer_mean_ms = _as_float(models_row.get("infer_mean_ms"))
+    infer_max_ms = _as_float(models_row.get("infer_max_ms"))
+    itmax_ms = _as_float(models_row.get("itmax_ms") or models_row.get("ITmax") or models_row.get("MTI_MS"))
+
+    details = {
+        "n_attempts": n_attempts,
+        "n_ok": n_ok,
+        "n_fail": n_fail,
+        "ok_rate": ok_rate,
+        "fail_rate": fail_rate,
+        "watchdog_rate": watchdog_rate,
+    }
+    details.update(
+        _dominant_failure_diagnosis(
+            {
+                "watchdog_deadline": n_wd_late + n_wd_early,
+                "urgent_fallback": n_urgent,
+                "inference_incomplete": n_inference_incomplete,
+                "offload": n_offload,
+                "no_inference": n_no_inference,
+            },
+            n_attempts,
+        )
+    )
+
+    if n_attempts < MIN_ATTEMPTS_FOR_VALID_EDGE_RUN:
+        return {
+            "phase_status_reason": "no_edge_attempts",
+            "edge_run_completed": False,
+            "validation": details,
+        }
+    if n_ok <= 0:
+        return {
+            "phase_status_reason": "no_successful_inferences",
+            "edge_run_completed": False,
+            "validation": details,
+        }
+    if ok_rate is not None and ok_rate < MIN_OK_RATE_FOR_VALID_EDGE_RUN:
+        return {
+            "phase_status_reason": "low_ok_rate",
+            "edge_run_completed": False,
+            "validation": details,
+        }
+    if fail_rate is not None and fail_rate > MAX_FAIL_RATE_FOR_VALID_EDGE_RUN:
+        return {
+            "phase_status_reason": "high_fail_rate",
+            "edge_run_completed": False,
+            "validation": details,
+        }
+    if watchdog_rate > MAX_WATCHDOG_RATE_FOR_VALID_EDGE_RUN:
+        return {
+            "phase_status_reason": "high_watchdog_rate",
+            "edge_run_completed": False,
+            "validation": details,
+        }
+    if itmax_ms and infer_mean_ms and infer_mean_ms > itmax_ms * MAX_LATENCY_FACTOR_FOR_VALID_EDGE_RUN:
+        return {
+            "phase_status_reason": "invalid_latency",
+            "edge_run_completed": False,
+            "validation": {**details, "infer_mean_ms": infer_mean_ms, "itmax_ms": itmax_ms},
+        }
+    if itmax_ms and infer_max_ms and infer_max_ms > itmax_ms * MAX_LATENCY_FACTOR_FOR_VALID_EDGE_RUN:
+        return {
+            "phase_status_reason": "invalid_latency",
+            "edge_run_completed": False,
+            "validation": {**details, "infer_max_ms": infer_max_ms, "itmax_ms": itmax_ms},
+        }
+
+    warning_reasons = []
+    if fail_rate and fail_rate > 0:
+        warning_reasons.append("nonzero_fail_rate")
+    if watchdog_rate > 0:
+        warning_reasons.append("nonzero_watchdog_rate")
+
+    if warning_reasons:
+        return {
+            "phase_status_reason": "completed_with_warnings",
+            "edge_run_completed": True,
+            "validation": {**details, "warnings": warning_reasons},
+        }
+
+    return {
+        "phase_status_reason": "completed",
+        "edge_run_completed": True,
+        "validation": details,
+    }
 
 
 def _build_quality_metrics(models_df: pd.DataFrame, prediction_df: pd.DataFrame | None = None):
@@ -504,7 +701,28 @@ def _detect_runtime_crash(log_path: Path) -> str | None:
         "Backtrace:",
         "SW_CPU_RESET",
     ]
-    return "edge_runtime_crash" if any(marker in text for marker in markers) else None
+    return "firmware_runtime_failed" if any(marker in text for marker in markers) else None
+
+
+def _detect_serial_open_failed(root: Path) -> bool:
+    patterns = [
+        "could not open port",
+        "permissionerror",
+        "permission denied",
+        "no se detecta ningún puerto serie",
+        "no se detecta ningun puerto serie",
+    ]
+    for path in [
+        root / "07_esp_flash_log.txt",
+        root / "07_esp_monitor_log.txt",
+        root / "07_esp_build_log.txt",
+    ]:
+        if not path.exists():
+            continue
+        text = path.read_text(errors="ignore").lower()
+        if any(pattern in text for pattern in patterns):
+            return True
+    return False
 
 
 def _resolve_single_model_row(models_df: pd.DataFrame) -> dict:
@@ -548,6 +766,8 @@ def _update_model_profile(
     system_row: dict,
     time_scale_factor: float = 1.0,
     phase_status_reason: str | None = None,
+    edge_run_completed: bool | None = None,
+    validation_details: dict | None = None,
 ):
     profile_path = root / "07_model_profile.yaml"
     profile = _load_yaml_if_exists(profile_path)
@@ -557,10 +777,13 @@ def _update_model_profile(
     quality_score = _build_quality_score(models_row)
 
     run_block = profile.get("run", {}) or {}
+    if edge_run_completed is None:
+        edge_run_completed = phase_status_reason in (None, "completed", "completed_with_warnings")
     run_block.update(
         {
-            "edge_run_completed": phase_status_reason != "edge_runtime_crash",
+            "edge_run_completed": bool(edge_run_completed),
             "phase_status_reason": phase_status_reason,
+            "validation": validation_details,
             "n_inferences": models_row.get("n_inferences"),
             "ok_rate": models_row.get("ok_rate"),
             "offload_rate": models_row.get("offload_rate"),
@@ -824,12 +1047,15 @@ def run_analysis(variant, parent_variant=None, fp_index=None):
 
         build_status_path = root / "07_build_status.yaml"
         build_status = _load_yaml_if_exists(build_status_path) or {}
-        status_reason = build_status.get("phase_status_reason") or "monitor_log_missing"
+        status_reason = build_status.get("phase_status_reason") or "monitor_missing"
+        if status_reason == "monitor_missing" and _detect_serial_open_failed(root):
+            status_reason = "serial_open_failed"
 
         run_block = model_profile.get("run", {}) or {}
         run_block.update(
             {
                 "edge_run_completed": False,
+                "phase_status_reason": status_reason,
                 "n_inferences": None,
                 "ok_rate": None,
                 "offload_rate": None,
@@ -1028,6 +1254,14 @@ def run_analysis(variant, parent_variant=None, fp_index=None):
     models_row = _resolve_single_model_row(models_report_df)
     memory_row = _first_row_dict(pd.DataFrame([memory_summary] if memory_summary else []))
     system_row = _first_row_dict(pd.DataFrame([system_summary] if system_summary else []))
+    run_classification = classify_edge_run(
+        models_row,
+        monitor_present=True,
+        runtime_crash=bool(runtime_crash_reason),
+    )
+    phase_status_reason = run_classification.get("phase_status_reason")
+    edge_run_completed = bool(run_classification.get("edge_run_completed", False))
+    validation_details = run_classification.get("validation")
 
     model_profile = _update_model_profile(
         root,
@@ -1035,7 +1269,9 @@ def run_analysis(variant, parent_variant=None, fp_index=None):
         memory_row=memory_row,
         system_row=system_row,
         time_scale_factor=_time_scale_factor,
-        phase_status_reason=runtime_crash_reason,
+        phase_status_reason=phase_status_reason,
+        edge_run_completed=edge_run_completed,
+        validation_details=validation_details,
     )
 
     artifacts = [
@@ -1061,7 +1297,10 @@ def run_analysis(variant, parent_variant=None, fp_index=None):
         models_row=models_row,
         memory_row=memory_row,
         system_row=system_row,
-        phase_status_reason=runtime_crash_reason,
+        phase_status_reason=phase_status_reason,
+        extra_exports={
+            "edge_run_validation": validation_details,
+        } if validation_details else None,
     )
 
     print("")
