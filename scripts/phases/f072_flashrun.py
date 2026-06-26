@@ -278,15 +278,21 @@ def looks_like_connection_failure(log_path: Path, extra_text: str = "") -> bool:
 
 def get_host_user_spec() -> str:
     """Devuelve UID:GID del proceso host para ejecutar Docker sin root."""
-    return f"{os.getuid()}:{os.getgid()}"
+    return f"{get_host_uid()}:{get_host_gid()}"
 
 
 def get_host_uid() -> str:
-    return str(os.getuid())
+    getuid = getattr(os, "getuid", None)
+    if getuid is None:
+        return os.environ.get("HOST_UID", "0")
+    return str(getuid())
 
 
 def get_host_gid() -> str:
-    return str(os.getgid())
+    getgid = getattr(os, "getgid", None)
+    if getgid is None:
+        return os.environ.get("HOST_GID", "0")
+    return str(getgid())
 
 
 def get_serial_device_gid(port: str | None) -> str | None:
