@@ -701,7 +701,28 @@ def _detect_runtime_crash(log_path: Path) -> str | None:
         "Backtrace:",
         "SW_CPU_RESET",
     ]
-    return "edge_runtime_crash" if any(marker in text for marker in markers) else None
+    return "firmware_runtime_failed" if any(marker in text for marker in markers) else None
+
+
+def _detect_serial_open_failed(root: Path) -> bool:
+    patterns = [
+        "could not open port",
+        "permissionerror",
+        "permission denied",
+        "no se detecta ningún puerto serie",
+        "no se detecta ningun puerto serie",
+    ]
+    for path in [
+        root / "07_esp_flash_log.txt",
+        root / "07_esp_monitor_log.txt",
+        root / "07_esp_build_log.txt",
+    ]:
+        if not path.exists():
+            continue
+        text = path.read_text(errors="ignore").lower()
+        if any(pattern in text for pattern in patterns):
+            return True
+    return False
 
 
 def _resolve_single_model_row(models_df: pd.DataFrame) -> dict:
@@ -745,6 +766,8 @@ def _update_model_profile(
     system_row: dict,
     time_scale_factor: float = 1.0,
     phase_status_reason: str | None = None,
+    edge_run_completed: bool | None = None,
+    validation_details: dict | None = None,
 ):
     profile_path = root / "07_model_profile.yaml"
     profile = _load_yaml_if_exists(profile_path)
@@ -758,8 +781,9 @@ def _update_model_profile(
         edge_run_completed = phase_status_reason in (None, "completed", "completed_with_warnings")
     run_block.update(
         {
-            "edge_run_completed": phase_status_reason != "edge_runtime_crash",
+            "edge_run_completed": bool(edge_run_completed),
             "phase_status_reason": phase_status_reason,
+            "validation": validation_details,
             "n_inferences": models_row.get("n_inferences"),
             "ok_rate": models_row.get("ok_rate"),
             "offload_rate": models_row.get("offload_rate"),
@@ -1023,7 +1047,9 @@ def run_analysis(variant, parent_variant=None, fp_index=None):
 
         build_status_path = root / "07_build_status.yaml"
         build_status = _load_yaml_if_exists(build_status_path) or {}
-        status_reason = build_status.get("phase_status_reason") or "monitor_log_missing"
+        status_reason = build_status.get("phase_status_reason") or "monitor_missing"
+        if status_reason == "monitor_missing" and _detect_serial_open_failed(root):
+            status_reason = "serial_open_failed"
 
         run_block = model_profile.get("run", {}) or {}
         run_block.update(
@@ -1243,7 +1269,9 @@ def run_analysis(variant, parent_variant=None, fp_index=None):
         memory_row=memory_row,
         system_row=system_row,
         time_scale_factor=_time_scale_factor,
-        phase_status_reason=runtime_crash_reason,
+        phase_status_reason=phase_status_reason,
+        edge_run_completed=edge_run_completed,
+        validation_details=validation_details,
     )
 
     artifacts = [
@@ -1269,7 +1297,10 @@ def run_analysis(variant, parent_variant=None, fp_index=None):
         models_row=models_row,
         memory_row=memory_row,
         system_row=system_row,
-        phase_status_reason=runtime_crash_reason,
+        phase_status_reason=phase_status_reason,
+        extra_exports={
+            "edge_run_validation": validation_details,
+        } if validation_details else None,
     )
 
     print("")
