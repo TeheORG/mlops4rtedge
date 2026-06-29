@@ -1,0 +1,201 @@
+phase: f05_modeling
+variant: v5_0063
+artifacts:
+  model:
+    path: 05_modeling_model.h5
+    sha256: fb88e002f572ce4b2cfc9dec2d2732c525f4c69778636412a2d3add4999577dd
+  labeled_dataset:
+    path: 05_modeling_training_dataset.parquet
+    sha256: 5aee906a32808986da5a3dc7c78d7e80a8df5c3b446056b81747c63d33f47808
+  history:
+    path: 05_modeling_history.json
+    sha256: ffda4f26b773931a55ab2d2e1806db6d9faf52954697d5c7cd8ec5c6fdcac6b5
+  split_hash_leakage:
+    path: 05_modeling_split_hash_leakage.json
+    sha256: 19ba3e03989ba5d6295cea62d080dadc4b923073c1407208a6d357903b3ffc1c
+  report:
+    path: 05_modeling_report.html
+    sha256: ae89eb54f041a4b53725d6aeafaaf785af551aa73fd916d24fa8b2d366abbf3d
+exports:
+  Tu: 10
+  OW: 90
+  LT: 10
+  PW: 10
+  event_type_count: 340
+  event_id_dtype: int16
+  event_id_np_dtype: int16
+  event_id_tf_dtype: int16
+  event_ids_are_categorical: true
+  requires_cast_to_int32: true
+  prediction_name: outlet_temperature_high_80_fine_4
+  measure_name: outlet_temperature_high_80_fine_4
+  model_family: cnn1d
+  window_strategy: synchro
+  deduplication_mode: none
+  deduplication_mode_effective: none
+  seed: 42
+  trainable: true
+  possible_split_leakage: false
+  high_split_leakage_warning: false
+  decision_threshold: 0.95306396484375
+  threshold_source: validation
+  threshold_policy: optimal_f2
+  threshold_metric: f2
+  threshold_warning: null
+  best_val_recall: 0.89
+  val_precision: 0.40454545454545454
+  val_recall: 0.89
+  val_f1: 0.55625
+  val_pr_auc: 0.5316126310968675
+  val_precision_at_threshold: 0.40454545454545454
+  val_recall_at_threshold: 0.89
+  val_f1_at_threshold: 0.55625
+  test_precision: 0.4090909090909091
+  test_recall: 0.81
+  test_f1: 0.5436241610738255
+  test_precision_at_threshold: 0.4090909090909091
+  test_recall_at_threshold: 0.81
+  test_f1_at_threshold: 0.5436241610738255
+  test_fn_at_threshold: 19
+  test_pr_auc: 0.4274458148063949
+  imbalance_strategy: rare_events
+  parent_f04: v4_0063
+  parent_f03: v3_0006
+  parent_f02: v2_0003
+  parent_f01: v1_0000
+metrics:
+  execution_time: 471.06989740000006
+  event_type_count: 340
+  event_id_dtype: int16
+  event_id_np_dtype: int16
+  event_id_tf_dtype: int16
+  event_ids_are_categorical: true
+  requires_cast_to_int32: true
+  mejor_modelo_f1:
+    f1: 0.56957928802589
+    recall: 0.88
+    precision: 0.42105263157894735
+  mejor_modelo_precision:
+    f1: 0.56957928802589
+    recall: 0.88
+    precision: 0.42105263157894735
+  mejor_modelo_recall:
+    f1: 0.55625
+    recall: 0.89
+    precision: 0.40454545454545454
+  threshold_selection:
+    threshold: 0.95306396484375
+    policy: optimal_f2
+    source: validation
+    metric: f2
+    warning: null
+    f2: 0.7177419354838709
+    precision: 0.40454545454545454
+    recall: 0.89
+    f1: 0.55625
+  threshold_metric: f2
+  n_train: 29942
+  n_val: 20000
+  n_test: 20000
+  n_exact_train: 0
+  n_exact_val: 0
+  n_exact_test: 0
+  n_exact_intersection_train_val: 0
+  n_exact_intersection_train_test: 0
+  n_exact_intersection_val_test: 0
+  n_exact_intersection_all_three: 0
+  n_unordered_train: 0
+  n_unordered_val: 0
+  n_unordered_test: 0
+  n_unordered_intersection_train_val: 0
+  n_unordered_intersection_train_test: 0
+  n_unordered_intersection_val_test: 0
+  n_unordered_intersection_all_three: 0
+  n_near_pairs_train_val: 0
+  n_near_pairs_train_test: 0
+  n_near_pairs_val_test: 0
+  n_near_pairs_total: 0
+  max_split_overlap_pct: 0.0
+  positive_ratio_train: 0.3320419477656803
+  positive_ratio_val: 0.005
+  positive_ratio_test: 0.005
+  val_positive_ratio: 0.005
+  test_positive_ratio: 0.005
+  val_pr_auc: 0.5316126310968675
+  val_precision_at_threshold: 0.40454545454545454
+  val_recall_at_threshold: 0.89
+  val_f1_at_threshold: 0.55625
+  test_pr_auc: 0.4274458148063949
+  test_precision_at_threshold: 0.4090909090909091
+  test_recall_at_threshold: 0.81
+  test_f1_at_threshold: 0.5436241610738255
+  test_fn_at_threshold: 19
+  val_cap_used: true
+  test_cap_used: true
+  val_max_samples: 20000
+  test_max_samples: 20000
+  val_positive_ratio_before: 0.004981672308354061
+  val_positive_ratio_after: 0.005
+  test_positive_ratio_before: 0.004979334592582895
+  test_positive_ratio_after: 0.005
+  tp: 81
+  tn: 19783
+  fp: 117
+  fn: 19
+  n_samples_before_dedup: 1996250
+  n_samples_after_dedup: 1996250
+  n_removed_by_dedup: 0
+  removed_ratio_by_dedup: 0.0
+  train_n_samples_before_dedup: 1996250
+  train_n_samples_after_dedup: 1996250
+  train_n_removed_by_dedup: 0
+  train_removed_ratio_by_dedup: 0.0
+provenance:
+  generated_at: '2026-06-22T18:12:14.791045+00:00'
+  parent_phase: f04_targets
+  parent_variant: v4_0063
+mlflow_registration:
+  experiment_name: F05_outlet_temperature_high_80_fine_4
+  run_name: outlet_temperature_high_80_fine_4__v5_0063
+  metrics:
+    val_precision: 0.40454545454545454
+    val_recall: 0.89
+    val_f1: 0.55625
+    val_pr_auc: 0.5316126310968675
+    val_precision_at_threshold: 0.40454545454545454
+    val_recall_at_threshold: 0.89
+    val_f1_at_threshold: 0.55625
+    test_precision: 0.4090909090909091
+    test_recall: 0.81
+    test_f1: 0.5436241610738255
+    test_precision_at_threshold: 0.4090909090909091
+    test_recall_at_threshold: 0.81
+    test_f1_at_threshold: 0.5436241610738255
+    test_fn_at_threshold: 19
+    test_pr_auc: 0.4274458148063949
+    test_tp: 81
+    test_tn: 19783
+    test_fp: 117
+    test_fn: 19
+  params:
+    batch_size: 128
+    learning_rate: 0.0005
+    n_layers: 2
+    units: 64
+    dropout: 0.0
+    embed_dim: 64
+    filters: 128
+    kernel_size: 3
+    model_family: cnn1d
+    decision_threshold: 0.95306396484375
+    threshold_source: validation
+    threshold_policy: optimal_f2
+    threshold_metric: f2
+  artifacts:
+  - /__w/mlops4rtedge/mlops4rtedge/executions/f05_modeling/v5_0063/05_modeling_model.h5
+  - /__w/mlops4rtedge/mlops4rtedge/executions/f05_modeling/v5_0063/05_modeling_history.json
+  - /__w/mlops4rtedge/mlops4rtedge/executions/f05_modeling/v5_0063/05_modeling_trials_summary.json
+mlflow:
+  run_id: 2d1479c3b84b4b8584447ef665af966e
+  experiment_id: '5'
+  experiment_name: F05_outlet_temperature_high_80_fine_4

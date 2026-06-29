@@ -1,0 +1,8 @@
+created_at: '2026-06-23T10:36:46.563631+00:00'
+params_path: executions/f08_sysval/v8_0002/params.yaml
+lifecycle_state: EXECUTION_COMPLETED
+lifecycle_updated_at: '2026-06-23T10:36:55.682397+00:00'
+verified: true
+verified_updated_at: '2026-06-23T10:37:04.114453+00:00'
+registred: true
+runner: ESP32-v1

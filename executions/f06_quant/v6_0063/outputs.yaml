@@ -1,0 +1,91 @@
+phase: f06_quant
+variant: v6_0063
+artifacts:
+  calibration_dataset:
+    path: 06_calibration_dataset.parquet
+    sha256: 5aee906a32808986da5a3dc7c78d7e80a8df5c3b446056b81747c63d33f47808
+  report:
+    path: 06_quant_report.html
+    sha256: 9a34c00bc8ed70414d5af171e448a26ce247b87e77befa128de1270ac928093d
+  test_dataset:
+    path: 06_test_dataset.parquet
+    sha256: 57e4eeaeaed26eb4e6531fb1eae4d805aa5d92ee06799c86519068c688672c59
+  model_float:
+    path: 06_model_float.h5
+    sha256: fb88e002f572ce4b2cfc9dec2d2732c525f4c69778636412a2d3add4999577dd
+  model_tflite:
+    path: 06_model_tflite.tflite
+    sha256: 9ed406b66bbe3cb0e796f01e3dacdf3568ddf3b662c5ea467aa7eda9feccc9ba
+  eedu_manifest:
+    path: eedu/eedu_manifest.yaml
+    sha256: fb9fb0b4af5f11633c85a05b3a86767c35110bf0804d864188f4580f415fc2dc
+exports:
+  Tu: 10
+  OW: 90
+  LT: 10
+  PW: 10
+  event_type_count: 340
+  prediction_name: outlet_temperature_high_80_fine_4
+  runtime_model_name: outlet_temperature_high_80_fine_4-cnn1d-v5_0063
+  model_family: cnn1d
+  edge_capable: true
+  event_id_dtype: int16
+  event_id_np_dtype: int16
+  event_id_tf_dtype: int16
+  event_ids_are_categorical: true
+  requires_cast_to_int32: true
+  decision_threshold: 0.5204201936721802
+  tflite_eval_threshold: 0.95306396484375
+  tflite_test_precision: 0.4090909090909091
+  tflite_test_recall: 0.81
+  tflite_test_f1: 0.5436241610738255
+  tflite_test_pr_auc: 0.40536157137835804
+  tflite_test_fp: 117
+  tflite_test_fn: 19
+  model_size_bytes: 67984
+  arena_estimated_bytes: 101976
+  footprint_estimated_bytes: 169960
+  operators:
+  - CAST
+  - CONV_2D
+  - EXPAND_DIMS
+  - FULLY_CONNECTED
+  - GATHER
+  - LOGISTIC
+  - REDUCE_MAX
+  - RESHAPE
+  input_dtype: int16
+  output_dtype: int8
+  input_shape:
+  - 1
+  - 40
+  output_shape:
+  - 1
+  - 1
+  input_elements: 40
+  output_elements: 1
+  input_bytes: 80
+  output_bytes: 1
+metrics:
+  execution_time: 4.608061258000021
+  tflm_compatible: true
+  operators_detected: 8
+  unsupported_operators: 0
+  n_calibration_samples: 69942
+  single_input_output_int8: false
+  single_input_output_integer: true
+  event_type_count: 340
+  event_id_dtype: int16
+  event_id_np_dtype: int16
+  event_id_tf_dtype: int16
+  event_ids_are_categorical: true
+  requires_cast_to_int32: true
+  tflite_eval_threshold: 0.95306396484375
+  tflite_test_precision: 0.4090909090909091
+  tflite_test_recall: 0.81
+  tflite_test_f1: 0.5436241610738255
+  tflite_test_pr_auc: 0.40536157137835804
+  tflite_test_tp: 81
+  tflite_test_tn: 19783
+  tflite_test_fp: 117
+  tflite_test_fn: 19

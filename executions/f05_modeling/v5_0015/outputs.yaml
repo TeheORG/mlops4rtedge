@@ -1,0 +1,201 @@
+phase: f05_modeling
+variant: v5_0015
+artifacts:
+  model:
+    path: 05_modeling_model.h5
+    sha256: 190996c9329bd6039de44377a3a8393539547a72808cd419f72ecb0a45d6e2db
+  labeled_dataset:
+    path: 05_modeling_training_dataset.parquet
+    sha256: fdd40c6588295980862e6ce9f0853869759b26c381e3171b51106bce10604c6a
+  history:
+    path: 05_modeling_history.json
+    sha256: 4d823fe794430d79c5a36238c04d5dc47aba69b638ea5170a4dd157203aa7e7e
+  split_hash_leakage:
+    path: 05_modeling_split_hash_leakage.json
+    sha256: 19ba3e03989ba5d6295cea62d080dadc4b923073c1407208a6d357903b3ffc1c
+  report:
+    path: 05_modeling_report.html
+    sha256: c20dcfa5abd2c27846425a9bf7508a116b031fd4c6d9adb2998f1cd1dbf2c2a8
+exports:
+  Tu: 10
+  OW: 50
+  LT: 10
+  PW: 10
+  event_type_count: 340
+  event_id_dtype: int16
+  event_id_np_dtype: int16
+  event_id_tf_dtype: int16
+  event_ids_are_categorical: true
+  requires_cast_to_int32: true
+  prediction_name: pvpcs_active_power_high_80_fine_4
+  measure_name: pvpcs_active_power_high_80_fine_4
+  model_family: cnn1d
+  window_strategy: synchro
+  deduplication_mode: none
+  deduplication_mode_effective: none
+  seed: 42
+  trainable: true
+  possible_split_leakage: false
+  high_split_leakage_warning: false
+  decision_threshold: 0.8968088030815125
+  threshold_source: validation
+  threshold_policy: optimal_f2
+  threshold_metric: f2
+  threshold_warning: null
+  best_val_recall: 0.8
+  val_precision: 0.2602965403624382
+  val_recall: 0.8
+  val_f1: 0.3927905531385954
+  val_pr_auc: 0.2818608437911205
+  val_precision_at_threshold: 0.2602965403624382
+  val_recall_at_threshold: 0.8
+  val_f1_at_threshold: 0.3927905531385954
+  test_precision: 0.26244725738396624
+  test_recall: 0.7873417721518987
+  test_f1: 0.39367088607594936
+  test_precision_at_threshold: 0.26244725738396624
+  test_recall_at_threshold: 0.7873417721518987
+  test_f1_at_threshold: 0.39367088607594936
+  test_fn_at_threshold: 84
+  test_pr_auc: 0.30635391387422806
+  imbalance_strategy: rare_events
+  parent_f04: v4_0015
+  parent_f03: v3_0003
+  parent_f02: v2_0003
+  parent_f01: v1_0000
+metrics:
+  execution_time: 411.12512370999997
+  event_type_count: 340
+  event_id_dtype: int16
+  event_id_np_dtype: int16
+  event_id_tf_dtype: int16
+  event_ids_are_categorical: true
+  requires_cast_to_int32: true
+  mejor_modelo_f1:
+    f1: 0.3927905531385954
+    recall: 0.8
+    precision: 0.2602965403624382
+  mejor_modelo_precision:
+    f1: 0.39080459770114945
+    recall: 0.7746835443037975
+    precision: 0.26131511528608026
+  mejor_modelo_recall:
+    f1: 0.3927905531385954
+    recall: 0.8
+    precision: 0.2602965403624382
+  threshold_selection:
+    threshold: 0.8968088030815125
+    policy: optimal_f2
+    source: validation
+    metric: f2
+    warning: null
+    f2: 0.5654974946313529
+    precision: 0.2602965403624382
+    recall: 0.8
+    f1: 0.3927905531385954
+  threshold_metric: f2
+  n_train: 55228
+  n_val: 20000
+  n_test: 20000
+  n_exact_train: 0
+  n_exact_val: 0
+  n_exact_test: 0
+  n_exact_intersection_train_val: 0
+  n_exact_intersection_train_test: 0
+  n_exact_intersection_val_test: 0
+  n_exact_intersection_all_three: 0
+  n_unordered_train: 0
+  n_unordered_val: 0
+  n_unordered_test: 0
+  n_unordered_intersection_train_val: 0
+  n_unordered_intersection_train_test: 0
+  n_unordered_intersection_val_test: 0
+  n_unordered_intersection_all_three: 0
+  n_near_pairs_train_val: 0
+  n_near_pairs_train_test: 0
+  n_near_pairs_val_test: 0
+  n_near_pairs_total: 0
+  max_split_overlap_pct: 0.0
+  positive_ratio_train: 0.6378648511624538
+  positive_ratio_val: 0.01975
+  positive_ratio_test: 0.01975
+  val_positive_ratio: 0.01975
+  test_positive_ratio: 0.01975
+  val_pr_auc: 0.2818608437911205
+  val_precision_at_threshold: 0.2602965403624382
+  val_recall_at_threshold: 0.8
+  val_f1_at_threshold: 0.3927905531385954
+  test_pr_auc: 0.30635391387422806
+  test_precision_at_threshold: 0.26244725738396624
+  test_recall_at_threshold: 0.7873417721518987
+  test_f1_at_threshold: 0.39367088607594936
+  test_fn_at_threshold: 84
+  val_cap_used: true
+  test_cap_used: true
+  val_max_samples: 20000
+  test_max_samples: 20000
+  val_positive_ratio_before: 0.019747718901724425
+  val_positive_ratio_after: 0.01975
+  test_positive_ratio_before: 0.019747718901724425
+  test_positive_ratio_after: 0.01975
+  tp: 311
+  tn: 18731
+  fp: 874
+  fn: 84
+  n_samples_before_dedup: 1783933
+  n_samples_after_dedup: 1783933
+  n_removed_by_dedup: 0
+  removed_ratio_by_dedup: 0.0
+  train_n_samples_before_dedup: 1783933
+  train_n_samples_after_dedup: 1783933
+  train_n_removed_by_dedup: 0
+  train_removed_ratio_by_dedup: 0.0
+provenance:
+  generated_at: '2026-06-22T16:16:58.068740+00:00'
+  parent_phase: f04_targets
+  parent_variant: v4_0015
+mlflow_registration:
+  experiment_name: F05_pvpcs_active_power_high_80_fine_4
+  run_name: pvpcs_active_power_high_80_fine_4__v5_0015
+  metrics:
+    val_precision: 0.2602965403624382
+    val_recall: 0.8
+    val_f1: 0.3927905531385954
+    val_pr_auc: 0.2818608437911205
+    val_precision_at_threshold: 0.2602965403624382
+    val_recall_at_threshold: 0.8
+    val_f1_at_threshold: 0.3927905531385954
+    test_precision: 0.26244725738396624
+    test_recall: 0.7873417721518987
+    test_f1: 0.39367088607594936
+    test_precision_at_threshold: 0.26244725738396624
+    test_recall_at_threshold: 0.7873417721518987
+    test_f1_at_threshold: 0.39367088607594936
+    test_fn_at_threshold: 84
+    test_pr_auc: 0.30635391387422806
+    test_tp: 311
+    test_tn: 18731
+    test_fp: 874
+    test_fn: 84
+  params:
+    batch_size: 256
+    learning_rate: 0.001
+    n_layers: 1
+    units: 128
+    dropout: 0.2
+    embed_dim: 64
+    filters: 128
+    kernel_size: 5
+    model_family: cnn1d
+    decision_threshold: 0.8968088030815125
+    threshold_source: validation
+    threshold_policy: optimal_f2
+    threshold_metric: f2
+  artifacts:
+  - /__w/mlops4rtedge/mlops4rtedge/executions/f05_modeling/v5_0015/05_modeling_model.h5
+  - /__w/mlops4rtedge/mlops4rtedge/executions/f05_modeling/v5_0015/05_modeling_history.json
+  - /__w/mlops4rtedge/mlops4rtedge/executions/f05_modeling/v5_0015/05_modeling_trials_summary.json
+mlflow:
+  run_id: f50d1d6855804551a6a1cb566287e1a0
+  experiment_id: '10'
+  experiment_name: F05_pvpcs_active_power_high_80_fine_4

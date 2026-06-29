@@ -1,0 +1,47 @@
+phase: f04_targets
+variant: v4_0032
+artifacts:
+  report:
+    path: 04_targets_report.html
+    sha256: 032aa2c596416174e36414f9e00e6d745989246885519bbc376a66ab661a303b
+exports:
+  Tu: 10
+  OW: 50
+  LT: 10
+  PW: 10
+  prediction_name: battery_active_power_high_90_coarse_5
+  measure_name: battery_active_power_high_90_coarse_5
+  target_operator: OR
+  target_event_types:
+  - Battery_Active_Power_0_10-to-90_100
+  - Battery_Active_Power_10_25-to-90_100
+  - Battery_Active_Power_25_50-to-90_100
+  - Battery_Active_Power_50_75-to-90_100
+  - Battery_Active_Power_75_90-to-90_100
+  target_event_count: 5
+  target_compatible: false
+  incompatibility_reason: positive_ratio=0.000267 below minimum 0.001000
+  target_candidate_checks:
+  - measure: Battery_Active_Power
+    direction: high
+  event_type_count: 510
+  window_strategy: synchro
+  parent_f03: v3_0002
+  parent_f02: v2_0002
+  parent_f01: v1_0000
+  n_windows: 1637077
+  n_windows_pos: 437
+  n_windows_neg: 1636640
+  n_positive: 437
+  n_negative: 1636640
+  class_balance_ratio: 0.0002669391849008935
+metrics:
+  execution_time: 2.5649307860000192
+  n_windows: 1637077
+  n_positive: 437
+  n_negative: 1636640
+  positive_ratio: 0.0002669391849008935
+  target_compatible: false
+  incompatibility_reason: positive_ratio=0.000267 below minimum 0.001000
+provenance:
+  generated_at: '2026-06-22T15:32:24.276254+00:00'

@@ -1,0 +1,5 @@
+outs:
+- md5: 7fa74380cd194167ba9c0cfcc06c1002
+  size: 564344
+  hash: md5
+  path: 06_model_float.h5

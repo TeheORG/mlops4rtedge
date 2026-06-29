@@ -1,0 +1,45 @@
+phase: f04_targets
+variant: v4_0042
+artifacts:
+  report:
+    path: 04_targets_report.html
+    sha256: 9978f2f0a6f573201a833f177bacd34c18fe3071a809550432339f0aff5a9355
+exports:
+  Tu: 10
+  OW: 50
+  LT: 10
+  PW: 10
+  prediction_name: fc_active_power_low_20_fine_4
+  measure_name: fc_active_power_low_20_fine_4
+  target_operator: OR
+  target_event_types:
+  - FC_Active_Power_20_40-to-0_20
+  - FC_Active_Power_40_60-to-0_20
+  - FC_Active_Power_60_80-to-0_20
+  target_event_count: 3
+  target_compatible: false
+  incompatibility_reason: positive_ratio=0.000121 below minimum 0.001000
+  target_candidate_checks:
+  - measure: FC_Active_Power
+    direction: low
+  event_type_count: 340
+  window_strategy: synchro
+  parent_f03: v3_0003
+  parent_f02: v2_0003
+  parent_f01: v1_0000
+  n_windows: 2548477
+  n_windows_pos: 309
+  n_windows_neg: 2548168
+  n_positive: 309
+  n_negative: 2548168
+  class_balance_ratio: 0.00012124888708040135
+metrics:
+  execution_time: 4.1994543610000505
+  n_windows: 2548477
+  n_positive: 309
+  n_negative: 2548168
+  positive_ratio: 0.00012124888708040135
+  target_compatible: false
+  incompatibility_reason: positive_ratio=0.000121 below minimum 0.001000
+provenance:
+  generated_at: '2026-06-22T15:35:20.646197+00:00'

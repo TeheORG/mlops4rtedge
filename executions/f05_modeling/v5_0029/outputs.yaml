@@ -1,0 +1,201 @@
+phase: f05_modeling
+variant: v5_0029
+artifacts:
+  model:
+    path: 05_modeling_model.h5
+    sha256: 1f094b661819c97e2dcddffa40a2b65d6a5d57efb4de99be1c4d1c22f3bbe740
+  labeled_dataset:
+    path: 05_modeling_training_dataset.parquet
+    sha256: 634b5deca1b1f8dbc2a862b4d9ee168b24832be6cd37de356a368cbf448ba52d
+  history:
+    path: 05_modeling_history.json
+    sha256: 9dac51d3d621d62ff1e163dca091bd0ab38369e3d5e028df4410b1fbf9f52f9b
+  split_hash_leakage:
+    path: 05_modeling_split_hash_leakage.json
+    sha256: 19ba3e03989ba5d6295cea62d080dadc4b923073c1407208a6d357903b3ffc1c
+  report:
+    path: 05_modeling_report.html
+    sha256: 9730cfe690115bfed8787e5419adde639d60aa90662a8f4c0b4a11e75e6ee7d2
+exports:
+  Tu: 10
+  OW: 50
+  LT: 10
+  PW: 10
+  event_type_count: 510
+  event_id_dtype: int16
+  event_id_np_dtype: int16
+  event_id_tf_dtype: int16
+  event_ids_are_categorical: true
+  requires_cast_to_int32: true
+  prediction_name: inlet_temperature_of_chilled_water_low_10_coarse_5
+  measure_name: inlet_temperature_of_chilled_water_low_10_coarse_5
+  model_family: cnn1d
+  window_strategy: synchro
+  deduplication_mode: none
+  deduplication_mode_effective: none
+  seed: 42
+  trainable: true
+  possible_split_leakage: false
+  high_split_leakage_warning: false
+  decision_threshold: 0.9089567065238953
+  threshold_source: validation
+  threshold_policy: optimal_f2
+  threshold_metric: f2
+  threshold_warning: null
+  best_val_recall: 0.7185185185185186
+  val_precision: 0.3553113553113553
+  val_recall: 0.7185185185185186
+  val_f1: 0.47549019607843135
+  val_pr_auc: 0.3678889300816449
+  val_precision_at_threshold: 0.3553113553113553
+  val_recall_at_threshold: 0.7185185185185186
+  val_f1_at_threshold: 0.47549019607843135
+  test_precision: 0.3235294117647059
+  test_recall: 0.6518518518518519
+  test_f1: 0.43243243243243246
+  test_precision_at_threshold: 0.3235294117647059
+  test_recall_at_threshold: 0.6518518518518519
+  test_f1_at_threshold: 0.43243243243243246
+  test_fn_at_threshold: 47
+  test_pr_auc: 0.3511655965493728
+  imbalance_strategy: rare_events
+  parent_f04: v4_0029
+  parent_f03: v3_0002
+  parent_f02: v2_0002
+  parent_f01: v1_0000
+metrics:
+  execution_time: 429.16659485300005
+  event_type_count: 510
+  event_id_dtype: int16
+  event_id_np_dtype: int16
+  event_id_tf_dtype: int16
+  event_ids_are_categorical: true
+  requires_cast_to_int32: true
+  mejor_modelo_f1:
+    f1: 0.47549019607843135
+    recall: 0.7185185185185186
+    precision: 0.3553113553113553
+  mejor_modelo_precision:
+    f1: 0.47549019607843135
+    recall: 0.7185185185185186
+    precision: 0.3553113553113553
+  mejor_modelo_recall:
+    f1: 0.47549019607843135
+    recall: 0.7185185185185186
+    precision: 0.3553113553113553
+  threshold_selection:
+    threshold: 0.9089567065238953
+    policy: optimal_f2
+    source: validation
+    metric: f2
+    warning: null
+    f2: 0.5965559655596556
+    precision: 0.3553113553113553
+    recall: 0.7185185185185186
+    f1: 0.47549019607843135
+  threshold_metric: f2
+  n_train: 27732
+  n_val: 20000
+  n_test: 20000
+  n_exact_train: 0
+  n_exact_val: 0
+  n_exact_test: 0
+  n_exact_intersection_train_val: 0
+  n_exact_intersection_train_test: 0
+  n_exact_intersection_val_test: 0
+  n_exact_intersection_all_three: 0
+  n_unordered_train: 0
+  n_unordered_val: 0
+  n_unordered_test: 0
+  n_unordered_intersection_train_val: 0
+  n_unordered_intersection_train_test: 0
+  n_unordered_intersection_val_test: 0
+  n_unordered_intersection_all_three: 0
+  n_near_pairs_train_val: 0
+  n_near_pairs_train_test: 0
+  n_near_pairs_val_test: 0
+  n_near_pairs_total: 0
+  max_split_overlap_pct: 0.0
+  positive_ratio_train: 0.27881148132121736
+  positive_ratio_val: 0.00675
+  positive_ratio_test: 0.00675
+  val_positive_ratio: 0.00675
+  test_positive_ratio: 0.00675
+  val_pr_auc: 0.3678889300816449
+  val_precision_at_threshold: 0.3553113553113553
+  val_recall_at_threshold: 0.7185185185185186
+  val_f1_at_threshold: 0.47549019607843135
+  test_pr_auc: 0.3511655965493728
+  test_precision_at_threshold: 0.3235294117647059
+  test_recall_at_threshold: 0.6518518518518519
+  test_f1_at_threshold: 0.43243243243243246
+  test_fn_at_threshold: 47
+  val_cap_used: true
+  test_cap_used: true
+  val_max_samples: 20000
+  test_max_samples: 20000
+  val_positive_ratio_before: 0.006747786709670063
+  val_positive_ratio_after: 0.00675
+  test_positive_ratio_before: 0.006747786709670063
+  test_positive_ratio_after: 0.00675
+  tp: 88
+  tn: 19681
+  fp: 184
+  fn: 47
+  n_samples_before_dedup: 1145953
+  n_samples_after_dedup: 1145953
+  n_removed_by_dedup: 0
+  removed_ratio_by_dedup: 0.0
+  train_n_samples_before_dedup: 1145953
+  train_n_samples_after_dedup: 1145953
+  train_n_removed_by_dedup: 0
+  train_removed_ratio_by_dedup: 0.0
+provenance:
+  generated_at: '2026-06-22T16:44:23.172062+00:00'
+  parent_phase: f04_targets
+  parent_variant: v4_0029
+mlflow_registration:
+  experiment_name: F05_inlet_temperature_of_chilled_water_low_10_coarse_5
+  run_name: inlet_temperature_of_chilled_water_low_10_coarse_5__v5_0029
+  metrics:
+    val_precision: 0.3553113553113553
+    val_recall: 0.7185185185185186
+    val_f1: 0.47549019607843135
+    val_pr_auc: 0.3678889300816449
+    val_precision_at_threshold: 0.3553113553113553
+    val_recall_at_threshold: 0.7185185185185186
+    val_f1_at_threshold: 0.47549019607843135
+    test_precision: 0.3235294117647059
+    test_recall: 0.6518518518518519
+    test_f1: 0.43243243243243246
+    test_precision_at_threshold: 0.3235294117647059
+    test_recall_at_threshold: 0.6518518518518519
+    test_f1_at_threshold: 0.43243243243243246
+    test_fn_at_threshold: 47
+    test_pr_auc: 0.3511655965493728
+    test_tp: 88
+    test_tn: 19681
+    test_fp: 184
+    test_fn: 47
+  params:
+    batch_size: 256
+    learning_rate: 0.001
+    n_layers: 1
+    units: 128
+    dropout: 0.2
+    embed_dim: 64
+    filters: 128
+    kernel_size: 5
+    model_family: cnn1d
+    decision_threshold: 0.9089567065238953
+    threshold_source: validation
+    threshold_policy: optimal_f2
+    threshold_metric: f2
+  artifacts:
+  - /__w/mlops4rtedge/mlops4rtedge/executions/f05_modeling/v5_0029/05_modeling_model.h5
+  - /__w/mlops4rtedge/mlops4rtedge/executions/f05_modeling/v5_0029/05_modeling_history.json
+  - /__w/mlops4rtedge/mlops4rtedge/executions/f05_modeling/v5_0029/05_modeling_trials_summary.json
+mlflow:
+  run_id: a6d5c46b862a41b595724ee6348288cf
+  experiment_id: '25'
+  experiment_name: F05_inlet_temperature_of_chilled_water_low_10_coarse_5

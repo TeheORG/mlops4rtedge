@@ -1,0 +1,6 @@
+outs:
+- md5: 0b03ac5dc335c9caa4d9315f68bd79c7.dir
+  size: 2329286
+  nfiles: 3
+  hash: md5
+  path: build_generated

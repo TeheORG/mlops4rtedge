@@ -1,0 +1,51 @@
+phase: f04_targets
+variant: v4_0043
+artifacts:
+  report:
+    path: 04_targets_report.html
+    sha256: 32c1c2588f231b6b8dbfdfae451678ac7106e79c64a936e3648186ee19397a5d
+exports:
+  Tu: 10
+  OW: 50
+  LT: 10
+  PW: 10
+  prediction_name: island_mode_mccb_ac_voltage_high_90_coarse_10
+  measure_name: island_mode_mccb_ac_voltage_high_90_coarse_10
+  target_operator: OR
+  target_event_types:
+  - Island_mode_MCCB_AC_Voltage_0_10-to-90_100
+  - Island_mode_MCCB_AC_Voltage_10_20-to-90_100
+  - Island_mode_MCCB_AC_Voltage_20_30-to-90_100
+  - Island_mode_MCCB_AC_Voltage_30_40-to-90_100
+  - Island_mode_MCCB_AC_Voltage_40_50-to-90_100
+  - Island_mode_MCCB_AC_Voltage_50_60-to-90_100
+  - Island_mode_MCCB_AC_Voltage_60_70-to-90_100
+  - Island_mode_MCCB_AC_Voltage_70_80-to-90_100
+  - Island_mode_MCCB_AC_Voltage_80_90-to-90_100
+  target_event_count: 9
+  target_compatible: false
+  incompatibility_reason: positive_ratio=0.000576 below minimum 0.001000
+  target_candidate_checks:
+  - measure: Island_mode_MCCB_AC_Voltage
+    direction: high
+  event_type_count: 1530
+  window_strategy: synchro
+  parent_f03: v3_0001
+  parent_f02: v2_0001
+  parent_f01: v1_0000
+  n_windows: 3154177
+  n_windows_pos: 1818
+  n_windows_neg: 3152359
+  n_positive: 1818
+  n_negative: 3152359
+  class_balance_ratio: 0.000576378560873407
+metrics:
+  execution_time: 5.207437518000006
+  n_windows: 3154177
+  n_positive: 1818
+  n_negative: 3152359
+  positive_ratio: 0.000576378560873407
+  target_compatible: false
+  incompatibility_reason: positive_ratio=0.000576 below minimum 0.001000
+provenance:
+  generated_at: '2026-06-22T15:35:41.545892+00:00'

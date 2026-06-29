@@ -1,0 +1,67 @@
+phase: f04_targets
+variant: v4_0061
+artifacts:
+  dataset:
+    path: 04_targets.parquet
+    sha256: 3da3f42fb11b21681af1b04ffb11af01a549dd5b9632230e9798690564a913b8
+  report:
+    path: 04_targets_report.html
+    sha256: f1818e932a2d442e03255e2cb22ff32c53cf571637c3c76381e4f55e63ea3bb3
+exports:
+  Tu: 10
+  OW: 90
+  LT: 10
+  PW: 10
+  prediction_name: outlet_temperature_high_90_coarse_10
+  measure_name: outlet_temperature_high_90_coarse_10
+  target_operator: OR
+  target_event_types:
+  - Outlet_Temperature_0_10-to-90_100
+  - Outlet_Temperature_10_20-to-90_100
+  - Outlet_Temperature_20_30-to-90_100
+  - Outlet_Temperature_30_40-to-90_100
+  - Outlet_Temperature_40_50-to-90_100
+  - Outlet_Temperature_50_60-to-90_100
+  - Outlet_Temperature_60_70-to-90_100
+  - Outlet_Temperature_70_80-to-90_100
+  - Outlet_Temperature_80_90-to-90_100
+  target_event_count: 9
+  target_compatible: true
+  incompatibility_reason: null
+  target_candidate_checks:
+  - measure: Outlet_Temperature
+    direction: high
+  event_type_count: 1530
+  window_strategy: synchro
+  parent_f03: v3_0004
+  parent_f02: v2_0001
+  parent_f01: v1_0000
+  n_windows: 3435222
+  n_windows_pos: 4058
+  n_windows_neg: 3431164
+  n_positive: 4058
+  n_negative: 3431164
+  class_balance_ratio: 0.0011812919223269996
+  deduplication_stats:
+    total_sequences: 3435222
+    unique_ow_sequences: 783792
+    num_duplicate_sequences: 2651430
+    duplicate_ratio: 0.7718365799939567
+    ambiguous_sequences: 226
+    ambiguous_samples: 167631
+    ambiguous_ratio: 0.04879771962336059
+    avg_label_consistency_per_ow: 0.9999217221352334
+  unique_ratio: 0.22816342000604328
+  dup_ratio_ow_parent: 0.7718365799939567
+  dup_ratio_pw_parent: 0.9267468012256559
+  seq_len_mean_ow_parent: 18.336757566177674
+metrics:
+  execution_time: 5.725160078000002
+  n_windows: 3435222
+  n_positive: 4058
+  n_negative: 3431164
+  positive_ratio: 0.0011812919223269996
+  target_compatible: true
+  incompatibility_reason: null
+provenance:
+  generated_at: '2026-06-22T15:40:45.953396+00:00'

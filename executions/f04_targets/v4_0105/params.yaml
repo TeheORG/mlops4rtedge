@@ -1,0 +1,19 @@
+phase: f04_targets
+variant: v4_0105
+parent: v3_0006
+parameters:
+  parent_variant: v3_0006
+  Tu: 10
+  OW: 90
+  LT: 10
+  PW: 10
+  event_type_count: 340
+  prediction_name: island_mode_mccb_active_power_high_80_fine_4
+  target_operator: OR
+  target_event_types:
+  - Island_mode_MCCB_Active_Power_0_20-to-80_100
+  - Island_mode_MCCB_Active_Power_20_40-to-80_100
+  - Island_mode_MCCB_Active_Power_40_60-to-80_100
+  - Island_mode_MCCB_Active_Power_60_80-to-80_100
+parent_hashes:
+  v3_0006: 06f65c6d1b259a5f9c2a8c7857eaecd52b0f08869c525d3881af76b49d57934a

@@ -1,0 +1,33 @@
+phase: f06_quant
+variant: v6_0106
+parent: v5_0106
+parameters:
+  parent_variant: v5_0106
+  Tu: 10
+  OW: 90
+  LT: 10
+  PW: 10
+  prediction_name: island_mode_mccb_active_power_low_10_coarse_10
+  event_type_count: 1530
+  deployment:
+    target: esp32
+    runtime: esp-tflite-micro
+    runtime_version: 1.3.3
+    require_int8: true
+    memory_limit_bytes: 327680
+  quantization:
+    tflite_optimization: DEFAULT
+    representative_dataset: val
+    calibration_samples: 512
+    symmetric_int8: true
+    per_channel: true
+    keep_float_fallback: false
+  thresholding:
+    strategy: recalibrate_on_quantized
+    maximize_metric: recall
+    grid_points: 101
+  eedu:
+    version: '1.0'
+    layout: default
+parent_hashes:
+  v5_0106: 6833620005d67ea75ca7106556fadb1189712b3dfcba49ba658e416f793d0017

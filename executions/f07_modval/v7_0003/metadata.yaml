@@ -1,0 +1,8 @@
+created_at: '2026-06-23T08:48:07.428616+00:00'
+params_path: executions/f07_modval/v7_0003/params.yaml
+lifecycle_state: EXECUTION_COMPLETED
+lifecycle_updated_at: '2026-06-23T09:10:32.550750+00:00'
+verified: true
+verified_updated_at: '2026-06-23T09:10:46.985391+00:00'
+registred: true
+runner: ESP32-v1

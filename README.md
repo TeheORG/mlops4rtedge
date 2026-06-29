@@ -308,18 +308,64 @@ make dvc-pull VARIANT=v2_0001,v5_0001,v7_0001
 Limpiar artefactos descargados:
 
 ```bash
-make dvc-clean VARIANT=v5_0001
+# make variant7 VARIANT=v701 PARENT=v601 PLATFORM=esp32 MTI_MS=100000
+make variant7 VARIANT=v701 PARENT=v601 PLATFORM=esp32 MTI_MS=100 TIME_SCALE=0.01 VIRTUAL=true MAX_ROWS=10000
+make script7 VARIANT=v701
+make check7 VARIANT=v701
+make register7 VARIANT=v701
 ```
 
-## Limpieza
+When the variant has `parameters.virtual: true`, `make script7` automatically delegates the ESP32 virtual run to the Docker runner (`scripts/esp32_virtual/Dockerfile`). This keeps the same command on Windows, Linux, and macOS: the host only needs Docker, while ESP-IDF, QEMU, `socat`, and the Python dependencies live inside the container.
 
-Eliminar una variante:
+Use `MAX_LINES=<n>` on `make variant7` to limit how many rows from `07_input_dataset.csv` are sent over serial during F07. By default, F07 sends all available lines. `MAX_ROWS=<n>` limits the generated dataset itself; `MAX_LINES=<n>` only limits the serial replay.
+
+F07 preserves the ESP-IDF `build/` directory between repeated runs of the same variant. After one successful build, `script7` reuses the compiled binaries when the generated firmware inputs have not changed. Set `F07_FORCE_REBUILD=true` to force a rebuild.
+
+You can also run F07 step by step:
 
 ```bash
 make remove5 VARIANT=v5_0001
 ```
 
-Eliminar todas las variantes de una fase:
+#### ESP32 flash size and large firmware images
+
+By default, F07 keeps the ESP-IDF template configuration unchanged. For ESP32 this normally means the default 2 MB flash setting and the default single-app partition table. This is intentional: it reflects the conservative baseline and avoids silently assuming a larger physical board.
+
+Some edge builds can produce a firmware image that is larger than the default app partition, especially when TensorFlow Lite Micro, several operators, tracing code, and an embedded model are linked into the final binary. In that case `idf.py build` may fail with an error similar to:
+
+```text
+app partition is too small for binary MLOps4OFP.bin
+```
+
+For a board or QEMU target with a larger flash, declare the intended flash size when creating the variant:
+
+```bash
+make variant7 VARIANT=v701 PARENT=v601 PLATFORM=esp32 MTI_MS=100 TIME_SCALE=0.01 ESP_FLASH_MB=4
+```
+
+This stores the value in `params.yaml`:
+
+```yaml
+parameters:
+  esp_flash_size_mb: 4
+```
+
+During `script7-prepare-build`, F07 then generates a variant-local `partitions.csv` and ESP-IDF defaults inside:
+
+```text
+executions/f07_modval/<variant>/esp32_project/
+```
+
+The repository template itself remains unchanged. If the firmware does not fit in the configured partition, F07 records the condition as a deployment incompatibility, for example:
+
+```yaml
+edge_capable: false
+reason: firmware_too_large_for_partition
+```
+
+Use `ESP_FLASH_MB=4` only when the physical ESP32 board, or the QEMU simulation target, is meant to provide 4 MB of flash. If the physical board has only 2 MB, a firmware that requires a larger app partition is not deployable to that board without reducing the firmware/model footprint or changing hardware.
+
+### F08: Validate a multi-model edge system
 
 ```bash
 make remove5-all
@@ -414,7 +460,5 @@ Lee [DEVELOPERS.md](DEVELOPERS.md).
 
 Antes de publicar cambios:
 
-- no subir `executions/`;
-- no subir `.env`;
-- no subir cachés DVC/MLflow;
-- actualizar este README si cambia el uso del pipeline.
+1. [DEVELOPERS.md](DEVELOPERS.md) for contributors and maintainers.
+2. [setup/local.yaml](setup/local.yaml) and [setup/remote.yaml](setup/remote.yaml) as setup templates.
