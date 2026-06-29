@@ -2,6 +2,6 @@ created_at: '2026-06-29T15:31:43.527258+00:00'
 params_path: executions/f01_explore/v1_9958/params.yaml
 lifecycle_state: EXECUTION_COMPLETED
 lifecycle_updated_at: '2026-06-29T15:33:04.374699+00:00'
-verified: none
-verified_updated_at: '2026-06-29T15:31:51.080677+00:00'
+verified: true
+verified_updated_at: '2026-06-29T15:33:11.338226+00:00'
 registred: none
