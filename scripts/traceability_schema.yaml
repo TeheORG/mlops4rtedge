@@ -186,6 +186,18 @@ phases:
           - keep
           - discard
 
+      target_candidate_min_unique_types:
+        type: integer
+        required: false
+        inherited: false
+        default: 3
+
+      target_candidate_min_ratio:
+        type: float
+        required: false
+        inherited: false
+        default: 0.001
+
     outputs:
 
       artifacts:
@@ -218,6 +230,22 @@ phases:
         n_types:
           type: integer
           required: true
+
+        n_types_observed:
+          type: integer
+          required: false
+
+        target_candidates:
+          type: dict
+          required: false
+
+        target_candidate_min_unique_types:
+          type: integer
+          required: false
+
+        target_candidate_min_ratio:
+          type: float
+          required: false
 
       metrics:
 
@@ -424,6 +452,12 @@ phases:
         items:
           type: string
 
+      min_positive_ratio_for_target_compatibility:
+        type: float
+        required: false
+        inherited: false
+        default: 0.001
+
     outputs:
 
       artifacts:
@@ -497,6 +531,10 @@ phases:
           type: integer
           required: false
 
+        compatible:
+          type: boolean
+          required: false
+
         target_compatible:
           type: boolean
           required: true
@@ -505,6 +543,16 @@ phases:
           type: string
           required: false
           nullable: true
+
+        compatibility_checks:
+          type: list
+          required: false
+          items:
+            type: dict
+
+        min_positive_ratio_for_target_compatibility:
+          type: float
+          required: false
 
         target_candidate_checks:
           type: list
@@ -533,6 +581,10 @@ phases:
         positive_ratio:
           type: float
           required: true
+
+        compatible:
+          type: boolean
+          required: false
 
         target_compatible:
           type: boolean

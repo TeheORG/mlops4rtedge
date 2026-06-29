@@ -37,8 +37,8 @@ from scripts.core.traceability import validate_outputs
 PHASE = "f02_events"
 PROJECT_ROOT = REPO_ROOT
 
-TARGET_CANDIDATE_MIN_UNIQUE_TYPES = 3
-TARGET_CANDIDATE_MIN_RATIO = 0.001
+DEFAULT_TARGET_CANDIDATE_MIN_UNIQUE_TYPES = 3
+DEFAULT_TARGET_CANDIDATE_MIN_RATIO = 0.001
 
 MEASURE_SCORE_WEIGHT_EVENTS = 0.35
 MEASURE_SCORE_WEIGHT_OCCUPANCY_ENTROPY = 0.25
@@ -345,7 +345,11 @@ def compute_band_occupancy_metrics(band_counts):
     }
 
 
-def compute_measure_quality_scores(per_measure):
+def compute_measure_quality_scores(
+    per_measure,
+    target_candidate_min_unique_types,
+    target_candidate_min_ratio,
+):
     max_log_events = max(
         (math.log1p(float(stats["n_events_generated"])) for stats in per_measure.values()),
         default=0.0,
@@ -380,15 +384,15 @@ def compute_measure_quality_scores(per_measure):
         stats["measure_transition_score"] = float(score)
         stats["high_target_candidate"] = bool(
             n_events > 0
-            and int(stats["n_unique_event_types_observed"]) >= TARGET_CANDIDATE_MIN_UNIQUE_TYPES
+            and int(stats["n_unique_event_types_observed"]) >= target_candidate_min_unique_types
             and int(stats["high_rare_event_count"]) > 0
-            and float(stats["high_rare_event_ratio"]) >= TARGET_CANDIDATE_MIN_RATIO
+            and float(stats["high_rare_event_ratio"]) >= target_candidate_min_ratio
         )
         stats["low_target_candidate"] = bool(
             n_events > 0
-            and int(stats["n_unique_event_types_observed"]) >= TARGET_CANDIDATE_MIN_UNIQUE_TYPES
+            and int(stats["n_unique_event_types_observed"]) >= target_candidate_min_unique_types
             and int(stats["low_rare_event_count"]) > 0
-            and float(stats["low_rare_event_ratio"]) >= TARGET_CANDIDATE_MIN_RATIO
+            and float(stats["low_rare_event_ratio"]) >= target_candidate_min_ratio
         )
 
     return per_measure
@@ -568,13 +572,13 @@ def render_gate_criteria_table(global_stats):
     )
 
 
-def render_target_rule_table():
+def render_target_rule_table(target_candidate_min_unique_types, target_candidate_min_ratio):
     rows = [
         ("High", "high_rare_event_count", "> 0"),
-        ("High", "high_rare_event_ratio", ">= 0.001"),
+        ("High", "high_rare_event_ratio", f">= {target_candidate_min_ratio:g}"),
         ("Low", "low_rare_event_count", "> 0"),
-        ("Low", "low_rare_event_ratio", ">= 0.001"),
-        ("Ambos", "n_unique_event_types_observed", ">= 3"),
+        ("Low", "low_rare_event_ratio", f">= {target_candidate_min_ratio:g}"),
+        ("Ambos", "n_unique_event_types_observed", f">= {target_candidate_min_unique_types}"),
     ]
     body = "".join(
         "<tr>"
@@ -694,6 +698,8 @@ def compute_measure_stats(
     event_metadata,
     band_assignments,
     strategy,
+    target_candidate_min_unique_types,
+    target_candidate_min_ratio,
 ):
     per_measure = {}
     band_occupancy = {}
@@ -794,12 +800,28 @@ def compute_measure_stats(
         per_measure[col] = measure_entry
         band_occupancy[col] = band_counts
 
-    per_measure = compute_measure_quality_scores(per_measure)
+    per_measure = compute_measure_quality_scores(
+        per_measure,
+        target_candidate_min_unique_types=target_candidate_min_unique_types,
+        target_candidate_min_ratio=target_candidate_min_ratio,
+    )
 
     return per_measure, band_occupancy
 
 
-def compute_event_stats(df, df_events, epoch_col, measure_cols, bands, event_to_id, strategy, nan_mode, Tu):
+def compute_event_stats(
+    df,
+    df_events,
+    epoch_col,
+    measure_cols,
+    bands,
+    event_to_id,
+    strategy,
+    nan_mode,
+    Tu,
+    target_candidate_min_unique_types,
+    target_candidate_min_ratio,
+):
     row_lengths = df_events["events"].apply(len).to_numpy(dtype=int)
     total_events_generated = int(row_lengths.sum())
     total_rows = int(len(df_events))
@@ -865,6 +887,8 @@ def compute_event_stats(df, df_events, epoch_col, measure_cols, bands, event_to_
         event_metadata=event_metadata,
         band_assignments=band_assignments,
         strategy=strategy,
+        target_candidate_min_unique_types=target_candidate_min_unique_types,
+        target_candidate_min_ratio=target_candidate_min_ratio,
     )
 
     transition_stats = {
@@ -1176,7 +1200,16 @@ def _build_report_html_legacy(variant, parent_variant, strategy, bands_pct, nan_
     """
 
 
-def build_report_html(variant, parent_variant, strategy, bands_pct, nan_mode, stats):
+def build_report_html(
+    variant,
+    parent_variant,
+    strategy,
+    bands_pct,
+    nan_mode,
+    stats,
+    target_candidate_min_unique_types,
+    target_candidate_min_ratio,
+):
     global_stats = stats.get("global", {})
 
     top_events_df = pd.DataFrame(stats.get("top_events", []))
@@ -1214,7 +1247,10 @@ def build_report_html(variant, parent_variant, strategy, bands_pct, nan_mode, st
         [{"metric": key, "value": value} for key, value in global_stats.items()]
     ).to_html(index=False, classes="tbl", escape=True)
     gate_criteria_html = render_gate_criteria_table(global_stats)
-    target_rules_html = render_target_rule_table()
+    target_rules_html = render_target_rule_table(
+        target_candidate_min_unique_types,
+        target_candidate_min_ratio,
+    )
     target_candidates_html = render_target_candidates_table(stats)
 
     return f"""
@@ -1462,6 +1498,18 @@ def main():
     strategy = params["strategy"]
     bands_pct = params["bands"]
     nan_mode = params["nan_mode"]
+    target_candidate_min_unique_types = int(
+        params.get(
+            "target_candidate_min_unique_types",
+            DEFAULT_TARGET_CANDIDATE_MIN_UNIQUE_TYPES,
+        )
+    )
+    target_candidate_min_ratio = float(
+        params.get(
+            "target_candidate_min_ratio",
+            DEFAULT_TARGET_CANDIDATE_MIN_RATIO,
+        )
+    )
 
     # --------------------------------------------------------
     # Determinar columna temporal 'segs'
@@ -1513,6 +1561,8 @@ def main():
         strategy=strategy,
         nan_mode=nan_mode,
         Tu=Tu,
+        target_candidate_min_unique_types=target_candidate_min_unique_types,
+        target_candidate_min_ratio=target_candidate_min_ratio,
     )
 
     # --------------------------------------------------------
@@ -1548,6 +1598,8 @@ def main():
         bands_pct=bands_pct,
         nan_mode=nan_mode,
         stats=stats,
+        target_candidate_min_unique_types=target_candidate_min_unique_types,
+        target_candidate_min_ratio=target_candidate_min_ratio,
     )
 
     report_path.write_text(report_html, encoding="utf-8")
@@ -1586,6 +1638,8 @@ def main():
             "n_types": int(len(event_to_id)),
             "n_types_observed": int(stats["global"]["n_event_types_observed"]),
             "target_candidates": target_candidates,
+            "target_candidate_min_unique_types": int(target_candidate_min_unique_types),
+            "target_candidate_min_ratio": float(target_candidate_min_ratio),
             "parent_f01": parent_variant,
         },
         "metrics": build_outputs_metrics(
