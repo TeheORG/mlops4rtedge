@@ -72,4 +72,4 @@ test/experiments/experiment1/
 # ESP32 managed components (re-downloaded by idf.py build)
 **/esp32_project/managed_components/
 
-executions
+# executions
